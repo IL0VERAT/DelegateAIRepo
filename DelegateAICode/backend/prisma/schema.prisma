@@ -1,0 +1,281 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id       String  @id @default(cuid())
+  email    String  @unique
+  password String
+  name     String?
+  avatar   String?
+  role     Role    @default(USER)
+
+  // Authentication
+  emailVerified    DateTime?
+  emailVerifyToken String?
+  resetToken       String?
+  resetTokenExpiry DateTime?
+
+  // Subscription
+  subscriptionId String?       @unique
+  subscription   Subscription? @relation(fields: [subscriptionId], references: [id])
+
+  // Usage tracking
+  usage Usage[]
+
+  // Status fields 
+  isActive     Boolean  @default(true)
+  isSuspended  Boolean  @default(false)
+  deletedAt    DateTime?
+
+  // Activity
+  sessions  Session[]
+  campaigns CampaignParticipation[]
+
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @updatedAt
+  AuditLog  AuditLog[]
+
+  @@map("users")
+}
+
+model AuditLog {
+  id     String  @id @default(cuid())
+  userId String? // Nullable for unauthenticated or anonymous actions
+  user   User?   @relation(fields: [userId], references: [id], onDelete: SetNull)
+
+  action    String
+  category  String  @default("general")
+  path      String
+  ip        String
+  userAgent String?
+
+  timestamp DateTime @default(now())
+
+  @@index([userId])
+  @@map("audit_logs")
+}
+
+model Subscription {
+  id     String  @id @default(cuid())
+  userId String? @unique
+  user   User?
+
+  // Subscription details
+  tier   SubscriptionTier
+  status SubscriptionStatus
+
+  // Stripe integration
+  stripeCustomerId      String? @unique
+  stripeSubscriptionId  String? @unique
+  stripePriceId         String?
+  stripePaymentMethodId String?
+
+  // Billing
+  currentPeriodStart DateTime
+  currentPeriodEnd   DateTime
+  cancelAtPeriodEnd  Boolean   @default(false)
+  canceledAt         DateTime?
+
+  // Trial
+  trialStart DateTime?
+  trialEnd   DateTime?
+
+  // Usage limits and tracking
+  limits SubscriptionLimits?
+
+  // Payment history
+  invoices Invoice[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("subscriptions")
+}
+
+model SubscriptionLimits {
+  id             String       @id @default(cuid())
+  subscriptionId String       @unique
+  subscription   Subscription @relation(fields: [subscriptionId], references: [id], onDelete: Cascade)
+
+  // Monthly limits
+  monthlyVoiceMinutes   Int
+  monthlyCampaigns      Int
+  monthlyAIInteractions Int
+  monthlyExports        Int
+
+  // Feature limits
+  maxConcurrentSessions Int
+  maxStorageGB          Int
+  maxTeamMembers        Int
+
+  // Current usage (resets monthly)
+  usedVoiceMinutes   Int @default(0)
+  usedCampaigns      Int @default(0)
+  usedAIInteractions Int @default(0)
+  usedExports        Int @default(0)
+
+  // Usage reset date
+  usageResetDate DateTime
+
+  @@map("subscription_limits")
+}
+
+model Usage {
+  id     String @id @default(cuid())
+  userId String
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  // Usage type
+  type UsageType
+
+  // Metrics
+  amount Float
+  unit   String // minutes, count, bytes, etc.
+
+  // Metadata
+  metadata Json? // Additional data like campaign id, session id, etc.
+
+  // Billing period
+  billingPeriodStart DateTime
+  billingPeriodEnd   DateTime
+
+  createdAt DateTime @default(now())
+
+  @@map("usage")
+}
+
+model Invoice {
+  id             String       @id @default(cuid())
+  subscriptionId String
+  subscription   Subscription @relation(fields: [subscriptionId], references: [id], onDelete: Cascade)
+
+  // Stripe invoice details
+  stripeInvoiceId String @unique
+
+  // Invoice details
+  amount   Int // Amount in cents
+  currency String        @default("usd")
+  status   InvoiceStatus
+
+  // Billing period
+  periodStart DateTime
+  periodEnd   DateTime
+
+  // Payment
+  paidAt          DateTime?
+  paymentFailedAt DateTime?
+
+  // Invoice data
+  invoiceUrl String?
+  invoicePdf String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("invoices")
+}
+
+model Session {
+  id     String @id @default(cuid())
+  userId String
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  campaignId String
+
+  // Session details
+  status    SessionStatus
+  startedAt DateTime      @default(now())
+  endedAt   DateTime?
+  duration  Int? // Duration in seconds
+
+  // Voice metrics
+  voiceMinutes Float @default(0)
+
+  // AI interactions
+  aiInteractions Int @default(0)
+
+  // Session data
+  transcript Json?
+  recordings Json?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("sessions")
+}
+
+model CampaignParticipation {
+  id     String @id @default(cuid())
+  userId String
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  campaignId String
+
+  // Participation details
+  role     String
+  joinedAt DateTime  @default(now())
+  leftAt   DateTime?
+
+  // Performance metrics
+  score    Float?
+  feedback Json?
+
+  @@unique([userId, campaignId])
+  @@map("campaign_participations")
+}
+
+enum Role {
+  USER
+  ADMIN
+  MODERATOR
+}
+
+enum SubscriptionTier {
+  FREE
+  PRO
+  ENTERPRISE
+  LIFETIME
+}
+
+enum SubscriptionStatus {
+  ACTIVE
+  TRIALING
+  PAST_DUE
+  CANCELED
+  UNPAID
+  INCOMPLETE
+  INCOMPLETE_EXPIRED
+}
+
+enum InvoiceStatus {
+  DRAFT
+  OPEN
+  PAID
+  UNCOLLECTIBLE
+  VOID
+}
+
+enum UsageType {
+  VOICE_MINUTES
+  CAMPAIGN_SESSION
+  AI_INTERACTION
+  EXPORT
+  STORAGE
+  API_CALL
+}
+
+enum SessionStatus {
+  ACTIVE
+  COMPLETED
+  ABANDONED
+  ERROR
+}

@@ -1,0 +1,913 @@
+@custom-variant dark (&:is(.dark *));
+
+:root {
+  --font-size: 14px;
+  --background: #ffffff;
+  --foreground: oklch(0.145 0 0);
+  --card: #ffffff;
+  --card-foreground: oklch(0.145 0 0);
+  --popover: oklch(1 0 0);
+  --popover-foreground: oklch(0.145 0 0);
+  --primary: #030213;
+  --primary-foreground: oklch(1 0 0);
+  --secondary: oklch(0.95 0.0058 264.53);
+  --secondary-foreground: #030213;
+  --muted: #ececf0;
+  --muted-foreground: #717182;
+  --accent: #e9ebef;
+  --accent-foreground: #030213;
+  --destructive: #d4183d;
+  --destructive-foreground: #ffffff;
+  --border: rgba(0, 0, 0, 0.1);
+  --input: transparent;
+  --input-background: #f3f3f5;
+  --switch-background: #cbced4;
+  --font-weight-medium: 500;
+  --font-weight-normal: 400;
+  --ring: oklch(0.708 0 0);
+  --chart-1: oklch(0.646 0.222 41.116);
+  --chart-2: oklch(0.6 0.118 184.704);
+  --chart-3: oklch(0.398 0.07 227.392);
+  --chart-4: oklch(0.828 0.189 84.429);
+  --chart-5: oklch(0.769 0.188 70.08);
+  --radius: 0.625rem;
+  --sidebar: oklch(0.985 0 0);
+  --sidebar-foreground: oklch(0.145 0 0);
+  --sidebar-primary: #030213;
+  --sidebar-primary-foreground: oklch(0.985 0 0);
+  --sidebar-accent: oklch(0.97 0 0);
+  --sidebar-accent-foreground: oklch(0.205 0 0);
+  --sidebar-border: oklch(0.922 0 0);
+  --sidebar-ring: oklch(0.708 0 0);
+  
+  /* Logo Blue Color Scheme */
+  --logo-blue: #5B9BD5;
+  --logo-blue-light: #87CEEB;
+  --logo-blue-dark: #4682B4;
+  --logo-blue-accent: #E6F3FF;
+  --brand-blue: var(--logo-blue);
+  --brand-blue-light: var(--logo-blue-light);
+  --brand-blue-dark: var(--logo-blue-dark);
+  --brand-accent: var(--logo-blue-accent);
+  
+  /* Debate Strength Colors */
+  --debate-collaborative: #10B981; /* Green - peaceful, cooperative */
+  --debate-collaborative-bg: #ECFDF5;
+  --debate-collaborative-border: #D1FAE5;
+  --debate-gentle: #3B82F6; /* Blue - calm, gentle */
+  --debate-gentle-bg: #EFF6FF;
+  --debate-gentle-border: #DBEAFE;
+  --debate-balanced: #8B5CF6; /* Purple - neutral, balanced */
+  --debate-balanced-bg: #F5F3FF;
+  --debate-balanced-border: #E9D5FF;
+  --debate-challenging: #F59E0B; /* Orange - energetic, challenging */
+  --debate-challenging-bg: #FFFBEB;
+  --debate-challenging-border: #FED7AA;
+  --debate-aggressive: #EF4444; /* Red - intense, aggressive */
+  --debate-aggressive-bg: #FEF2F2;
+  --debate-aggressive-border: #FECACA;
+
+  /* CSP-Safe Color Variables for Dynamic Styling */
+  --csp-safe-primary: var(--primary);
+  --csp-safe-secondary: var(--secondary);
+  --csp-safe-accent: var(--accent);
+  --csp-safe-background: var(--background);
+  --csp-safe-foreground: var(--foreground);
+
+  /* Enhanced Microphone Animation Variables */
+  --mic-listening-scale: 1.03;
+  --mic-speaking-scale: 1.08;
+  --mic-processing-scale: 1.05;
+  --ring-emanate-speed: 2.5s;
+  --ring-opacity-start: 0.3;
+  --ring-opacity-end: 0;
+
+  /* Rate Limit Bar Animation Variables */
+  --rate-limit-bar-duration: 0.7s;
+  --rate-limit-bar-easing: cubic-bezier(0.4, 0, 0.2, 1);
+  --rate-limit-glow-opacity: 0.4;
+  --rate-limit-pulse-scale: 1.02;
+}
+
+.dark {
+  --background: oklch(0.145 0 0);
+  --foreground: oklch(0.985 0 0);
+  --card: oklch(0.145 0 0);
+  --card-foreground: oklch(0.985 0 0);
+  --popover: oklch(0.145 0 0);
+  --popover-foreground: oklch(0.985 0 0);
+  --primary: oklch(0.985 0 0);
+  --primary-foreground: oklch(0.205 0 0);
+  --secondary: oklch(0.269 0 0);
+  --secondary-foreground: oklch(0.985 0 0);
+  --muted: oklch(0.269 0 0);
+  --muted-foreground: oklch(0.708 0 0);
+  --accent: oklch(0.269 0 0);
+  --accent-foreground: oklch(0.985 0 0);
+  --destructive: oklch(0.396 0.141 25.723);
+  --destructive-foreground: oklch(0.637 0.237 25.331);
+  --border: oklch(0.269 0 0);
+  --input: oklch(0.269 0 0);
+  --ring: oklch(0.439 0 0);
+  --font-weight-medium: 500;
+  --font-weight-normal: 400;
+  --chart-1: oklch(0.488 0.243 264.376);
+  --chart-2: oklch(0.696 0.17 162.48);
+  --chart-3: oklch(0.769 0.188 70.08);
+  --chart-4: oklch(0.627 0.265 303.9);
+  --chart-5: oklch(0.645 0.246 16.439);
+  --sidebar: oklch(0.205 0 0);
+  --sidebar-foreground: oklch(0.985 0 0);
+  --sidebar-primary: oklch(0.488 0.243 264.376);
+  --sidebar-primary-foreground: oklch(0.985 0 0);
+  --sidebar-accent: oklch(0.269 0 0);
+  --sidebar-accent-foreground: oklch(0.985 0 0);
+  --sidebar-border: oklch(0.269 0 0);
+  --sidebar-ring: oklch(0.439 0 0);
+  
+  /* Logo Blue Color Scheme - Dark Mode */
+  --logo-blue: #6BA6DC;
+  --logo-blue-light: #87CEEB;
+  --logo-blue-dark: #4682B4;
+  --logo-blue-accent: #1A2332;
+  --brand-blue: var(--logo-blue);
+  --brand-blue-light: var(--logo-blue-light);
+  --brand-blue-dark: var(--logo-blue-dark);
+  --brand-accent: var(--logo-blue-accent);
+  
+  /* Debate Strength Colors - Dark Mode */
+  --debate-collaborative: #10B981; /* Keeping green vibrant in dark mode */
+  --debate-collaborative-bg: #064E3B;
+  --debate-collaborative-border: #065F46;
+  --debate-gentle: #3B82F6; /* Keeping blue vibrant in dark mode */
+  --debate-gentle-bg: #1E3A8A;
+  --debate-gentle-border: #1E40AF;
+  --debate-balanced: #8B5CF6; /* Keeping purple vibrant in dark mode */
+  --debate-balanced-bg: #581C87;
+  --debate-balanced-border: #6B21A8;
+  --debate-challenging: #F59E0B; /* Keeping orange vibrant in dark mode */
+  --debate-challenging-bg: #92400E;
+  --debate-challenging-border: #B45309;
+  --debate-aggressive: #EF4444; /* Keeping red vibrant in dark mode */
+  --debate-aggressive-bg: #991B1B;
+  --debate-aggressive-border: #B91C1C;
+
+  /* CSP-Safe Dark Mode Variables */
+  --csp-safe-primary: var(--primary);
+  --csp-safe-secondary: var(--secondary);
+  --csp-safe-accent: var(--accent);
+  --csp-safe-background: var(--background);
+  --csp-safe-foreground: var(--foreground);
+
+  /* Enhanced Dark Mode Animation Variables */
+  --ring-opacity-start: 0.4;
+  --ring-opacity-end: 0;
+
+  /* Rate Limit Bar Animation Variables - Dark Mode */
+  --rate-limit-glow-opacity: 0.5;
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-input-background: var(--input-background);
+  --color-switch-background: var(--switch-background);
+  --color-ring: var(--ring);
+  --color-chart-1: var(--chart-1);
+  --color-chart-2: var(--chart-2);
+  --color-chart-3: var(--chart-3);
+  --color-chart-4: var(--chart-4);
+  --color-chart-5: var(--chart-5);
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+  --color-sidebar: var(--sidebar);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar-primary: var(--sidebar-primary);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-ring: var(--sidebar-ring);
+  
+  /* Brand colors */
+  --color-brand-blue: var(--brand-blue);
+  --color-brand-blue-light: var(--brand-blue-light);
+  --color-brand-blue-dark: var(--brand-blue-dark);
+  --color-brand-accent: var(--brand-accent);
+  
+  /* Debate Strength Colors */
+  --color-debate-collaborative: var(--debate-collaborative);
+  --color-debate-collaborative-bg: var(--debate-collaborative-bg);
+  --color-debate-collaborative-border: var(--debate-collaborative-border);
+  --color-debate-gentle: var(--debate-gentle);
+  --color-debate-gentle-bg: var(--debate-gentle-bg);
+  --color-debate-gentle-border: var(--debate-gentle-border);
+  --color-debate-balanced: var(--debate-balanced);
+  --color-debate-balanced-bg: var(--debate-balanced-bg);
+  --color-debate-balanced-border: var(--debate-balanced-border);
+  --color-debate-challenging: var(--debate-challenging);
+  --color-debate-challenging-bg: var(--debate-challenging-bg);
+  --color-debate-challenging-border: var(--debate-challenging-border);
+  --color-debate-aggressive: var(--debate-aggressive);
+  --color-debate-aggressive-bg: var(--debate-aggressive-bg);
+  --color-debate-aggressive-border: var(--debate-aggressive-border);
+
+  /* CSP-Safe Color Mappings */
+  --color-csp-safe-primary: var(--csp-safe-primary);
+  --color-csp-safe-secondary: var(--csp-safe-secondary);
+  --color-csp-safe-accent: var(--csp-safe-accent);
+  --color-csp-safe-background: var(--csp-safe-background);
+  --color-csp-safe-foreground: var(--csp-safe-foreground);
+}
+
+/* ============================================================================
+   CSP-COMPLIANT BASE STYLES
+   ============================================================================ */
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+    box-sizing: border-box;
+  }
+
+  body {
+    @apply bg-background text-foreground;
+    min-height: 100vh;
+    min-height: 100dvh; /* Use dynamic viewport height where supported */
+  }
+
+  /* CSP-Safe Responsive Container Utilities */
+  .container-responsive {
+    width: 100%;
+    max-width: 100%;
+    margin-left: auto;
+    margin-right: auto;
+    padding-left: 1rem;
+    padding-right: 1rem;
+  }
+
+  @media (min-width: 640px) {
+    .container-responsive {
+      max-width: 640px;
+    }
+  }
+
+  @media (min-width: 768px) {
+    .container-responsive {
+      max-width: 768px;
+      padding-left: 1.5rem;
+      padding-right: 1.5rem;
+    }
+  }
+
+  @media (min-width: 1024px) {
+    .container-responsive {
+      max-width: 1024px;
+      padding-left: 2rem;
+      padding-right: 2rem;
+    }
+  }
+
+  @media (min-width: 1280px) {
+    .container-responsive {
+      max-width: 1280px;
+    }
+  }
+}
+
+/* ============================================================================
+   FONT SIZE SYSTEM - SIMPLIFIED AND RELIABLE APPROACH
+   ============================================================================ */
+
+/* Base font size setup - now directly on html element */
+html {
+  font-size: var(--font-size);
+  transition: font-size 0.2s ease;
+}
+
+/* Font size variants controlled by data attribute */
+html[data-font-size="small"] {
+  --font-size: 13px;
+}
+
+html[data-font-size="medium"] {
+  --font-size: 14px;
+}
+
+html[data-font-size="large"] {
+  --font-size: 16px;
+}
+
+/* ============================================================================
+   SIMPLIFIED TYPOGRAPHY SYSTEM
+   ============================================================================ */
+
+@layer base {
+  /* Apply font sizes directly to elements without complex selectors */
+  h1, h2, h3, h4, h5, h6, p, span, div, label, button, input, textarea, select, a, li, td, th {
+    /* Reset any potential conflicting font-size and let elements inherit */
+    font-size: inherit;
+  }
+
+  /* Specific typography scales */
+  h1 {
+    font-size: 1.6em; /* Will scale with the base font-size */
+    font-weight: var(--font-weight-medium);
+    line-height: 1.4;
+  }
+
+  h2 {
+    font-size: 1.4em;
+    font-weight: var(--font-weight-medium);
+    line-height: 1.4;
+  }
+
+  h3 {
+    font-size: 1.2em;
+    font-weight: var(--font-weight-medium);
+    line-height: 1.4;
+  }
+
+  h4 {
+    font-size: 1.1em;
+    font-weight: var(--font-weight-medium);
+    line-height: 1.4;
+  }
+
+  h5 {
+    font-size: 1.05em;
+    font-weight: var(--font-weight-medium);
+    line-height: 1.4;
+  }
+
+  h6 {
+    font-size: 1em;
+    font-weight: var(--font-weight-medium);
+    line-height: 1.4;
+  }
+
+  p {
+    font-size: 1em;
+    font-weight: var(--font-weight-normal);
+    line-height: 1.5;
+  }
+
+  label {
+    font-size: 1em;
+    font-weight: var(--font-weight-medium);
+    line-height: 1.4;
+  }
+
+  button {
+    font-size: 1em;
+    font-weight: var(--font-weight-medium);
+    line-height: 1.4;
+  }
+
+  input, textarea, select {
+    font-size: 1em;
+    font-weight: var(--font-weight-normal);
+    line-height: 1.4;
+  }
+
+  /* Small text variants */
+  small, .text-sm {
+    font-size: 0.875em;
+  }
+
+  .text-xs {
+    font-size: 0.75em;
+  }
+
+  /* Large text variants */
+  .text-lg {
+    font-size: 1.125em;
+  }
+
+  .text-xl {
+    font-size: 1.25em;
+  }
+
+  .text-2xl {
+    font-size: 1.5em;
+  }
+
+  .text-3xl {
+    font-size: 1.875em;
+  }
+}
+
+/* Safe area insets for mobile devices */
+@supports (padding: max(0px)) {
+  .safe-area-inset-top {
+    padding-top: max(1rem, env(safe-area-inset-top));
+  }
+  
+  .safe-area-inset-bottom {
+    padding-bottom: max(1rem, env(safe-area-inset-bottom));
+  }
+  
+  .safe-area-insets {
+    padding-top: max(1rem, env(safe-area-inset-top));
+    padding-right: max(1rem, env(safe-area-inset-right));
+    padding-bottom: max(1rem, env(safe-area-inset-bottom));
+    padding-left: max(1rem, env(safe-area-inset-left));
+  }
+}
+
+/* ============================================================================
+   ENHANCED MICROPHONE ANIMATIONS WITH CORRECTED EMANATING LIGHT RINGS
+   ============================================================================ 
+   Enhanced voice animations with improved microphone button feedback:
+   - Subtle pulse when listening (slower, gentle) - GREEN RINGS
+   - Pronounced pulse when speaking (larger, more dramatic) - BLUE RINGS
+   - Emanating light rings for all states that properly center on microphone icon
+   - Hardware acceleration for smooth performance
+*/
+
+/* Enhanced Voice Animations with Hardware Acceleration */
+@layer utilities {
+  /* Performance optimization base - CSP compliant */
+  .voice-performance-base {
+    will-change: transform, box-shadow, opacity, filter;
+    transform-style: preserve-3d;
+    backface-visibility: hidden;
+    perspective: 1000px;
+  }
+
+  /* ========== ENHANCED LISTENING ANIMATION - SUBTLE & SLOW ========== */
+  @keyframes mic-listening-subtle {
+    0%, 100% {
+      transform: translate3d(0, 0, 0) scale3d(1, 1, 1);
+      box-shadow: 
+        0 0 15px rgba(34, 197, 94, 0.2),
+        0 0 30px rgba(34, 197, 94, 0.08),
+        0 0 45px rgba(34, 197, 94, 0.03);
+      filter: brightness(1) saturate(1);
+    }
+    25% {
+      transform: translate3d(0, -1px, 0) scale3d(var(--mic-listening-scale), var(--mic-listening-scale), 1);
+      box-shadow: 
+        0 0 20px rgba(34, 197, 94, 0.25),
+        0 0 40px rgba(34, 197, 94, 0.1),
+        0 0 60px rgba(34, 197, 94, 0.04);
+      filter: brightness(1.02) saturate(1.05);
+    }
+    50% {
+      transform: translate3d(0, -2px, 0) scale3d(calc(var(--mic-listening-scale) + 0.01), calc(var(--mic-listening-scale) + 0.01), 1);
+      box-shadow: 
+        0 0 25px rgba(34, 197, 94, 0.3),
+        0 0 50px rgba(34, 197, 94, 0.12),
+        0 0 75px rgba(34, 197, 94, 0.05);
+      filter: brightness(1.03) saturate(1.08);
+    }
+    75% {
+      transform: translate3d(0, -1px, 0) scale3d(var(--mic-listening-scale), var(--mic-listening-scale), 1);
+      box-shadow: 
+        0 0 20px rgba(34, 197, 94, 0.25),
+        0 0 40px rgba(34, 197, 94, 0.1),
+        0 0 60px rgba(34, 197, 94, 0.04);
+      filter: brightness(1.02) saturate(1.05);
+    }
+  }
+
+  /* ========== ENHANCED SPEAKING ANIMATION - PRONOUNCED & DRAMATIC ========== */
+  @keyframes mic-speaking-pronounced {
+    0%, 100% {
+      transform: translate3d(0, 0, 0) scale3d(1, 1, 1);
+      box-shadow: 
+        0 0 30px rgba(91, 155, 213, 0.4),
+        0 0 60px rgba(91, 155, 213, 0.2),
+        0 0 90px rgba(91, 155, 213, 0.08);
+      filter: brightness(1) saturate(1) hue-rotate(0deg);
+    }
+    15% {
+      transform: translate3d(-2px, -2px, 0) scale3d(calc(var(--mic-speaking-scale) - 0.02), calc(var(--mic-speaking-scale) - 0.02), 1);
+      box-shadow: 
+        0 0 40px rgba(91, 155, 213, 0.6),
+        0 0 80px rgba(91, 155, 213, 0.3),
+        0 0 120px rgba(91, 155, 213, 0.12);
+      filter: brightness(1.05) saturate(1.15) hue-rotate(3deg);
+    }
+    30% {
+      transform: translate3d(2px, -4px, 0) scale3d(var(--mic-speaking-scale), var(--mic-speaking-scale), 1);
+      box-shadow: 
+        0 0 50px rgba(91, 155, 213, 0.7),
+        0 0 100px rgba(91, 155, 213, 0.35),
+        0 0 150px rgba(91, 155, 213, 0.15);
+      filter: brightness(1.08) saturate(1.2) hue-rotate(5deg);
+    }
+    45% {
+      transform: translate3d(-1px, -3px, 0) scale3d(calc(var(--mic-speaking-scale) - 0.01), calc(var(--mic-speaking-scale) - 0.01), 1);
+      box-shadow: 
+        0 0 35px rgba(91, 155, 213, 0.5),
+        0 0 70px rgba(91, 155, 213, 0.25),
+        0 0 105px rgba(91, 155, 213, 0.1);
+      filter: brightness(1.03) saturate(1.1) hue-rotate(2deg);
+    }
+    60% {
+      transform: translate3d(3px, -5px, 0) scale3d(calc(var(--mic-speaking-scale) + 0.02), calc(var(--mic-speaking-scale) + 0.02), 1);
+      box-shadow: 
+        0 0 55px rgba(91, 155, 213, 0.8),
+        0 0 110px rgba(91, 155, 213, 0.4),
+        0 0 165px rgba(91, 155, 213, 0.18);
+      filter: brightness(1.1) saturate(1.25) hue-rotate(6deg);
+    }
+    75% {
+      transform: translate3d(-2px, -2px, 0) scale3d(var(--mic-speaking-scale), var(--mic-speaking-scale), 1);
+      box-shadow: 
+        0 0 45px rgba(91, 155, 213, 0.65),
+        0 0 90px rgba(91, 155, 213, 0.3),
+        0 0 135px rgba(91, 155, 213, 0.13);
+      filter: brightness(1.06) saturate(1.18) hue-rotate(4deg);
+    }
+    90% {
+      transform: translate3d(1px, -1px, 0) scale3d(calc(var(--mic-speaking-scale) - 0.01), calc(var(--mic-speaking-scale) - 0.01), 1);
+      box-shadow: 
+        0 0 35px rgba(91, 155, 213, 0.5),
+        0 0 70px rgba(91, 155, 213, 0.25),
+        0 0 105px rgba(91, 155, 213, 0.1);
+      filter: brightness(1.04) saturate(1.12) hue-rotate(2deg);
+    }
+  }
+
+  /* ========== PROCESSING ANIMATION - SMOOTH ROTATION ========== */
+  @keyframes mic-processing-rotate {
+    0% {
+      transform: translate3d(0, 0, 0) rotate(0deg) scale3d(1, 1, 1);
+      box-shadow: 
+        0 0 25px rgba(245, 158, 11, 0.4),
+        0 0 50px rgba(245, 158, 11, 0.2),
+        0 0 75px rgba(245, 158, 11, 0.08);
+      filter: brightness(1) saturate(1) hue-rotate(0deg);
+    }
+    25% {
+      transform: translate3d(0, -1px, 0) rotate(90deg) scale3d(var(--mic-processing-scale), var(--mic-processing-scale), 1);
+      box-shadow: 
+        0 0 30px rgba(245, 158, 11, 0.5),
+        0 0 60px rgba(245, 158, 11, 0.25),
+        0 0 90px rgba(245, 158, 11, 0.1);
+      filter: brightness(1.03) saturate(1.1) hue-rotate(5deg);
+    }
+    50% {
+      transform: translate3d(0, -2px, 0) rotate(180deg) scale3d(calc(var(--mic-processing-scale) + 0.01), calc(var(--mic-processing-scale) + 0.01), 1);
+      box-shadow: 
+        0 0 35px rgba(245, 158, 11, 0.6),
+        0 0 70px rgba(245, 158, 11, 0.3),
+        0 0 105px rgba(245, 158, 11, 0.12);
+      filter: brightness(1.05) saturate(1.15) hue-rotate(10deg);
+    }
+    75% {
+      transform: translate3d(0, -1px, 0) rotate(270deg) scale3d(var(--mic-processing-scale), var(--mic-processing-scale), 1);
+      box-shadow: 
+        0 0 30px rgba(245, 158, 11, 0.5),
+        0 0 60px rgba(245, 158, 11, 0.25),
+        0 0 90px rgba(245, 158, 11, 0.1);
+      filter: brightness(1.03) saturate(1.1) hue-rotate(5deg);
+    }
+    100% {
+      transform: translate3d(0, 0, 0) rotate(360deg) scale3d(1, 1, 1);
+      box-shadow: 
+        0 0 25px rgba(245, 158, 11, 0.4),
+        0 0 50px rgba(245, 158, 11, 0.2),
+        0 0 75px rgba(245, 158, 11, 0.08);
+      filter: brightness(1) saturate(1) hue-rotate(0deg);
+    }
+  }
+
+  /* ========== EMANATING LIGHT RINGS - CORRECTED COLORS ========== */
+  @keyframes emanate-ring-listening {
+    0% {
+      transform: translate(-50%, -50%) scale3d(1, 1, 1);
+      opacity: var(--ring-opacity-start);
+      filter: blur(0px);
+    }
+    25% {
+      transform: translate(-50%, -50%) scale3d(1.3, 1.3, 1);
+      opacity: calc(var(--ring-opacity-start) * 0.8);
+      filter: blur(0.5px);
+    }
+    50% {
+      transform: translate(-50%, -50%) scale3d(1.6, 1.6, 1);
+      opacity: calc(var(--ring-opacity-start) * 0.5);
+      filter: blur(1px);
+    }
+    75% {
+      transform: translate(-50%, -50%) scale3d(1.9, 1.9, 1);
+      opacity: calc(var(--ring-opacity-start) * 0.2);
+      filter: blur(1.5px);
+    }
+    100% {
+      transform: translate(-50%, -50%) scale3d(2.2, 2.2, 1);
+      opacity: var(--ring-opacity-end);
+      filter: blur(2px);
+    }
+  }
+
+  @keyframes emanate-ring-speaking {
+    0% {
+      transform: translate(-50%, -50%) scale3d(1, 1, 1);
+      opacity: calc(var(--ring-opacity-start) + 0.1);
+      filter: blur(0px) brightness(1);
+    }
+    20% {
+      transform: translate(-50%, -50%) scale3d(1.4, 1.4, 1);
+      opacity: calc(var(--ring-opacity-start) + 0.05);
+      filter: blur(0.3px) brightness(1.1);
+    }
+    40% {
+      transform: translate(-50%, -50%) scale3d(1.8, 1.8, 1);
+      opacity: calc(var(--ring-opacity-start) * 0.7);
+      filter: blur(0.8px) brightness(1.2);
+    }
+    60% {
+      transform: translate(-50%, -50%) scale3d(2.2, 2.2, 1);
+      opacity: calc(var(--ring-opacity-start) * 0.4);
+      filter: blur(1.2px) brightness(1.15);
+    }
+    80% {
+      transform: translate(-50%, -50%) scale3d(2.6, 2.6, 1);
+      opacity: calc(var(--ring-opacity-start) * 0.15);
+      filter: blur(1.6px) brightness(1.05);
+    }
+    100% {
+      transform: translate(-50%, -50%) scale3d(3, 3, 1);
+      opacity: var(--ring-opacity-end);
+      filter: blur(2px) brightness(1);
+    }
+  }
+
+  @keyframes emanate-ring-processing {
+    0% {
+      transform: translate(-50%, -50%) scale3d(1, 1, 1) rotate(0deg);
+      opacity: var(--ring-opacity-start);
+      filter: blur(0px) hue-rotate(0deg);
+    }
+    25% {
+      transform: translate(-50%, -50%) scale3d(1.4, 1.4, 1) rotate(90deg);
+      opacity: calc(var(--ring-opacity-start) * 0.8);
+      filter: blur(0.4px) hue-rotate(5deg);
+    }
+    50% {
+      transform: translate(-50%, -50%) scale3d(1.8, 1.8, 1) rotate(180deg);
+      opacity: calc(var(--ring-opacity-start) * 0.5);
+      filter: blur(0.8px) hue-rotate(10deg);
+    }
+    75% {
+      transform: translate(-50%, -50%) scale3d(2.2, 2.2, 1) rotate(270deg);
+      opacity: calc(var(--ring-opacity-start) * 0.2);
+      filter: blur(1.2px) hue-rotate(5deg);
+    }
+    100% {
+      transform: translate(-50%, -50%) scale3d(2.6, 2.6, 1) rotate(360deg);
+      opacity: var(--ring-opacity-end);
+      filter: blur(1.6px) hue-rotate(0deg);
+    }
+  }
+
+  /* ========== ANIMATION CLASSES ========== */
+  .animate-mic-listening-subtle {
+    animation: mic-listening-subtle 4.5s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+    transition: all 0.8s cubic-bezier(0.4, 0, 0.6, 1);
+  }
+
+  .animate-mic-speaking-pronounced {
+    animation: mic-speaking-pronounced 1.8s cubic-bezier(0.25, 0.46, 0.45, 0.94) infinite;
+    transition: all 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  }
+
+  .animate-mic-processing-rotate {
+    animation: mic-processing-rotate 2.5s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+    transition: all 0.7s cubic-bezier(0.4, 0, 0.6, 1);
+  }
+
+  .animate-emanate-ring-listening {
+    animation: emanate-ring-listening var(--ring-emanate-speed) cubic-bezier(0.4, 0, 0.6, 1) infinite;
+  }
+
+  .animate-emanate-ring-speaking {
+    animation: emanate-ring-speaking 2s cubic-bezier(0.25, 0.46, 0.45, 0.94) infinite;
+  }
+
+  .animate-emanate-ring-processing {
+    animation: emanate-ring-processing 2.2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+  }
+
+  /* ========== EMANATING RING UTILITY CLASSES - CORRECTED COLORS ========== */
+  .emanating-ring {
+    position: absolute;
+    border-radius: 50%;
+    border: 2px solid currentColor;
+    pointer-events: none;
+    will-change: transform, opacity, filter;
+    /* Ensure rings are centered on the microphone icon within the button */
+    top: 50%;
+    left: 50%;
+    width: 100%;
+    height: 100%;
+  }
+
+  /* CORRECTED: Listening = Green, Speaking = Blue */
+  .emanating-ring-listening {
+    border-color: rgba(34, 197, 94, 0.4); /* Green for listening */
+  }
+
+  .emanating-ring-speaking {
+    border-color: rgba(91, 155, 213, 0.4); /* Blue for speaking */
+  }
+
+  .emanating-ring-processing {
+    border-color: rgba(245, 158, 11, 0.35); /* Orange for processing */
+  }
+
+  /* ========== TEXT OVERFLOW AND LAYOUT UTILITIES ========== */
+  .text-overflow-safe {
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+    hyphens: auto;
+    -webkit-hyphens: auto;
+    -ms-hyphens: auto;
+  }
+
+  .truncate-enhanced {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    max-width: 100%;
+    min-width: 0;
+  }
+
+  .campaign-header-title {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    max-width: 100%;
+    min-width: 0;
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+  }
+
+  .flex-container-safe {
+    min-width: 0;
+    flex: 1;
+  }
+
+  .flex-item-constrained {
+    min-width: 0;
+    max-width: 100%;
+    flex-shrink: 1;
+  }
+
+  .flex-item-no-shrink {
+    flex-shrink: 0;
+  }
+
+  /* Line clamp utilities */
+  .line-clamp-1 {
+    display: -webkit-box;
+    -webkit-line-clamp: 1;
+    -webkit-box-orient: vertical;  
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .line-clamp-2 {
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;  
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .line-clamp-3 {
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;  
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  /* ========== RATE LIMIT BAR ANIMATIONS ========== */
+  @keyframes rate-limit-fill {
+    0% {
+      width: 0%;
+      opacity: 0.8;
+    }
+    100% {
+      opacity: 1;
+    }
+  }
+
+  @keyframes rate-limit-glow-pulse {
+    0%, 100% {
+      opacity: var(--rate-limit-glow-opacity);
+      transform: scale(1);
+    }
+    50% {
+      opacity: calc(var(--rate-limit-glow-opacity) * 1.2);
+      transform: scale(var(--rate-limit-pulse-scale));
+    }
+  }
+
+  @keyframes rate-limit-warning-pulse {
+    0%, 100% {
+      box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.4);
+    }
+    50% {
+      box-shadow: 0 0 0 8px rgba(239, 68, 68, 0);
+    }
+  }
+
+  /* ========== RATE LIMIT BAR CLASSES ========== */
+  .rate-limit-bar-fill {
+    transition: width var(--rate-limit-bar-duration) var(--rate-limit-bar-easing);
+    animation: rate-limit-fill var(--rate-limit-bar-duration) var(--rate-limit-bar-easing);
+  }
+
+  .rate-limit-bar-glow {
+    animation: rate-limit-glow-pulse 3s ease-in-out infinite;
+  }
+
+  .rate-limit-bar-warning {
+    animation: rate-limit-warning-pulse 2s ease-in-out infinite;
+  }
+
+  .rate-limit-bar-container {
+    transition: all 0.3s var(--rate-limit-bar-easing);
+  }
+
+  .rate-limit-bar-container:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  }
+
+  /* Reduced motion preferences */
+  @media (prefers-reduced-motion: reduce) {
+    .animate-mic-listening-subtle,
+    .animate-mic-speaking-pronounced,
+    .animate-mic-processing-rotate,
+    .animate-emanate-ring-listening,
+    .animate-emanate-ring-speaking,
+    .animate-emanate-ring-processing,
+    .rate-limit-bar-fill,
+    .rate-limit-bar-glow,
+    .rate-limit-bar-warning {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+    }
+    
+    .rate-limit-bar-container,
+    .rate-limit-bar-container:hover {
+      transition: none !important;
+      transform: none !important;
+    }
+    
+    html {
+      transition: none !important;
+    }
+  }
+}
+
+/* ============================================================================
+   CSP-SAFE UTILITIES
+   ============================================================================ */
+
+@layer utilities {
+  .csp-safe-bg-primary {
+    background-color: var(--color-csp-safe-primary);
+  }
+
+  .csp-safe-text-primary {
+    color: var(--color-csp-safe-primary);
+  }
+
+  .csp-safe-gradient-primary {
+    background: linear-gradient(135deg, var(--color-csp-safe-primary), var(--color-csp-safe-secondary));
+  }
+
+  .csp-safe-shadow-primary {
+    box-shadow: 0 4px 6px -1px rgba(var(--color-csp-safe-primary), 0.1), 0 2px 4px -1px rgba(var(--color-csp-safe-primary), 0.06);
+  }
+}
+
+/* ============================================================================
+   END OF CSP-COMPLIANT STYLES
+   ============================================================================ */

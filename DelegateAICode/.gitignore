@@ -1,0 +1,460 @@
+# ============================================================================
+# DELEGATE AI - COMPREHENSIVE GITIGNORE
+# ============================================================================
+# Full-stack React/TypeScript application with Node.js backend
+# Covers frontend (Vite), backend (Node.js/Express), Prisma, Docker, and more
+# ============================================================================
+#TESTESTEST
+# ============================================================================
+# NODE.JS & NPM/YARN/PNPM
+# ============================================================================
+
+# Dependencies
+node_modules/
+jspm_packages/
+
+# Package manager lock files (keep one, ignore others based on your choice)
+# Uncomment the ones you want to ignore:
+# package-lock.json
+# yarn.lock
+# pnpm-lock.yaml
+
+# NPM cache
+.npm/
+.eslintcache
+
+# Yarn
+.yarn/*
+!.yarn/patches
+!.yarn/plugins
+!.yarn/releases
+!.yarn/sdks
+!.yarn/versions
+.yarn/cache
+.yarn/unplugged
+.yarn/build-state.yml
+.yarn/install-state.gz
+
+# PNPM
+.pnpm-debug.log*
+.pnpm/
+pnpm-debug.log*
+
+# ============================================================================
+# BUILD OUTPUTS & DIST
+# ============================================================================
+
+# Frontend build outputs (Vite/React)
+dist/
+build/
+.vite/
+vite.config.js.timestamp-*
+vite.config.ts.timestamp-*
+
+# Backend build outputs
+backend/dist/
+backend/build/
+backend/.next/
+
+# Static files
+public/uploads/
+public/temp/
+
+# ============================================================================
+# ENVIRONMENT & CONFIGURATION
+# ============================================================================
+
+# Environment variables (KEEP .env.example files)
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+.env.staging
+
+# Backend environment files
+backend/.env
+backend/.env.local
+backend/.env.development
+backend/.env.production
+backend/.env.staging
+
+# Configuration overrides
+config.local.js
+config.local.ts
+
+# ============================================================================
+# DATABASE & PRISMA
+# ============================================================================
+
+# Prisma
+backend/prisma/dev.db
+backend/prisma/dev.db-journal
+backend/prisma/test.db
+backend/prisma/test.db-journal
+backend/prisma/migrations/**/migration.sql
+
+# SQLite databases
+*.db
+*.db-journal
+*.sqlite
+*.sqlite3
+
+# PostgreSQL
+*.pgsql
+
+# MySQL
+*.sql
+
+# Database dumps
+*.dump
+
+# ============================================================================
+# LOGS & DEBUGGING
+# ============================================================================
+
+# Logs
+logs/
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+
+# Backend logs
+backend/logs/
+backend/*.log
+
+# Runtime data
+pids/
+*.pid
+*.seed
+*.pid.lock
+
+# Coverage directory used by tools like istanbul
+coverage/
+*.lcov
+.nyc_output/
+
+# ============================================================================
+# DOCKER & CONTAINERIZATION
+# ============================================================================
+
+# Docker volumes
+docker-data/
+postgres-data/
+redis-data/
+
+# Docker Compose override files
+docker-compose.override.yml
+docker-compose.local.yml
+
+# Docker build cache
+.dockerignore.local
+
+# ============================================================================
+# CACHING & TEMPORARY FILES
+# ============================================================================
+
+# Vite cache
+.vite/
+
+# Turborepo cache
+.turbo/
+
+# Next.js cache (if used)
+.next/
+
+# Temporary folders
+tmp/
+temp/
+.tmp/
+.temp/
+
+# File uploads (temporary)
+uploads/
+public/uploads/
+backend/uploads/
+backend/public/uploads/
+
+# Cache directories
+.cache/
+.parcel-cache/
+
+# ============================================================================
+# IDE & EDITOR FILES
+# ============================================================================
+
+# Visual Studio Code
+.vscode/
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
+*.code-workspace
+
+# JetBrains IDEs (WebStorm, IntelliJ, etc.)
+.idea/
+*.sln
+*.sw?
+
+# Sublime Text
+*.sublime-project
+*.sublime-workspace
+
+# Vim
+*.swp
+*.swo
+*~
+
+# Emacs
+*~
+\#*\#
+/.emacs.desktop
+/.emacs.desktop.lock
+*.elc
+auto-save-list
+tramp
+.\#*
+
+# ============================================================================
+# OPERATING SYSTEM FILES
+# ============================================================================
+
+# macOS
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# Windows
+Thumbs.db
+Thumbs.db:encryptable
+ehthumbs.db
+ehthumbs_vista.db
+*.stackdump
+[Dd]esktop.ini
+$RECYCLE.BIN/
+*.lnk
+
+# Linux
+*~
+.fuse_hidden*
+.directory
+.Trash-*
+.nfs*
+
+# ============================================================================
+# TESTING & QUALITY ASSURANCE
+# ============================================================================
+
+# Jest
+coverage/
+.nyc_output/
+
+# Playwright
+test-results/
+playwright-report/
+playwright/.cache/
+
+# Cypress
+cypress/videos/
+cypress/screenshots/
+cypress/downloads/
+
+# Test databases
+test.db
+test.sqlite
+*.test.db
+
+# ============================================================================
+# SECURITY & KEYS
+# ============================================================================
+
+# SSL certificates
+*.pem
+*.key
+*.crt
+*.cert
+
+# SSH keys
+id_rsa
+id_rsa.pub
+id_ed25519
+id_ed25519.pub
+
+# GPG keys
+*.gpg
+*.asc
+
+# JWT secrets (if stored in files)
+jwt-secret.txt
+private-key.pem
+public-key.pem
+
+# ============================================================================
+# RUNTIME DATA & SESSIONS
+# ============================================================================
+
+# Runtime data
+pids/
+*.pid
+*.seed
+*.pid.lock
+
+# Session data
+sessions/
+.sessions/
+
+# ============================================================================
+# MONITORING & ANALYTICS
+# ============================================================================
+
+# Sentry
+.sentryclirc
+
+# New Relic
+newrelic_agent.log
+
+# ============================================================================
+# DEPLOYMENT & CI/CD
+# ============================================================================
+
+# Deployment artifacts
+deploy/
+deployment/
+.deploy/
+
+# Terraform
+*.tfstate
+*.tfstate.*
+.terraform/
+.terraform.lock.hcl
+
+# Kubernetes
+*.kubeconfig
+
+# Serverless
+.serverless/
+
+# ============================================================================
+# DOCUMENTATION & GENERATED FILES
+# ============================================================================
+
+# Generated documentation
+docs/generated/
+api-docs/generated/
+
+# Auto-generated files
+auto-generated/
+generated/
+
+# ============================================================================
+# MISCELLANEOUS
+# ============================================================================
+
+# Optional npm cache directory
+.npm
+
+# Optional eslint cache
+.eslintcache
+
+# Microbundle cache
+.rpt2_cache/
+.rts2_cache_cjs/
+.rts2_cache_es/
+.rts2_cache_umd/
+
+# Optional REPL history
+.node_repl_history
+
+# Output of 'npm pack'
+*.tgz
+
+# Yarn Integrity file
+.yarn-integrity
+
+# dotenv environment variables file
+.env
+.env.test
+
+# Stores VSCode versions used for testing VSCode extensions
+.vscode-test
+
+# yarn v2
+.yarn/cache
+.yarn/unplugged
+.yarn/build-state.yml
+.yarn/install-state.gz
+.pnp.*
+
+# Backup files
+*.backup
+*.bak
+*.old
+
+# Local development overrides
+local.*
+*.local.*
+
+# Figma Make specific ignores
+figma-*
+.figma/
+
+# ============================================================================
+# PROJECT-SPECIFIC IGNORES
+# ============================================================================
+
+# Voice processing temporary files
+voice-temp/
+audio-temp/
+transcription-temp/
+
+# AI model cache (if caching OpenAI responses locally)
+ai-cache/
+openai-cache/
+
+# User uploaded content (adjust based on your needs)
+user-uploads/
+user-content/
+
+# Analytics and metrics data
+analytics-data/
+metrics/
+
+# ============================================================================
+# KEEP THESE FILES (use ! to force include)
+# ============================================================================
+
+# Keep example environment files
+!.env.example
+!backend/.env.example
+
+# Keep important config files
+!.gitignore
+!package.json
+!backend/package.json
+!tsconfig.json
+!backend/tsconfig.json
+
+# Keep Docker files
+!Dockerfile
+!backend/Dockerfile
+!docker-compose.yml
+!backend/docker-compose.yml
+
+# Keep Prisma schema
+!backend/prisma/schema.prisma
+
+# Keep documentation
+!README.md
+!DEPLOYMENT_GUIDE.md
+!PRODUCTION_READINESS.md
+
+# ============================================================================
+# END OF GITIGNORE
+# ============================================================================
