@@ -11,7 +11,7 @@
  * - Production-ready monitoring and logging
  */
 
-import OpenAI from 'openai';
+/*import OpenAI from 'openai';
 import { PrismaClient } from '@prisma/client';
 import { logger } from '../utils/logger';
 
@@ -100,7 +100,7 @@ interface TranscriptionResponse {
 /**
  * OpenAI Service Class
  */
-export class OpenAIService {
+/*export class OpenAIService {
   private apiKey: string;
   private client: OpenAI;
 
@@ -119,7 +119,7 @@ export class OpenAIService {
   /**
    * Create Chat Completion
    */
-  async createChatCompletion(
+  /*async createChatCompletion(
     messages: ChatMessage[],
     options: ChatCompletionOptions = {}
   ): Promise<ChatResponse> {
@@ -224,7 +224,7 @@ export class OpenAIService {
   /**
    * Create Streaming Chat Completion
    */
-  async createStreamingChatCompletion(
+  /*async createStreamingChatCompletion(
     messages: ChatMessage[],
     options: ChatCompletionOptions = {}
   ): Promise<AsyncIterable<string>> {
@@ -289,7 +289,7 @@ export class OpenAIService {
   /**
    * Transcribe Audio using Whisper
    */
-  async transcribeAudio(
+  /*async transcribeAudio(
     audioFile: Buffer | File | string,
     options: TranscriptionOptions = {}
   ): Promise<TranscriptionResponse> {
@@ -375,7 +375,7 @@ export class OpenAIService {
   /**
    * Calculate Cost for API Usage
    */
-  private calculateCost(model: string, promptTokens: number, completionTokens: number): number {
+  /*private calculateCost(model: string, promptTokens: number, completionTokens: number): number {
     const config = MODEL_CONFIG[model as keyof typeof MODEL_CONFIG];
     if (!config) return 0;
 
@@ -388,7 +388,7 @@ export class OpenAIService {
   /**
    * Calculate Confidence from Whisper Segments
    */
-  private calculateConfidence(segments?: any[]): number | undefined {
+  /*private calculateConfidence(segments?: any[]): number | undefined {
     if (!segments || segments.length === 0) return undefined;
 
     const totalConfidence = segments.reduce((sum, segment) => {
@@ -405,7 +405,7 @@ export class OpenAIService {
   /**
    * Process Streaming Response
    */
-  private async* processStream(stream: any): AsyncIterable<string> {
+  /*private async* processStream(stream: any): AsyncIterable<string> {
     try {
       for await (const chunk of stream) {
         const content = chunk.choices[0]?.delta?.content;
@@ -424,7 +424,7 @@ export class OpenAIService {
   /**
    * Count Tokens (Approximate)
    */
-  countTokens(text: string): number {
+  /*countTokens(text: string): number {
     // Approximate token count (actual tokenization requires tiktoken)
     // This is a rough estimate: ~4 characters per token for English
     return Math.ceil(text.length / 4);
@@ -433,7 +433,7 @@ export class OpenAIService {
   /**
    * Validate API Key
    */
-  async validateApiKey(): Promise<boolean> {
+  /*async validateApiKey(): Promise<boolean> {
     try {
       await this.client.models.list();
       return true;
@@ -448,7 +448,7 @@ export class OpenAIService {
   /**
    * Get Available Models
    */
-  async getAvailableModels(): Promise<string[]> {
+  /*async getAvailableModels(): Promise<string[]> {
     try {
       const models = await this.client.models.list();
       return models.data
@@ -466,7 +466,7 @@ export class OpenAIService {
   /**
    * Get Usage Statistics
    */
-  async getUsageStats(startDate: Date, endDate: Date): Promise<any> {
+  /*async getUsageStats(startDate: Date, endDate: Date): Promise<any> {
     try {
       // Note: OpenAI doesn't provide usage API, this would need to be tracked internally
       const stats = await prisma.message.aggregate({
@@ -509,7 +509,7 @@ export class OpenAIService {
   /**
    * Health Check
    */
-  async healthCheck(): Promise<{ status: 'healthy' | 'unhealthy'; details: any }> {
+  /*async healthCheck(): Promise<{ status: 'healthy' | 'unhealthy'; details: any }> {
     try {
       const startTime = Date.now();
       await this.client.models.list();
@@ -549,4 +549,4 @@ export type {
 };
 
 // Export debate prompts for reference
-export { DEBATE_PROMPTS };
+export { DEBATE_PROMPTS };*/
