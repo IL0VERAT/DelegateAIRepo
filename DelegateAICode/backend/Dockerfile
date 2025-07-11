@@ -4,10 +4,10 @@ FROM node:18-alpine AS builder
 WORKDIR /app
 
 # Copy backend folder contents
-COPY DelegateAICode/backend/package*.json ./backend/
-COPY DelegateAICode/backend/tsconfig.json ./backend/
-COPY DelegateAICode/backend/prisma ./backend/prisma
-COPY DelegateAICode/backend/src ./backend/src
+COPY package*.json ./
+COPY tsconfig.json ./
+COPY prisma ./prisma
+COPY src ./src
 
 WORKDIR /app/backend
 
