@@ -15,7 +15,7 @@ WORKDIR /app/backend
 RUN npm install
 
 # Generate Prisma client
-RUN npx prisma generate
+RUN npx prisma generate --schema=./prisma/schema.prisma
 
 # Build TypeScript
 RUN npm run build
