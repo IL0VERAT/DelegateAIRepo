@@ -1,0 +1,36 @@
+# Dependency directories
+node_modules
+dist
+
+# Logs
+*.log
+npm-debug.log*
+
+# Local env and credentials
+.env
+.env.*.local
+
+# OS-specific
+.DS_Store
+Thumbs.db
+
+# Editor configs
+*.swp
+*.swo
+*.bak
+.vscode
+.idea
+
+# Git
+.git
+.gitignore
+
+# Tests
+coverage
+__tests__/
+*.spec.ts
+*.test.ts
+
+# Docker itself
+Dockerfile
+.dockerignore
