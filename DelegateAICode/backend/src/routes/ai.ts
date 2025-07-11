@@ -101,7 +101,7 @@ router.post('/completion',
 
     const userId = req.user?.id;
 
-    const response = await aiServiceManager.generateCompletion(messages, {
+    const response = await aiServiceManager.generateStreamCompletion(messages, {
       ...options,
       userId
     });
@@ -149,7 +149,7 @@ router.post('/completion/stream',
         userId
       });
 
-      for await (const chunk of stream) {
+      for await (const chunk of await stream) {
         res.write(`data: ${JSON.stringify(chunk)}\n\n`);
         
         if (chunk.isComplete) {
@@ -508,7 +508,7 @@ router.post('/test/:provider',
     const { provider } = req.params as { provider: 'openai' | 'gemini' };
     const startTime = Date.now();
     
-    const response = await aiServiceManager.generateCompletion(
+    const response = await aiServiceManager.generateStreamCompletion(
       [{ role: 'user', content: 'Respond with "OK" to confirm you are working.' }],
       { 
         provider, 

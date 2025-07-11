@@ -13,7 +13,7 @@
 
 import express, { Request, Response } from 'express';
 import { body, validationResult } from 'express-validator';
-import aiServiceManager, { AIMessage, AIServiceOptions } from '../services/aiServiceManager';
+import { aiServiceManager, AIMessage, AIServiceOptions } from '../services/aiServiceManager';
 import { auth } from '../middleware/auth';
 import { rateLimiter } from '../middleware/rateLimiter';
 import logger from '../utils/logger';
@@ -108,7 +108,7 @@ router.post('/completion',
       });
 
       // Generate AI response
-      const response = await aiServiceManager.generateCompletion(messages, {
+      const response = await aiServiceManager.generateStreamCompletion(messages, {
         ...options,
         userId
       });
@@ -210,7 +210,7 @@ router.post('/completion/stream',
           userId
         });
 
-        for await (const chunk of stream) {
+        for await (const chunk of await stream) {
           res.write(`data: ${JSON.stringify(chunk)}\n\n`);
           
           if (chunk.isComplete) {
@@ -511,7 +511,7 @@ router.post('/test/:provider',
       const startTime = Date.now();
       
       // Simple test request
-      const response = await aiServiceManager.generateCompletion(
+      const response = await aiServiceManager.generateStreamCompletion(
         [{ role: 'user', content: 'Hello, please respond with "OK"' }],
         { 
           provider, 

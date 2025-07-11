@@ -10,7 +10,7 @@ import express from 'express';
 import { Request, Response } from 'express';
 import { authMiddleware } from '../middleware/auth';
 import { rateLimiter } from '../middleware/rateLimiter';
-import { requestLogger } from '../middleware/requestLogger';
+import requestLogger from '../middleware/requestLogger';
 import { aiServiceManager } from '../services/aiServiceManager';
 import { database } from '../services/database';
 import { logger } from '../utils/logger';
