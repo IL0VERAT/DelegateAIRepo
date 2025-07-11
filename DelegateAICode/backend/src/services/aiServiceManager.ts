@@ -240,7 +240,7 @@ class AiServiceManagerEnhanced {
    * Generate response with retry logic (Gemini only)
    */
   private async generateWithRetry(prompt: string, type: string): Promise<string> {
-    let lastError: Error;
+    let lastError: Error | undefined;
 
     for (let attempt = 1; attempt <= this.retryAttempts; attempt++) {
       try {
@@ -259,7 +259,7 @@ class AiServiceManagerEnhanced {
     }
 
     logger.error(`All Gemini attempts failed for ${type}:`, lastError);
-    throw new Error(`Gemini generation failed for ${type}: ${lastError?.message}`);
+    throw new Error(`Gemini generation failed for ${type}: ${lastError?.message || 'unknown error'}`);
   }
 
   /**
@@ -667,3 +667,31 @@ Return as JSON:
 }
 
 export const aiServiceManager = new AiServiceManagerEnhanced();
+
+/*AI hallucination risk:
+
+You're trusting the AI to return strictly valid JSON. Sometimes even well-written prompts produce malformed outputs (e.g., trailing commas, extra quotes).
+
+✅ Consider wrapping JSON.parse() with a helper that catches syntax errors and logs the raw string on failure.
+
+✅ OR: Run the AI output through a regex/sanitization filter before parsing if you notice regular issues.
+
+Gemini limits:
+
+Your maxTokens: 4096 setting may hit limits if the context is too long (especially for buildPlayerInputPrompt with long logs or many characters).
+
+✅ You might want to truncate campaignLog or aiCharacters beyond a certain number.
+
+No validation after AI JSON parse:
+
+TypeScript typing isn’t runtime validation. If an AI response is missing a key or has the wrong type, TypeScript won't catch it.
+
+✅ Consider using a JSON schema validator (e.g. zod or joi) on parsed objects.
+
+Hardcoded fallback IDs and voice IDs:
+
+May want to dynamically generate fallback IDs or allow them to be passed in, in case multiple fallbacks occur simultaneously.
+
+Concurrency:
+
+If multiple users are running generateAICharacters or processPlayerInput at once, make sure external services (Gemini, DB, Redis) can scale to handle it. */
