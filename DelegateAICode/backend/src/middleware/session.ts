@@ -11,12 +11,13 @@
 
 import { Request, Response, NextFunction } from 'express';
 import session from 'express-session';
-import RedisStore from 'connect-redis';
-import connectRedis from 'connect-redis';
+//import RedisStore from 'connect-redis';
+//import RedisStoreModule from 'connect-redis';
 import Redis from 'ioredis';
 import { redisConfig, securityConfig, environmentInfo } from '../config/environment';
 import logger from '../utils/logger';
 
+const RedisStore = require('connect-redis')(session);
 
 // Redis client for sessions
 let redisClient: Redis | null = null;
