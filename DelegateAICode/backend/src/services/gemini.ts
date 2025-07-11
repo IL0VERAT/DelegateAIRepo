@@ -275,7 +275,7 @@ Please generate natural, expressive speech that matches the character's personal
   }
 
   /**
-   * Get voice profile by ID
+   * Get voice profile by ID --> NEED TO CHANGE FOR MORE DYNAMIC INTERACTION
    */
   private getVoiceProfile(voiceId: string): GeminiVoice | undefined {
     const voices = [
