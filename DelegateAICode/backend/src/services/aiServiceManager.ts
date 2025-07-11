@@ -52,6 +52,14 @@ class AiServiceManagerEnhanced {
     this.retryDelay = 1000;
   }
 
+  async generateStreamCompletion(messages: AIMessage[], options: AIServiceOptions) {
+  if (options.provider === 'gemini') {
+    return geminiService.streamResponse(messages, options);
+  }
+
+  throw new Error('Streaming is only supported for Gemini currently.');
+}
+
   // ============================================================================
   // CHARACTER GENERATION
   // ============================================================================
@@ -86,6 +94,7 @@ class AiServiceManagerEnhanced {
       throw new Error('Failed to generate player character');
     }
   }
+  
 
   /**
    * Generate AI characters for campaign

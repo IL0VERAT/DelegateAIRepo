@@ -9,6 +9,7 @@
 import { GoogleGenerativeAI } from '@google/generative-ai';
 import { environment } from '../config/environment';
 import { logger } from '../utils/logger';
+import { AIMessage, AIServiceOptions } from './aiServiceManager';
 
 interface GeminiAudioSettings {
   speed?: number;
@@ -81,6 +82,34 @@ class GeminiServiceEnhanced {
       throw new Error('Failed to generate response');
     }
   }
+
+  async *streamResponse(messages: AIMessage[], options: AIServiceOptions) {
+  const model = this.genAI.getGenerativeModel({
+    model: options.model || 'gemini-1.5-pro',
+    generationConfig: {
+      temperature: options.temperature || 0.7,
+      topK: 1,
+      topP: 1,
+    },
+  });
+
+  const chat = model.startChat({});
+
+  for (const message of messages) {
+    if (message.role === 'user') {
+      const stream = await chat.sendMessageStream(message.content);
+
+      for await (const chunk of stream.stream) {
+        yield {
+          content: chunk.text || '',
+          isComplete: false,
+        };
+      }
+    }
+  }
+
+  yield { isComplete: true };
+}
 
   /**
    * Generate native audio using Gemini 2.5
@@ -295,3 +324,4 @@ Please generate natural, expressive speech that matches the character's personal
 
 export const geminiService = new GeminiServiceEnhanced();
 export default geminiService;
+
