@@ -36,7 +36,7 @@ router.get('/dashboard', async (req: Request, res: Response) => {
         select: {
           id: true,
           email: true,
-          displayName: true,
+          name: true,
           role: true,
           createdAt: true
         }
