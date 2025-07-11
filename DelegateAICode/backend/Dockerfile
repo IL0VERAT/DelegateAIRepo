@@ -1,14 +1,18 @@
-# Production Dockerfile for Delegate AI Backend
+# Delegate AI Dockerfile
 FROM node:18-alpine AS builder
 
 WORKDIR /app
 
-# Install dependencies
-COPY package*.json ./
-RUN npm ci --only=production
+# Copy backend folder contents
+COPY DelegateAICode/backend/package*.json ./backend/
+COPY DelegateAICode/backend/tsconfig.json ./backend/
+COPY DelegateAICode/backend/prisma ./backend/prisma
+COPY DelegateAICode/backend/src ./backend/src
 
-# Copy source code
-COPY . .
+WORKDIR /app/backend
+
+# Install dependencies
+RUN npm install
 
 # Generate Prisma client
 RUN npx prisma generate
@@ -16,20 +20,19 @@ RUN npx prisma generate
 # Build TypeScript
 RUN npm run build
 
-# Production stage
+# Production image
 FROM node:18-alpine AS production
 
 WORKDIR /app
 
 # Create non-root user
-RUN addgroup -g 1001 -S nodejs
-RUN adduser -S nodejs -u 1001
+RUN addgroup -g 1001 -S nodejs && adduser -S nodejs -u 1001
 
-# Copy built application
-COPY --from=builder --chown=nodejs:nodejs /app/dist ./dist
-COPY --from=builder --chown=nodejs:nodejs /app/node_modules ./node_modules
-COPY --from=builder --chown=nodejs:nodejs /app/package.json ./
-COPY --from=builder --chown=nodejs:nodejs /app/prisma ./prisma
+# Copy build artifacts from builder
+COPY --from=builder --chown=nodejs:nodejs /app/backend/dist ./dist
+COPY --from=builder --chown=nodejs:nodejs /app/backend/node_modules ./node_modules
+COPY --from=builder --chown=nodejs:nodejs /app/backend/package.json ./
+COPY --from=builder --chown=nodejs:nodejs /app/backend/prisma ./prisma
 
 USER nodejs
 
