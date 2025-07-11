@@ -15,7 +15,7 @@
 
 import express, { Request, Response } from 'express';
 import { body, param, query, validationResult } from 'express-validator';
-import aiServiceManager, { AIMessage, AIServiceOptions } from '../services/aiServiceManager';
+import { aiServiceManager, AIMessage, AIServiceOptions } from '../services/aiServiceManager';
 import { auth } from '../middleware/auth';
 import { aiRateLimit } from '../middleware/rateLimiter';
 import { asyncHandler } from '../middleware/errorHandler';

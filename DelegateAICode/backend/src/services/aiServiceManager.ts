@@ -668,6 +668,19 @@ Return as JSON:
 
 export const aiServiceManager = new AiServiceManagerEnhanced();
 
+export type AIMessage = {
+  role: 'user' | 'assistant' | 'system';
+  content: string;
+};
+
+export type AIServiceOptions = {
+  provider?: 'openai' | 'gemini';
+  model?: string;
+  temperature?: number;
+  maxTokens?: number;
+  userId?: string;
+};
+
 /*AI hallucination risk:
 
 You're trusting the AI to return strictly valid JSON. Sometimes even well-written prompts produce malformed outputs (e.g., trailing commas, extra quotes).
