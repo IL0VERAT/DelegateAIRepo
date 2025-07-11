@@ -1,7 +1,7 @@
 # Delegate AI Dockerfile
 FROM node:18-alpine AS builder
 
-WORKDIR /app
+WORKDIR /app/backend
 
 # Copy backend folder contents
 COPY package*.json ./
