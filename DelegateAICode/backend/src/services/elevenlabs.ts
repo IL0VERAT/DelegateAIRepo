@@ -12,7 +12,7 @@
  * - Cost tracking and usage analytics
  */
 
-import { PrismaClient } from '@prisma/client';
+/*import { PrismaClient } from '@prisma/client';
 import { logger } from '../utils/logger';
 
 const prisma = new PrismaClient();
@@ -155,7 +155,7 @@ interface VoiceInfo {
 /**
  * ElevenLabs Service Class
  */
-export class ElevenLabsService {
+/*export class ElevenLabsService {
   private apiKey: string;
   private baseUrl: string;
 
@@ -171,7 +171,7 @@ export class ElevenLabsService {
   /**
    * Generate Speech from Text
    */
-  async generateSpeech(
+  /*async generateSpeech(
     text: string,
     options: GenerateOptions = {}
   ): Promise<GenerateResponse> {
@@ -269,7 +269,7 @@ export class ElevenLabsService {
   /**
    * Generate Streaming Speech
    */
-  async generateStreamingSpeech(
+  /*async generateStreamingSpeech(
     text: string,
     options: GenerateOptions = {}
   ): Promise<ReadableStream> {
@@ -331,7 +331,7 @@ export class ElevenLabsService {
   /**
    * Get Available Voices
    */
-  async getVoices(): Promise<VoiceInfo[]> {
+  /*async getVoices(): Promise<VoiceInfo[]> {
     try {
       logger.info('Fetching ElevenLabs voices');
 
@@ -416,7 +416,7 @@ export class ElevenLabsService {
   /**
    * Get Voice Details
    */
-  async getVoiceDetails(voiceId: string): Promise<VoiceInfo | null> {
+  /*async getVoiceDetails(voiceId: string): Promise<VoiceInfo | null> {
     try {
       // Check if it's a preset voice first
       const presetVoice = Object.entries(VOICE_PRESETS).find(
@@ -478,7 +478,7 @@ export class ElevenLabsService {
   /**
    * Detect Language and Suggest Voice
    */
-  detectLanguageAndSuggestVoice(text: string): { language: string; voiceId: string; confidence: number } {
+  /*detectLanguageAndSuggestVoice(text: string): { language: string; voiceId: string; confidence: number } {
     // Simple language detection based on character patterns
     // In production, you might want to use a proper language detection library
     
@@ -519,7 +519,7 @@ export class ElevenLabsService {
   /**
    * Calculate Cost (Approximate)
    */
-  private calculateCost(characterCount: number): number {
+  /*private calculateCost(characterCount: number): number {
     // ElevenLabs pricing (approximate): $0.30 per 1K characters for standard voices
     const costPer1000Chars = 0.30;
     return (characterCount / 1000) * costPer1000Chars;
@@ -528,7 +528,7 @@ export class ElevenLabsService {
   /**
    * Get Optimal Voice Settings for Different Use Cases
    */
-  getOptimalVoiceSettings(useCase: 'conversation' | 'narration' | 'presentation' | 'character'): VoiceSettings {
+  /*getOptimalVoiceSettings(useCase: 'conversation' | 'narration' | 'presentation' | 'character'): VoiceSettings {
     switch (useCase) {
       case 'conversation':
         return {
@@ -571,7 +571,7 @@ export class ElevenLabsService {
   /**
    * Validate API Key
    */
-  async validateApiKey(): Promise<boolean> {
+  /*async validateApiKey(): Promise<boolean> {
     try {
       const response = await fetch(`${this.baseUrl}/user`, {
         headers: {
@@ -590,7 +590,7 @@ export class ElevenLabsService {
   /**
    * Get Usage Statistics
    */
-  async getUsageStats(): Promise<any> {
+ /* async getUsageStats(): Promise<any> {
     try {
       const response = await fetch(`${this.baseUrl}/user/subscription`, {
         headers: {
@@ -633,7 +633,7 @@ export class ElevenLabsService {
   /**
    * Health Check
    */
-  async healthCheck(): Promise<{ status: 'healthy' | 'unhealthy'; details: any }> {
+  /*async healthCheck(): Promise<{ status: 'healthy' | 'unhealthy'; details: any }> {
     try {
       const startTime = Date.now();
       const response = await fetch(`${this.baseUrl}/user`, {
@@ -687,4 +687,4 @@ export type {
   VoiceInfo
 };
 
-export { VOICE_PRESETS, LANGUAGE_VOICE_MAPPING };
+export { VOICE_PRESETS, LANGUAGE_VOICE_MAPPING }; */
