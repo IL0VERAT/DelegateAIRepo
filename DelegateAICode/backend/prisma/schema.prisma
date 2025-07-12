@@ -32,18 +32,19 @@ model User {
   usage Usage[]
 
   // Status fields 
-  isActive     Boolean  @default(true)
-  isSuspended  Boolean  @default(false)
-  deletedAt    DateTime?
+  isActive    Boolean   @default(true)
+  isSuspended Boolean   @default(false)
+  deletedAt   DateTime?
 
   // Activity
   sessions  Session[]
   campaigns CampaignParticipation[]
 
-  createdAt DateTime   @default(now())
-  updatedAt DateTime   @updatedAt
-  AuditLog  AuditLog[]
-  messages Message[]
+  createdAt  DateTime     @default(now())
+  updatedAt  DateTime     @updatedAt
+  AuditLog   AuditLog[]
+  messages   Message[]
+  Transcript Transcript[]
 
   @@map("users")
 }
@@ -72,6 +73,21 @@ model AuditLog {
 
   @@index([userId])
   @@map("audit_logs")
+}
+
+model Transcript {
+  id     String @id @default(cuid())
+  userId String
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  sessionId String
+  session   Session @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+
+  content   Json
+  createdAt DateTime @default(now())
+
+  @@index([userId])
+  @@index([sessionId])
 }
 
 model Subscription {
@@ -217,8 +233,9 @@ model Session {
   transcript Json?
   recordings Json?
 
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  createdAt  DateTime     @default(now())
+  updatedAt  DateTime     @updatedAt
+  Transcript Transcript[]
 
   @@map("sessions")
 }

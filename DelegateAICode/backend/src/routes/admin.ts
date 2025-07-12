@@ -24,7 +24,7 @@ router.get('/dashboard', async (req: Request, res: Response) => {
       messageCount,
       transcriptCount,
       recentUsers,
-      systemStats
+      systemStats 
     ] = await Promise.all([
       prisma.user.count(),
       prisma.session.count(),
