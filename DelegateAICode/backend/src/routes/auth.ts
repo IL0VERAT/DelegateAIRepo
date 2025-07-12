@@ -172,11 +172,12 @@ router.post('/login', async (req: Request, res: Response) => {
       });
     }
 
-      await prisma.loginLog.update({
+      await prisma.user.update({
         where: { id: user.id },
         data: {
-        loginCount: { increment: 1 } // Remove lastLoginAt if unsupported
-        }
+          loginCount: { increment: 1 },
+          lastLoginAt: new Date()
+          }
       });
 
       // Log login event

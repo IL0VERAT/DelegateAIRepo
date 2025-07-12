@@ -31,6 +31,7 @@ model User {
   // Usage tracking
   usage Usage[]
   lastLoginAt  DateTime?
+  loginCount Int      @default(0)
 
   // Status fields 
   isActive    Boolean   @default(true)
