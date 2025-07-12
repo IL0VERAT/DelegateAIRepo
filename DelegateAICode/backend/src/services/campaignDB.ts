@@ -9,14 +9,18 @@ const prisma = new PrismaClient();
 export const savePlayerCharacter = async (
   userId: string,
   scenarioId: string,
-  character: any
+  character: any,
+  sessionId: string,
 ): Promise<void> => {
   try {
     await prisma.character.create({
       data: {
         userId,
+        sessionId,
+        name: character.name || 'Unnamed Player',
         //scenarioId,
         content: character,
+        traits: character.traits || {},
         type: 'PLAYER'
       }
     });
