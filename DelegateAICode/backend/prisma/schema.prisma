@@ -68,6 +68,8 @@ model AuditLog {
   path      String
   ip        String
   userAgent String?
+ 
+ success   Boolean  @default(true)
 
   timestamp DateTime @default(now())
 
