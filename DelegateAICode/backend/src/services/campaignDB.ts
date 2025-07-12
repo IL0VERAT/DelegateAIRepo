@@ -144,6 +144,29 @@ export const loadCampaignSession = async (
 };
 
 /**
+ * Saves the choices the player makes in campaigns to database
+ */
+export async function savePlayerChoice(
+  userId: string,
+  sessionId: string,
+  data: {
+    choice: string;
+    result: any;
+    createdAt: Date;
+  }
+): Promise<void> {
+  await Prisma.playerChoice.create({
+    data: {
+      userId,
+      sessionId,
+      choice: data.choice,
+      result: data.result,
+      createdAt: data.createdAt
+    }
+  });
+}
+
+/**
  * Get campaign history for a user.
  */
 export const getCampaignHistory = async (

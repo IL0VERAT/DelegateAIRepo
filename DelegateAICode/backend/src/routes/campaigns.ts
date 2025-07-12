@@ -301,7 +301,7 @@ router.post('/process-choice', async (req: Request, res: Response) => {
     await campaignDb.savePlayerChoice(userId, sessionId, {
       choice,
       result,
-      timestamp: new Date()
+      createdAt: new Date()
     });
 
     res.json({
