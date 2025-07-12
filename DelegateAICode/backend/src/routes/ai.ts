@@ -16,7 +16,7 @@
 import express, { Request, Response } from 'express';
 import { body, param, query, validationResult } from 'express-validator';
 import { aiServiceManager, AIMessage, AIServiceOptions } from '../services/aiServiceManager';
-import { auth } from '../middleware/auth';
+import { auth, requireAdmin } from '../middleware/auth';
 import { aiRateLimit } from '../middleware/rateLimiter';
 import { asyncHandler } from '../middleware/errorHandler';
 import logger from '../utils/logger';
@@ -208,6 +208,7 @@ router.post('/vision',
  * GET /api/v1/ai/providers
  * Get available AI providers
  */
+/*
 router.get('/providers', 
   auth,
   asyncHandler(async (req: Request, res: Response) => {
@@ -224,6 +225,7 @@ router.get('/providers',
  * GET /api/v1/ai/providers/:provider/capabilities
  * Get capabilities for a specific provider
  */
+/*
 router.get('/providers/:provider/capabilities', 
   auth,
   validateProviderParam,
@@ -271,6 +273,7 @@ router.get('/providers/:provider/capabilities',
  * GET /api/v1/ai/providers/:provider/models
  * Get available models for a provider
  */
+/*
 router.get('/providers/:provider/models', 
   auth,
   validateProviderParam,
@@ -298,6 +301,7 @@ router.get('/providers/:provider/models',
  * GET /api/v1/ai/providers/:provider/models/:model
  * Get information about a specific model
  */
+/*
 router.get('/providers/:provider/models/:model', 
   auth,
   validateProviderParam,
@@ -338,6 +342,7 @@ router.get('/providers/:provider/models/:model',
  * GET /api/v1/ai/providers/:provider/health
  * Get health status for a specific provider
  */
+/*
 router.get('/providers/:provider/health', 
   auth,
   validateProviderParam,
@@ -361,6 +366,7 @@ router.get('/providers/:provider/health',
  * GET /api/v1/ai/health
  * Get overall AI service health
  */
+/*
 router.get('/health', 
   auth,
   asyncHandler(async (req: Request, res: Response) => {
@@ -384,6 +390,7 @@ router.get('/health',
  */
 router.get('/usage', 
   auth,
+  requireAdmin, 
   asyncHandler(async (req: Request, res: Response) => {
     const usage = aiServiceManager.getUsageStats();
     

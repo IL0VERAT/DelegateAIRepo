@@ -9,6 +9,7 @@
 import { geminiService } from './gemini';
 import { GoogleGenerativeAI, GenerativeModel } from '@google/generative-ai';
 import { logger } from '../utils/logger';
+import { Prisma, PrismaClient } from '@prisma/client';
 import { environment } from '../config/environment';
 
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY || '');
@@ -16,6 +17,8 @@ const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY || '');
 const visionModel: GenerativeModel = genAI.getGenerativeModel({
   model: 'gemini-pro-vision'
 });
+
+const prisma = new PrismaClient();
 
 interface CampaignCharacter {
   id: string;
@@ -84,6 +87,51 @@ class AiServiceManagerEnhanced {
 
     throw new Error(`Vision completion is not supported for provider: ${options.provider}`);
   }
+
+  /**
+   * Get usage info. on AI 
+   */
+  async getUsageStats(): Promise<any> {
+  const now = new Date();
+  const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);
+
+  const usageByDay = await prisma.$queryRaw<
+  { date: string; total: number }[]
+>`SELECT 
+    DATE("createdAt") AS date, 
+    SUM("amount")::FLOAT AS total 
+  FROM "Usage"
+  WHERE "createdAt" >= ${startOfMonth}
+  GROUP BY DATE("createdAt")
+  ORDER BY DATE("createdAt") ASC;`;
+
+  const [totalUsage, byType, activeUsers] = await Promise.all([
+    prisma.usage.aggregate({
+      _sum: { amount: true }
+    }),
+    prisma.usage.groupBy({
+      by: ['type'],
+      _sum: { amount: true }
+    }),
+    prisma.usage.groupBy({
+      by: ['userId'],
+      where: {
+        createdAt: { gte: startOfMonth }
+      }
+    })
+  ]);
+
+  return {
+    totalRequests: totalUsage._sum.amount || 0,
+    usageByType: byType.map(u => ({
+      type: u.type,
+      amount: u._sum.amount
+    })),
+    usageByDay,
+    activeUsersThisMonth: activeUsers,
+    timestamp: now.toISOString()
+  };
+}
   
 
 
