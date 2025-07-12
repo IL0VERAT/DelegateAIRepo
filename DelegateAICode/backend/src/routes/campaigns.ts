@@ -13,7 +13,7 @@ import { rateLimiter } from '../middleware/rateLimiter';
 import requestLogger from '../middleware/requestLogger';
 import { aiServiceManager } from '../services/aiServiceManager';
 //import { database } from '../services/database';
-import * as campaignDb from '../services/campaignDb';
+import * as campaignDb from '../services/campaignDB';
 import { logger } from '../utils/logger';
 
 const router = express.Router();
@@ -54,7 +54,7 @@ router.post('/generate-player-character', async (req: Request, res: Response) =>
     });
 
     // Save character to database
-    await database.savePlayerCharacter(userId, scenarioId, character);
+    await campaignDb.savePlayerCharacter(userId, scenarioId, character);
 
     res.json({
       success: true,
@@ -98,7 +98,7 @@ router.post('/generate-ai-characters', async (req: Request, res: Response) => {
     });
 
     // Save characters to database
-    await database.saveAICharacters(userId, scenarioId, aiCharacters);
+    await campaignDb.saveAICharacters(userId, scenarioId, aiCharacters);
 
     res.json({
       success: true,
@@ -147,7 +147,7 @@ router.post('/generate-crisis', async (req: Request, res: Response) => {
     });
 
     // Save crisis to database
-    await database.saveCrisis(userId, sessionId, crisis);
+    await campaignDb.saveCrisis(userId, sessionId, crisis);
 
     res.json({
       success: true,
@@ -207,7 +207,7 @@ router.post('/process-player-input', async (req: Request, res: Response) => {
     });
 
     // Save interaction to database
-    await database.savePlayerInteraction(userId, sessionId, {
+    await campaignDb.savePlayerInteraction(userId, sessionId, {
       transcript,
       response,
       timestamp: new Date()
@@ -263,7 +263,7 @@ router.post('/process-choice', async (req: Request, res: Response) => {
     });
 
     // Save choice and consequences to database
-    await database.savePlayerChoice(userId, sessionId, {
+    await campaignDb.savePlayerChoice(userId, sessionId, {
       choice,
       result,
       timestamp: new Date()
