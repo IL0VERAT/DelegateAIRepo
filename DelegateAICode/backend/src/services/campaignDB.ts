@@ -15,7 +15,7 @@ export const savePlayerCharacter = async (
     await prisma.character.create({
       data: {
         userId,
-        scenarioId,
+        //scenarioId,
         content: character,
         type: 'PLAYER'
       }
