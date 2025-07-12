@@ -318,7 +318,7 @@ model Character {
   description String?
   traits      Json
   createdAt   DateTime      @default(now())
-  content    Json 
+  content    Json? 
 
   user    User    @relation(fields: [userId], references: [id])
   session Session @relation(fields: [sessionId], references: [id])

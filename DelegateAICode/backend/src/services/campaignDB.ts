@@ -33,6 +33,7 @@ export const saveAICharacters = async (
   userId: string,
   scenarioId: string,
   characters: any[],
+  traits: Record<string, any>,
   sessionId: string
 ): Promise<void> => {
   try {
@@ -40,6 +41,7 @@ export const saveAICharacters = async (
       userId,
       //scenarioId,
       sessionId,
+      traits,
       name: c.name || 'Unnamed AI',
       content: c,
       type: CharacterType.AI
