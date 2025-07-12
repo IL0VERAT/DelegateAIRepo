@@ -61,7 +61,7 @@ router.post('/generate-player-character', async (req: Request, res: Response) =>
     });
 
     // Save character to database
-    await campaignDb.savePlayerCharacter(userId, scenarioId, character);
+    await campaignDb.savePlayerCharacter(userId, scenarioId, character,);
 
     res.json({
       success: true,
