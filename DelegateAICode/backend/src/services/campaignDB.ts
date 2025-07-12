@@ -164,7 +164,7 @@ export async function savePlayerChoice(
     createdAt: Date;
   }
 ): Promise<void> {
-  await Prisma.playerChoice.create({
+  await prisma.playerChoice.create({
     data: {
       userId,
       sessionId,
