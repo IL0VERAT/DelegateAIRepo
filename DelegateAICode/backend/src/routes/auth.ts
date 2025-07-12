@@ -172,14 +172,21 @@ router.post('/login', async (req: Request, res: Response) => {
       });
     }
 
-    // Update login stats
-    await prisma.user.update({
-      where: { id: user.id },
-      data: {
-        lastLoginAt: new Date(),
-        loginCount: { increment: 1 }
-      }
-    });
+      await prisma.user.update({
+        where: { id: user.id },
+        data: {
+        loginCount: { increment: 1 } // Remove lastLoginAt if unsupported
+        }
+      });
+
+      // Log login event
+      await prisma.loginLog.create({
+        data: {
+          userId: user.id,
+          ip: req.ip,
+          userAgent: req.get('User-Agent') || ''
+        }
+      });
 
     // Generate token
     const token = generateToken({

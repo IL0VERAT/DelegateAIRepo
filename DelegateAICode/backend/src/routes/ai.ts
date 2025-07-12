@@ -405,6 +405,7 @@ router.get('/usage',
  * POST /api/v1/ai/recommend
  * Get AI provider recommendation for a task
  */
+/*
 router.post('/recommend', 
   auth,
   [
@@ -500,6 +501,7 @@ router.post('/recommend',
  * POST /api/v1/ai/test/:provider
  * Test a specific provider
  */
+/*
 router.post('/test/:provider', 
   auth,
   validateProviderParam,
@@ -538,4 +540,4 @@ router.post('/test/:provider',
   })
 );
 
-export default router;
+export default router;*/

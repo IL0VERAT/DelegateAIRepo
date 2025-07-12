@@ -45,6 +45,7 @@ model User {
   AuditLog   AuditLog[]
   messages   Message[]
   Transcript Transcript[]
+  LoginLog   LoginLog[]
 
   @@map("users")
 }
@@ -68,8 +69,8 @@ model AuditLog {
   path      String
   ip        String
   userAgent String?
- 
-  success   Boolean  @default(true)
+
+  success Boolean @default(true)
 
   timestamp DateTime @default(now())
 
@@ -240,6 +241,17 @@ model Session {
   Transcript Transcript[]
 
   @@map("sessions")
+}
+
+model LoginLog {
+  id        String   @id @default(cuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id])
+  timestamp DateTime @default(now())
+  ip        String?
+  userAgent String?
+
+  @@index([userId, timestamp])
 }
 
 model CampaignParticipation {
