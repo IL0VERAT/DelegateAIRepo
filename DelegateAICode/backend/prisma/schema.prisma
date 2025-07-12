@@ -288,6 +288,8 @@ model Character {
   content    Json
   createdAt  DateTime      @default(now())
 
+
+
   @@index([userId])
   @@index([scenarioId])
   @@map("characters")

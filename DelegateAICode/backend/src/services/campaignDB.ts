@@ -1,4 +1,4 @@
-import { PrismaClient } from '@prisma/client';
+import { Prisma, PrismaClient, CharacterType } from '@prisma/client';
 import { logger } from '../utils/logger';
 
 const prisma = new PrismaClient();
@@ -39,7 +39,7 @@ export const saveAICharacters = async (
       userId,
       scenarioId,
       content: c,
-      type: 'AI'
+      type: CharacterType.AI
     }));
 
     await prisma.character.createMany({ data });
