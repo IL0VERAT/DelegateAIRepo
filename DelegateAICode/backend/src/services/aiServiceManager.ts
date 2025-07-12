@@ -7,8 +7,15 @@
  */
 
 import { geminiService } from './gemini';
+import { GoogleGenerativeAI, GenerativeModel } from '@google/generative-ai';
 import { logger } from '../utils/logger';
 import { environment } from '../config/environment';
+
+const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY || '');
+
+const visionModel: GenerativeModel = genAI.getGenerativeModel({
+  model: 'gemini-pro-vision'
+});
 
 interface CampaignCharacter {
   id: string;
@@ -59,6 +66,27 @@ class AiServiceManagerEnhanced {
 
   throw new Error('Streaming is only supported for Gemini currently.');
 }
+
+  async generateVisionCompletion(
+    text: string,
+    imageData: string,
+    options: AIServiceOptions & { mimeType?: string }
+  ): Promise<{
+    provider: string;
+    model: string;
+    content: string;
+    usage: null;
+    isComplete: true;
+  }> {
+    if (options.provider === 'gemini') {
+      return geminiService.generateVisionCompletion(text, imageData, options);
+    }
+
+    throw new Error(`Vision completion is not supported for provider: ${options.provider}`);
+  }
+  
+
+
 
   // ============================================================================
   // CHARACTER GENERATION
@@ -172,6 +200,7 @@ class AiServiceManagerEnhanced {
       throw new Error('Failed to generate crisis');
     }
   }
+  
 
   // ============================================================================
   // AI INTERACTIONS
@@ -270,6 +299,7 @@ class AiServiceManagerEnhanced {
     logger.error(`All Gemini attempts failed for ${type}:`, lastError);
     throw new Error(`Gemini generation failed for ${type}: ${lastError?.message || 'unknown error'}`);
   }
+  
 
   /**
    * Delay helper for retry logic
@@ -688,6 +718,7 @@ export type AIServiceOptions = {
   temperature?: number;
   maxTokens?: number;
   userId?: string;
+  mimeType?: string;
 };
 
 /*AI hallucination risk:

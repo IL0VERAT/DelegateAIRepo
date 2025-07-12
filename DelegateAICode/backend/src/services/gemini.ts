@@ -83,6 +83,60 @@ class GeminiServiceEnhanced {
     }
   }
 
+
+  /**
+   * Generate imaged vision for campaign creation
+   */
+  async generateVisionCompletion(
+    text: string,
+    imageData: string,
+    options: AIServiceOptions & { userId?: string }
+  ): Promise<{
+    provider: string;
+    model: string;
+    content: string;
+    usage: null;
+    isComplete: true;
+  }> {
+    try {
+      const visionModel = this.genAI.getGenerativeModel({
+        model: 'gemini-pro-vision'
+      });
+
+      const result = await visionModel.generateContent({
+        contents: [
+          {
+            role: 'user',
+            parts: [
+              { text },
+              {
+                inlineData: {
+                  mimeType: options.mimeType || 'image/png',
+                  data: imageData
+                }
+              }
+            ]
+          }
+        ]
+      });
+
+      const response = await result.response;
+      const content = response.text();
+
+      return {
+        provider: 'gemini',
+        model: 'gemini-pro-vision',
+        content,
+        usage: null,
+        isComplete: true
+      };
+
+    } catch (error) {
+      logger.error('Gemini vision error:', error);
+      throw new Error('Failed to generate vision completion');
+    }
+  }
+
   async *streamResponse(messages: AIMessage[], options: AIServiceOptions) {
   const model = this.genAI.getGenerativeModel({
     model: options.model || 'gemini-1.5-pro',
