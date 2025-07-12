@@ -12,7 +12,7 @@ import { auth as authMiddleware } from '../middleware/auth';
 import { rateLimiter } from '../middleware/rateLimiter';
 import requestLogger from '../middleware/requestLogger';
 import { aiServiceManager } from '../services/aiServiceManager';
-//import { database } from '../services/database';
+import database from '../services/database';
 import * as campaignDb from '../services/campaignDB';
 import { logger } from '../utils/logger';
 
@@ -40,6 +40,13 @@ router.post('/generate-player-character', async (req: Request, res: Response) =>
         success: false,
         error: 'Missing required parameters'
       });
+    }
+
+    if (!userId) {
+      return res.status(401).json({
+        success: false,
+        error: 'Unauthorized: user ID is missing'
+    });
     }
 
     logger.info('Generating player character', { userId, scenarioId });
@@ -83,6 +90,13 @@ router.post('/generate-ai-characters', async (req: Request, res: Response) => {
         success: false,
         error: 'Missing required parameters'
       });
+    }
+
+    if (!userId) {
+      return res.status(401).json({
+        success: false,
+        error: 'Unauthorized: user ID is missing'
+    });
     }
 
     logger.info('Generating AI characters', { userId, scenarioId });
@@ -131,6 +145,13 @@ router.post('/generate-crisis', async (req: Request, res: Response) => {
         success: false,
         error: 'Missing required parameters'
       });
+    }
+
+    if (!userId) {
+      return res.status(401).json({
+        success: false,
+        error: 'Unauthorized: user ID is missing'
+    });
     }
 
     logger.info('Generating crisis', { userId, sessionId });
@@ -191,6 +212,13 @@ router.post('/process-player-input', async (req: Request, res: Response) => {
       });
     }
 
+    if (!userId) {
+      return res.status(401).json({
+        success: false,
+        error: 'Unauthorized: user ID is missing'
+    });
+    }
+
     logger.info('Processing player input', { userId, sessionId });
 
     // Process input using AI service
@@ -247,6 +275,13 @@ router.post('/process-choice', async (req: Request, res: Response) => {
         success: false,
         error: 'Missing required parameters'
       });
+    }
+
+    if (!userId) {
+      return res.status(401).json({
+        success: false,
+        error: 'Unauthorized: user ID is missing'
+    });
     }
 
     logger.info('Processing player choice', { userId, sessionId });
