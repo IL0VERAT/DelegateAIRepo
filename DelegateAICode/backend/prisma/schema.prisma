@@ -50,6 +50,7 @@ model User {
   LoginLog     LoginLog[]
   Crisis       Crisis[]
   PlayerChoice PlayerChoice[]
+  Character    Character[]
 
   @@map("users")
 }
@@ -245,6 +246,7 @@ model Session {
   Transcript   Transcript[]
   Crisis       Crisis[]
   PlayerChoice PlayerChoice[]
+  Character    Character[]
 
   @@map("sessions")
 }
@@ -305,6 +307,23 @@ model Crisis {
   @@index([userId])
   @@index([sessionId])
   @@map("crises")
+}
+
+model Character {
+  id          String        @id @default(cuid())
+  userId      String
+  sessionId   String
+  type        CharacterType
+  name        String
+  description String?
+  traits      Json
+  createdAt   DateTime      @default(now())
+
+  user    User    @relation(fields: [userId], references: [id])
+  session Session @relation(fields: [sessionId], references: [id])
+
+  @@index([userId])
+  @@index([sessionId])
 }
 
 enum Role {
