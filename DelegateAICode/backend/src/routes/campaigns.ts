@@ -12,7 +12,8 @@ import { auth as authMiddleware } from '../middleware/auth';
 import { rateLimiter } from '../middleware/rateLimiter';
 import requestLogger from '../middleware/requestLogger';
 import { aiServiceManager } from '../services/aiServiceManager';
-import { database } from '../services/database';
+//import { database } from '../services/database';
+import * as campaignDb from '../services/campaignDb';
 import { logger } from '../utils/logger';
 
 const router = express.Router();
