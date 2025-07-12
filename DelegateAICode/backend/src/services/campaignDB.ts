@@ -32,12 +32,15 @@ export const savePlayerCharacter = async (
 export const saveAICharacters = async (
   userId: string,
   scenarioId: string,
-  characters: any[]
+  characters: any[],
+  sessionId: string
 ): Promise<void> => {
   try {
     const data = characters.map(c => ({
       userId,
-      scenarioId,
+      //scenarioId,
+      sessionId,
+      name: c.name || 'Unnamed AI',
       content: c,
       type: CharacterType.AI
     }));
