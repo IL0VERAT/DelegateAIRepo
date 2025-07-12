@@ -8,7 +8,7 @@
 
 import express from 'express';
 import { Request, Response } from 'express';
-import { authMiddleware } from '../middleware/auth';
+import { auth as authMiddleware } from '../middleware/auth';
 import { rateLimiter } from '../middleware/rateLimiter';
 import requestLogger from '../middleware/requestLogger';
 import { aiServiceManager } from '../services/aiServiceManager';
