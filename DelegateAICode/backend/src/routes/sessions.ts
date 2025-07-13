@@ -719,19 +719,6 @@ router.get('/:sessionId/analytics', async (req: Request, res: Response) => {
         _count: true
       }),
 
-      // Cost breakdown by AI model
-      prisma.message.groupBy({
-        where: {
-          sessionId,
-          status: 'COMPLETED'
-        },
-        _sum: {
-          cost: true,
-          totalTokens: true
-        },
-        _count: true
-      }),
-
       // Response time statistics
       prisma.message.aggregate({
         where: {

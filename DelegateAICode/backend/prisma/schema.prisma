@@ -65,8 +65,11 @@ model Message {
   Session   Session? @relation(fields: [sessionId], references: [id])
   sessionId String?
   status    String
+  type      MessageType
 
+  //need for aggregate
   responseTime Float?
+  totalTokens  Int?
 }
 
 model AuditLog {
@@ -92,6 +95,7 @@ model Transcript {
   id     String @id @default(cuid())
   userId String
   user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  status        TranscriptStatus @default(COMPLETED)
 
   sessionId String
   session   Session @relation(fields: [sessionId], references: [id], onDelete: Cascade)
@@ -403,4 +407,10 @@ enum CharacterType {
 enum MessageType {
   USER
   SYSTEM
+}
+
+enum TranscriptStatus {
+  COMPLETED
+  IN_PROGRESS
+  FAILED
 }
