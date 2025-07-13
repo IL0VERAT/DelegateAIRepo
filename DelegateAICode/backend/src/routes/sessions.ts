@@ -664,8 +664,8 @@ router.get('/:sessionId/analytics', async (req: Request, res: Response) => {
       transcriptStats,
       messagesByRole,
       messagesByType,
-      costBreakdown,
-      responseTimeStats
+      responseTimeStats,
+      costBreakdown
     ] = await Promise.all([
       // Message statistics
       prisma.message.aggregate({
@@ -735,7 +735,10 @@ router.get('/:sessionId/analytics', async (req: Request, res: Response) => {
         _max: {
           responseTime: true
         }
-      })
+      }),
+
+      prisma.message.groupBy({ by: ['type'], _sum: { cost: true } }),
+      
     ]);
 
     res.json({
@@ -751,9 +754,9 @@ router.get('/:sessionId/analytics', async (req: Request, res: Response) => {
       analytics: {
         messages: {
           total: messageStats._count,
-          totalTokens: messageStats._sum.totalTokens || 0,
-          totalCost: messageStats._sum.cost || 0,
-          averageResponseTime: Math.round(messageStats._avg.responseTime || 0),
+          totalTokens: messageStats._sum?.totalTokens || 0,
+          totalCost: messageStats._sum?.cost || 0,
+          averageResponseTime: Math.round(messageStats._avg?.responseTime || 0),
           breakdown: {
             byRole: messagesByRole,
             byType: messagesByType
@@ -767,7 +770,7 @@ router.get('/:sessionId/analytics', async (req: Request, res: Response) => {
         },
         costs: {
           breakdown: costBreakdown,
-          total: messageStats._sum.cost || 0
+          total: messageStats._sum?.cost || 0
         },
         performance: {
           responseTime: {
