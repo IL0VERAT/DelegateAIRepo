@@ -145,6 +145,7 @@ class AiServiceManagerEnhanced {
    */
   async generatePlayerCharacter(params: {
     scenarioId: string;
+    sessionId: string;
     scenarioContext: string;
     theme: string;
     difficulty: string;
