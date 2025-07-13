@@ -64,6 +64,9 @@ model Message {
   updatedAt DateTime @updatedAt
   Session   Session? @relation(fields: [sessionId], references: [id])
   sessionId String?
+  status    String
+
+  responseTime Float?
 }
 
 model AuditLog {
@@ -395,4 +398,9 @@ enum SessionStatus {
 enum CharacterType {
   PLAYER
   AI
+}
+
+enum MessageType {
+  USER
+  SYSTEM
 }

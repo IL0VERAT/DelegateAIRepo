@@ -11,7 +11,7 @@
  */
 
 import express, { Request, Response } from 'express';
-import { PrismaClient } from '@prisma/client';
+import { Prisma, PrismaClient } from '@prisma/client';
 import { auth, logUserAction } from '../middleware/auth';
 import { logger } from '../utils/logger';
 
@@ -701,7 +701,7 @@ router.get('/:sessionId/analytics', async (req: Request, res: Response) => {
 
       // Messages by role
       prisma.message.groupBy({
-        by: ['role'],
+        by: [Prisma.MessageScalarFieldEnum.type],
         where: {
           sessionId,
           status: 'COMPLETED'
@@ -711,7 +711,7 @@ router.get('/:sessionId/analytics', async (req: Request, res: Response) => {
 
       // Messages by type
       prisma.message.groupBy({
-        by: ['type'],
+        by: [Prisma.MessageScalarFieldEnum.type],
         where: {
           sessionId,
           status: 'COMPLETED'
@@ -721,10 +721,8 @@ router.get('/:sessionId/analytics', async (req: Request, res: Response) => {
 
       // Cost breakdown by AI model
       prisma.message.groupBy({
-        by: ['aiModel'],
         where: {
           sessionId,
-          role: 'ASSISTANT',
           status: 'COMPLETED'
         },
         _sum: {
@@ -738,7 +736,6 @@ router.get('/:sessionId/analytics', async (req: Request, res: Response) => {
       prisma.message.aggregate({
         where: {
           sessionId,
-          role: 'ASSISTANT',
           status: 'COMPLETED',
           responseTime: { not: null }
         },
