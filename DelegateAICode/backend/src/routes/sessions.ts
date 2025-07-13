@@ -12,7 +12,7 @@
 
 import express, { Request, Response } from 'express';
 import { PrismaClient } from '@prisma/client';
-import { authMiddleware, logUserAction } from '../middleware/auth';
+import { auth, logUserAction } from '../middleware/auth';
 import { logger } from '../utils/logger';
 
 const router = express.Router();
@@ -27,7 +27,7 @@ router.post('/', async (req: Request, res: Response) => {
       title,
       description,
       type = 'CHAT',
-      aiModel = 'gpt-4',
+      aiModel = 'gemini-1.5-pro',
       aiTemperature = 0.7,
       aiMaxTokens = 2048,
       debateStrength = 3,
@@ -97,7 +97,6 @@ router.post('/', async (req: Request, res: Response) => {
     await logUserAction(req, 'session_created', 'sessions', {
       sessionId: session.id,
       type: session.type,
-      aiModel: session.aiModel,
       debateStrength: session.debateStrength
     });
 
@@ -105,7 +104,6 @@ router.post('/', async (req: Request, res: Response) => {
       userId,
       sessionId: session.id,
       type: session.type,
-      aiModel: session.aiModel,
       debateStrength: session.debateStrength
     });
 
@@ -116,7 +114,6 @@ router.post('/', async (req: Request, res: Response) => {
         description: session.description,
         type: session.type,
         status: session.status,
-        aiModel: session.aiModel,
         aiTemperature: session.aiTemperature,
         aiMaxTokens: session.aiMaxTokens,
         debateStrength: session.debateStrength,
@@ -195,7 +192,6 @@ router.get('/', async (req: Request, res: Response) => {
           description: true,
           type: true,
           status: true,
-          aiModel: true,
           aiTemperature: true,
           aiMaxTokens: true,
           debateStrength: true,
@@ -278,7 +274,6 @@ router.get('/:sessionId', async (req: Request, res: Response) => {
         description: session.description,
         type: session.type,
         status: session.status,
-        aiModel: session.aiModel,
         aiTemperature: session.aiTemperature,
         aiMaxTokens: session.aiMaxTokens,
         debateStrength: session.debateStrength,
@@ -325,7 +320,6 @@ router.put('/:sessionId', async (req: Request, res: Response) => {
     const {
       title,
       description,
-      aiModel,
       aiTemperature,
       aiMaxTokens,
       debateStrength,
@@ -389,7 +383,6 @@ router.put('/:sessionId', async (req: Request, res: Response) => {
 
     if (title !== undefined) updateData.title = title;
     if (description !== undefined) updateData.description = description;
-    if (aiModel !== undefined) updateData.aiModel = aiModel;
     if (aiTemperature !== undefined) updateData.aiTemperature = aiTemperature;
     if (aiMaxTokens !== undefined) updateData.aiMaxTokens = aiMaxTokens;
     if (debateStrength !== undefined) updateData.debateStrength = debateStrength;
@@ -432,7 +425,6 @@ router.put('/:sessionId', async (req: Request, res: Response) => {
         description: updatedSession.description,
         type: updatedSession.type,
         status: updatedSession.status,
-        aiModel: updatedSession.aiModel,
         aiTemperature: updatedSession.aiTemperature,
         aiMaxTokens: updatedSession.aiMaxTokens,
         debateStrength: updatedSession.debateStrength,
