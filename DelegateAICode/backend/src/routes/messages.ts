@@ -24,7 +24,7 @@ const router = express.Router();
 const aiRateLimit = rateLimiter({
   windowMs: 1 * 60 * 1000, // 1 minute
   maxRequests: 30, // 30 requests per minute
-  message: 'Too many AI requests, please try again later'
+  message: 'Too many requests, please try again later'
 });
 
 // Validation middleware
@@ -116,11 +116,9 @@ router.post('/completion',
       // Log success
       logger.info(`✅ AI completion successful:`, {
         userId,
-        provider: response.provider,
-        model: response.model,
-        tokens: response.usage.totalTokens,
-        cost: response.usage.cost,
-        processingTime: response.processingTime
+        //tokens: response.usage.totalTokens,
+        //cost: response.usage.cost,
+        //processingTime: response.processingTime
       });
 
       res.json(response);
@@ -216,8 +214,7 @@ router.post('/completion/stream',
           if (chunk.isComplete) {
             logger.info(`✅ AI streaming completed:`, {
               userId,
-              provider: chunk.provider,
-              usage: chunk.usage
+              //usage: chunk.usage
             });
             break;
           }
@@ -299,10 +296,8 @@ router.post('/vision',
       // Log success
       logger.info(`✅ Vision completion successful:`, {
         userId,
-        provider: response.provider,
-        model: response.model,
-        tokens: response.usage.totalTokens,
-        processingTime: response.processingTime
+        //tokens: response.usage.totalTokens,
+        //processingTime: response.processingTime
       });
 
       res.json(response);
@@ -331,7 +326,7 @@ router.post('/vision',
  * GET /api/v1/messages/providers
  * Get available AI providers
  */
-router.get('/providers', 
+/*router.get('/providers', 
   auth,
   async (req: Request, res: Response) => {
     try {
@@ -356,7 +351,7 @@ router.get('/providers',
  * GET /api/v1/messages/providers/:provider/models
  * Get available models for a provider
  */
-router.get('/providers/:provider/models', 
+/*router.get('/providers/:provider/models', 
   auth,
   async (req: Request, res: Response) => {
     try {
@@ -384,13 +379,13 @@ router.get('/providers/:provider/models',
       });
     }
   }
-);
+); 
 
 /**
  * GET /api/v1/messages/providers/:provider/health
  * Get health status for a provider
  */
-router.get('/providers/:provider/health', 
+/*router.get('/providers/:provider/health', 
   auth,
   async (req: Request, res: Response) => {
     try {
@@ -420,7 +415,7 @@ router.get('/providers/:provider/health',
  * GET /api/v1/messages/health
  * Get health status for all providers
  */
-router.get('/health', 
+/*router.get('/health', 
   auth,
   async (req: Request, res: Response) => {
     try {
@@ -439,29 +434,20 @@ router.get('/health',
 
 /**
  * GET /api/v1/messages/providers/:provider/usage
- * Get usage statistics for a provider
+ * Get usage statistics 
  */
-router.get('/providers/:provider/usage', 
+router.get('/usage', 
   auth,
   async (req: Request, res: Response) => {
     try {
-      const { provider } = req.params as { provider: 'openai' | 'gemini' };
-      
-      if (!['openai', 'gemini'].includes(provider)) {
-        return res.status(400).json({
-          error: 'Invalid provider',
-          message: 'Provider must be either "openai" or "gemini"'
-        });
-      }
-
-      const usage = aiServiceManager.getUsageStats(provider);
+      const usage = await aiServiceManager.getUsageStats(); // No argument
       res.json({
-        provider,
+        provider: 'gemini',
         usage
-      });
+        });
 
     } catch (error) {
-      logger.error(`❌ Failed to get usage for ${req.params.provider}:`, error);
+      logger.error('❌ Failed to get usage statistics:', error);
       res.status(500).json({
         error: 'Failed to get usage statistics',
         message: error instanceof Error ? error.message : 'Unknown error'
@@ -523,11 +509,10 @@ router.post('/test/:provider',
       const latency = Date.now() - startTime;
 
       res.json({
-        provider,
         success: true,
         latency,
-        response: response.content,
-        usage: response.usage
+        //response: response.content,
+        //usage: response.usage
       });
 
     } catch (error) {

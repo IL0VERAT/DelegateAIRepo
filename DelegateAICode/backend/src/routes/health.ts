@@ -2,7 +2,7 @@
  * Health Check Routes for Delegate AI
  * ===================================
  * 
- * Provides health monitoring endpoints for the application. --> NEED TO UPDATE FOR GEMINI
+ * Provides health monitoring endpoints for the application. 
  */
 
 import express, { Request, Response } from 'express';

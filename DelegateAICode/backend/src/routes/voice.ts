@@ -8,17 +8,17 @@
 
 import express from 'express';
 import { Request, Response } from 'express';
-import { authMiddleware } from '../middleware/auth';
+import { auth } from '../middleware/auth';
 import { rateLimiter } from '../middleware/rateLimiter';
-import { requestLogger } from '../middleware/requestLogger';
+import requestLogger from '../middleware/requestLogger';
 import { geminiService } from '../services/gemini';
-import { database } from '../services/database';
+import * as database from '../services/database';
 import { logger } from '../utils/logger';
 
 const router = express.Router();
 
 // Apply middleware
-router.use(authMiddleware);
+router.use(auth);
 router.use(rateLimiter);
 router.use(requestLogger);
 
