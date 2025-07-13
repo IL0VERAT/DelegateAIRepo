@@ -55,6 +55,10 @@ const SUBSCRIPTION_TIERS = {
 
 router.get('/current', auth, async (req, res) => {
   try {
+
+  if (!req.user) {
+    return res.status(401).json({ error: 'Unauthorized or undefined userId' });
+  }
     const userId = req.user.id;
 
     const subscription = await prisma.subscription.findFirst({
@@ -130,6 +134,10 @@ router.get('/plans', async (req, res) => {
 
 router.post('/checkout', auth, rateLimiter({ windowMs: 60000, max: 5 }), async (req, res) => {
   try {
+
+    if (!req.user) {
+      return res.status(401).json({ error: 'Unauthorized or undefined userId' });
+    }
     const userId = req.user.id;
     const { tier, annual = false } = req.body;
 
@@ -186,6 +194,9 @@ router.post('/checkout', auth, rateLimiter({ windowMs: 60000, max: 5 }), async (
 
 router.post('/cancel', auth, async (req, res) => {
   try {
+    if (!req.user) {
+      return res.status(401).json({ error: 'Unauthorized or undefined userId' });
+    }
     const userId = req.user.id;
     const { immediate = false } = req.body;
 
@@ -237,6 +248,9 @@ router.post('/cancel', auth, async (req, res) => {
 
 router.post('/reactivate', auth, async (req, res) => {
   try {
+    if (!req.user) {
+      return res.status(401).json({ error: 'Unauthorized or undefined userId' });
+    }
     const userId = req.user.id;
 
     const subscription = await prisma.subscription.findFirst({
@@ -277,6 +291,9 @@ router.post('/reactivate', auth, async (req, res) => {
 
 router.post('/payment-method', auth, async (req, res) => {
   try {
+    if (!req.user) {
+      return res.status(401).json({ error: 'Unauthorized or undefined userId' });
+    }
     const userId = req.user.id;
     const { paymentMethodId } = req.body;
 
@@ -329,6 +346,9 @@ router.post('/payment-method', auth, async (req, res) => {
 
 router.get('/usage', auth, async (req, res) => {
   try {
+    if (!req.user) {
+      return res.status(401).json({ error: 'Unauthorized or undefined userId' });
+    }
     const userId = req.user.id;
 
     const subscription = await prisma.subscription.findFirst({
