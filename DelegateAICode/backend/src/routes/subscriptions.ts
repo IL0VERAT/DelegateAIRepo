@@ -15,7 +15,7 @@ import logger from '../utils/logger';
 const router = Router();
 const prisma = new PrismaClient();
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
-  apiVersion: '2024-06-20',
+  apiVersion: '2025-06-30.basil',
 });
 
 // ============================================================================
@@ -46,18 +46,6 @@ const SUBSCRIPTION_TIERS = {
     maxTeamMembers: 5,
     price: 1999, // $19.99 in cents
     stripePriceId: process.env.STRIPE_PRO_PRICE_ID
-  },
-  ENTERPRISE: {
-    tier: 'ENTERPRISE',
-    monthlyVoiceMinutes: 1000,
-    monthlyCampaigns: 200,
-    monthlyAIInteractions: 5000,
-    monthlyExports: 100,
-    maxConcurrentSessions: 10,
-    maxStorageGB: 100,
-    maxTeamMembers: 25,
-    price: 4999, // $49.99 in cents
-    stripePriceId: process.env.STRIPE_ENTERPRISE_PRICE_ID
   }
 };
 
@@ -127,20 +115,6 @@ router.get('/plans', async (req, res) => {
           'Priority support',
           'Advanced analytics',
           'Custom voice training'
-        ],
-        ENTERPRISE: [
-          '1,000 minutes of voice interaction per month',
-          '200 campaign sessions per month',
-          '5,000 AI interactions per month',
-          '100 exports per month',
-          '10 concurrent sessions',
-          '100GB storage',
-          'Dedicated support',
-          'Advanced analytics',
-          'Custom voice training',
-          'Team management',
-          'SSO integration',
-          'Custom integrations'
         ]
       }
     });

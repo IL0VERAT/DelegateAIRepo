@@ -365,8 +365,6 @@ enum Role {
 enum SubscriptionTier {
   FREE
   PRO
-  ENTERPRISE
-  LIFETIME
 }
 
 enum SubscriptionStatus {
