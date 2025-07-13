@@ -33,6 +33,7 @@ router.post('/', async (req: Request, res: Response) => {
       debateStrength = 3,
       systemPrompt,
       voiceId,
+      campaignId,
       voiceSpeed = 1.0,
       voiceLanguage = 'en',
       isPrivate = false
@@ -87,6 +88,7 @@ router.post('/', async (req: Request, res: Response) => {
         messageCount: 0,
         totalTokens: 0,
         totalCost: 0.0,
+        campaignId,
         startedAt: new Date(),
         createdAt: new Date(),
         updatedAt: new Date()
@@ -327,6 +329,7 @@ router.put('/:sessionId', async (req: Request, res: Response) => {
       voiceSpeed,
       voiceLanguage,
       isPrivate,
+      campaignId,
       status
     } = req.body;
     const userId = req.user!.id;

@@ -389,6 +389,7 @@ enum SessionStatus {
   COMPLETED
   ABANDONED
   ERROR
+  DELETED
 }
 
 enum CharacterType {
