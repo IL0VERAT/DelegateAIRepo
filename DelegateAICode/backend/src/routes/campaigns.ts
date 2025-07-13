@@ -83,7 +83,7 @@ router.post('/generate-player-character', async (req: Request, res: Response) =>
  */
 router.post('/generate-ai-characters', async (req: Request, res: Response) => {
   try {
-    const { scenarioId, scenarioContext, characters, playerCharacter, theme } = req.body;
+    const { scenarioId, scenarioContext, characters, playerCharacter, theme, sessionId } = req.body;
     const userId = req.user?.id;
 
     if (!scenarioId || !characters || !playerCharacter) {
@@ -104,16 +104,16 @@ router.post('/generate-ai-characters', async (req: Request, res: Response) => {
 
     // Generate characters using AI service
     const aiCharacters = await aiServiceManager.generateAICharacters({
-      scenarioId,
       scenarioContext,
       characters,
       playerCharacter,
       theme,
-      userId
+      userId,
+      scenarioId: ''
     });
 
     // Save characters to database
-    await campaignDb.saveAICharacters(userId, scenarioId, aiCharacters);
+    await campaignDb.saveAICharacters(userId, scenarioId, aiCharacters, sessionId);
 
     res.json({
       success: true,

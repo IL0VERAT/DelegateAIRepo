@@ -313,6 +313,7 @@ model Character {
   id          String        @id @default(cuid())
   userId      String
   sessionId   String
+  scenarioID  String
   type        CharacterType
   name        String
   description String?
