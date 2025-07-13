@@ -12,11 +12,12 @@ import { auth as authMiddleware } from '../middleware/auth';
 import { rateLimiter } from '../middleware/rateLimiter';
 import requestLogger from '../middleware/requestLogger';
 import { aiServiceManager } from '../services/aiServiceManager';
-import database from '../services/database';
+import * as database from '../services/database';
 import * as campaignDb from '../services/campaignDB';
 import { logger } from '../utils/logger';
 
 const router = express.Router();
+const prisma = database.getDatabase();
 
 // Apply middleware
 router.use(authMiddleware);
@@ -338,6 +339,13 @@ router.post('/save-session', async (req: Request, res: Response) => {
       });
     }
 
+    if (!userId) {
+      return res.status(401).json({
+        success: false,
+        error: 'Unauthorized: user ID is missing'
+      });
+    }
+
     logger.info('Saving campaign session', { userId, sessionId });
 
     // Save session to database
@@ -363,12 +371,20 @@ router.post('/save-session', async (req: Request, res: Response) => {
 router.get('/session/:sessionId', async (req: Request, res: Response) => {
   try {
     const { sessionId } = req.params;
+
     const userId = req.user?.id;
 
     if (!sessionId) {
       return res.status(400).json({
         success: false,
         error: 'Missing session ID'
+      });
+    }
+
+    if (!userId) {
+      return res.status(401).json({
+        success: false,
+        error: 'Unauthorized: user ID is missing'
       });
     }
 
@@ -404,6 +420,14 @@ router.get('/session/:sessionId', async (req: Request, res: Response) => {
 router.get('/history', async (req: Request, res: Response) => {
   try {
     const userId = req.user?.id;
+
+    if (!userId) {
+      return res.status(401).json({
+        success: false,
+        error: 'Unauthorized: user ID is missing'
+      });
+    }
+
     const { limit = 10, offset = 0 } = req.query;
 
     logger.info('Fetching campaign history', { userId });

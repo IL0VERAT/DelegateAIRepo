@@ -44,6 +44,47 @@ export const getDatabase = (): PrismaClient => {
   return prisma;
 };
 
+//connect to character and ai in schema?
+export const saveCampaignSession = async (
+  userId: string,
+  sessionId: string,
+  sessionData: any
+): Promise<void> => {
+  const prisma = getDatabase();
+
+  await prisma.session.update({
+    where: { id: sessionId },
+    data: {
+      transcript: sessionData.transcript,
+      recordings: sessionData.recordings,
+      updatedAt: new Date()
+    }
+  });
+};
+
+//connect to character and ai in schema?
+export const loadCampaignSession = async (
+  userId: string,
+  sessionId: string
+): Promise<any | null> => {
+  const prisma = getDatabase();
+
+  const session = await prisma.session.findFirst({
+    where: {
+      id: sessionId,
+      userId
+    },
+    select: {
+      id: true,
+      transcript: true,
+      recordings: true,
+      updatedAt: true
+    }
+  });
+
+  return session;
+};
+
 /**
  * Health check for database
  */
@@ -55,6 +96,30 @@ export const checkDatabaseHealth = async (): Promise<boolean> => {
     logger.error('Database health check failed:', error);
     return false;
   }
+};
+
+export const getCampaignHistory = async (
+  userId: string,
+  options: { limit: number; offset: number }
+): Promise<any[]> => {
+  const prisma = getDatabase();
+
+  const sessions = await prisma.session.findMany({
+    where: { userId },
+    orderBy: { updatedAt: 'desc' },
+    skip: options.offset,
+    take: options.limit,
+    select: { //modify to fit frontend 
+      id: true,
+      campaignId: true,
+      startedAt: true,
+      endedAt: true,
+      transcript: true,
+      updatedAt: true
+    }
+  });
+
+  return sessions;
 };
 
 /**
@@ -70,5 +135,3 @@ export const closeDatabase = async (): Promise<void> => {
     logger.error('Error closing database connection:', error);
   }
 };
-
-export { prisma };
