@@ -6,10 +6,11 @@
  */
 
 import express, { Request, Response } from 'express';
-import { PrismaClient } from '@prisma/client';
+import { PrismaClient }  from '@prisma/client';
+import geminiService from '@/services/gemini';
 import { logger } from '../utils/logger';
-import { openaiService } from '../services/openai';
-import { elevenLabsService } from '../services/elevenlabs';
+//import { openaiService } from '../services/openai';
+//import { elevenLabsService } from '../services/elevenlabs';
 
 const router = express.Router();
 const prisma = new PrismaClient();
@@ -45,16 +46,15 @@ router.get('/detailed', async (req: Request, res: Response) => {
   try {
     const checks = await Promise.allSettled([
       checkDatabase(),
-      checkOpenAI(),
-      checkElevenLabs(),
+      checkGemini(),
       checkSystem()
     ]);
 
-    const [database, openai, elevenlabs, system] = checks.map(check => 
+    const [database, gemini, system] = checks.map(check => 
       check.status === 'fulfilled' ? check.value : { status: 'unhealthy', error: check.reason?.message }
-    );
+    ) as { status: string }[];
 
-    const overallStatus = [database, openai, elevenlabs, system].every(check => check.status === 'healthy') 
+    const overallStatus = [database, gemini, system].every(check => check.status === 'healthy') 
       ? 'healthy' 
       : 'unhealthy';
 
@@ -63,8 +63,7 @@ router.get('/detailed', async (req: Request, res: Response) => {
       timestamp: new Date().toISOString(),
       services: {
         database,
-        openai,
-        elevenlabs,
+        gemini,
         system
       }
     };
@@ -104,30 +103,14 @@ async function checkDatabase() {
 /**
  * OpenAI service health check
  */
-async function checkOpenAI() {
+async function checkGemini() {
   try {
-    const health = await openaiService.healthCheck();
+    const health = await geminiService.healthCheck();
     return health;
   } catch (error) {
     return {
       status: 'unhealthy',
-      error: 'OpenAI service check failed',
-      details: error instanceof Error ? error.message : 'Unknown error'
-    };
-  }
-}
-
-/**
- * ElevenLabs service health check
- */
-async function checkElevenLabs() {
-  try {
-    const health = await elevenLabsService.healthCheck();
-    return health;
-  } catch (error) {
-    return {
-      status: 'unhealthy',
-      error: 'ElevenLabs service check failed',
+      error: 'Gemini service check failed',
       details: error instanceof Error ? error.message : 'Unknown error'
     };
   }
@@ -168,3 +151,4 @@ async function checkSystem() {
 }
 
 export default router;
+
