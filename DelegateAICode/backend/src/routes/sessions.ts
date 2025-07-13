@@ -76,7 +76,6 @@ router.post('/', async (req: Request, res: Response) => {
         description,
         type,
         status: 'ACTIVE',
-        aiModel,
         aiTemperature,
         aiMaxTokens,
         debateStrength,

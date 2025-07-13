@@ -227,6 +227,16 @@ model Session {
   user           User      @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   campaignId String
+  aiTemperature   Float
+  aiMaxTokens     Int
+  systemPrompt    String?
+  voiceId         String?
+  voiceSpeed      Float
+  voiceLanguage   String
+  isPrivate       Boolean  @default(false)
+  messageCount    Int      @default(0)
+  totalTokens     Float    @default(0)
+  totalCost       Float    @default(0)
 
   // Session details
   status    SessionStatus
