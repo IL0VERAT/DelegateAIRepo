@@ -132,7 +132,7 @@ router.get('/plans', async (req, res) => {
 // CREATE CHECKOUT SESSION
 // ============================================================================
 
-router.post('/checkout', auth, rateLimiter({ windowMs: 60000, max: 5 }), async (req, res) => {
+router.post('/checkout', auth, rateLimiter({ windowMs: 60000, maxRequests: 5 }), async (req, res) => {
   try {
 
     if (!req.user) {
@@ -491,6 +491,10 @@ async function getOrCreateStripeCustomer(userId: string) {
     return await stripe.customers.retrieve(subscription.stripeCustomerId);
   }
 
+  if (!user.email || !user.name) {
+  throw new Error('User is missing required fields');
+  }
+
   const customer = await stripe.customers.create({
     email: user.email,
     name: user.name,
@@ -522,7 +526,7 @@ async function syncWithStripe(subscriptionId: string) {
   if (!subscription?.stripeSubscriptionId) return;
 
   try {
-    const stripeSubscription = await stripe.subscriptions.retrieve(subscription.stripeSubscriptionId);
+    const stripeSubscription = await stripe.subscriptions.retrieve(subscription.stripeSubscriptionId) as Stripe.Subscription;
     
     await prisma.subscription.update({
       where: { id: subscriptionId },
