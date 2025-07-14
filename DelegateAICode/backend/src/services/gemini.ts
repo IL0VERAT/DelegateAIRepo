@@ -294,6 +294,21 @@ class GeminiServiceEnhanced {
     }
   }
 
+  async detectLanguage(text: string): Promise<string> {
+  const result = await this.model.generateContent({
+    contents: [{
+      role: 'user',
+      parts: [{
+        text: `Please tell me, in one ISO-639-1 code (e.g. "en", "fr", "es"), what language this text is in: "${text}"`
+      }]
+    }],
+    // you can dial down tokens since this is short
+    generationConfig: { maxOutputTokens: 10 }
+  });
+  const response = await result.response;
+  return response.text().trim();
+}
+
   // ============================================================================
   // PRIVATE HELPER METHODS
   // ============================================================================

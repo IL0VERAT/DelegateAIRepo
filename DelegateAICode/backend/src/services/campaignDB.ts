@@ -1,5 +1,6 @@
-import { Prisma, PrismaClient, CharacterType } from '@prisma/client';
+import { Prisma, PrismaClient, CharacterType,SessionStatus } from '@prisma/client';
 import { logger } from '../utils/logger';
+import { geminiService } from './gemini'
 
 const prisma = new PrismaClient();
 
@@ -17,11 +18,11 @@ export const savePlayerCharacter = async (
       data: {
         userId,
         sessionId,
-        name: character.name || 'Unnamed Player',
         scenarioId,
-        content: character,
-        traits: character.traits || {},
-        type: 'PLAYER'
+        name: character.name || 'Unnamed Player',
+        content: character,          // Json column
+        traits: character.traits || {}, 
+        type: CharacterType.PLAYER
       }
     });
   } catch (error) {
@@ -85,9 +86,17 @@ export const saveCrisis = async (
 export const savePlayerInteraction = async (
   userId: string,
   sessionId: string,
-  data: { transcript: any; response: any; timestamp: Date }
+  data: { transcript: any; response: any; timestamp: Date; }
 ): Promise<void> => {
   try {
+
+     // let Gemini detect the language…
+    const language = await geminiService.detectLanguage(data.transcript)
+      .catch(err => {
+        logger.warn('Language detection failed, defaulting to "und":', err)
+        return 'und'  // und = undetermined
+      })
+
     await prisma.transcript.create({
       data: {
         userId,
@@ -96,7 +105,10 @@ export const savePlayerInteraction = async (
           transcript: data.transcript,
           response: data.response,
           timestamp: data.timestamp
-        }
+        },
+        originalText: data.transcript,
+        cleanedText:  data.response,
+        language, 
       }
     });
   } catch (error) {
@@ -111,16 +123,28 @@ export const savePlayerInteraction = async (
 export const saveCampaignSession = async (
   userId: string,
   sessionId: string,
-  sessionData: any
+  sessionData: { recordings?: any; status?: string }
 ): Promise<void> => {
   try {
+
+    let statusUpdate:
+      | { status: SessionStatus }
+      | Record<string, never> = {}
+
+    if (
+      sessionData.status &&
+      Object.values(SessionStatus).includes(
+        sessionData.status as SessionStatus
+      )
+    ) {
+      statusUpdate = { status: sessionData.status as SessionStatus }
+    }
+
     await prisma.session.update({
       where: { id: sessionId },
       data: {
-        transcript: sessionData.transcript,
         recordings: sessionData.recordings,
-        status: sessionData.status || 'ACTIVE',
-        updatedAt: new Date()
+        ...statusUpdate
       }
     });
   } catch (error) {
@@ -135,16 +159,15 @@ export const saveCampaignSession = async (
 export const loadCampaignSession = async (
   userId: string,
   sessionId: string
-): Promise<any> => {
+): Promise<{ recordings: any; transcripts: any[] } | null> => {
   try {
-    const session = await prisma.session.findFirst({
+    return await prisma.session.findFirst({
       where: { id: sessionId, userId },
-      include: {
-        Transcript: true
+      select: {
+        recordings: true,      // JSON column
+        transcripts: true      // relation field
       }
     });
-
-    return session;
   } catch (error) {
     logger.error('Failed to load campaign session:', error);
     throw error;
@@ -186,7 +209,16 @@ export const getCampaignHistory = async (
       where: { userId },
       orderBy: { createdAt: 'desc' },
       take: options.limit,
-      skip: options.offset
+      skip: options.offset,
+      select: {
+        id: true,
+        campaignId: true,
+        startedAt: true,
+        endedAt: true,
+        recordings: true,
+        createdAt: true,
+        updatedAt: true
+      }
     });
 
     return sessions;
