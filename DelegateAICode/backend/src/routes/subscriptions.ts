@@ -8,6 +8,7 @@
 import { Router } from 'express';
 import { PrismaClient } from '@prisma/client';
 import Stripe from 'stripe';
+import StripePkg from 'stripe';
 import { auth } from '../middleware/auth';
 import { rateLimiter } from '../middleware/rateLimiter';
 import logger from '../utils/logger';
@@ -17,6 +18,7 @@ const prisma = new PrismaClient();
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
   apiVersion: '2025-06-30.basil',
 });
+type StripeInvoiceWithSub = StripePkg.Invoice & { subscription: string };
 
 // ============================================================================
 // SUBSCRIPTION CONFIGURATION
@@ -421,7 +423,8 @@ router.post('/webhook', async (req, res) => {
         break;
 
       case 'customer.subscription.updated':
-        await handleSubscriptionUpdated(event.data.object as Stripe.Subscription);
+        const rawSub = event.data.object as Stripe.Subscription;
+        await handleSubscriptionUpdated(rawSub);
         break;
 
       case 'customer.subscription.deleted':
@@ -429,12 +432,20 @@ router.post('/webhook', async (req, res) => {
         break;
 
       case 'invoice.payment_succeeded':
-        await handlePaymentSucceeded(event.data.object as Stripe.Invoice);
+        {
+        // cast event.data.object to stronger type
+        const paidInvoice = event.data.object as StripeInvoiceWithSub;
+        await handlePaymentSucceeded(paidInvoice);
         break;
+        }
 
       case 'invoice.payment_failed':
-        await handlePaymentFailed(event.data.object as Stripe.Invoice);
+        {
+        // cast event.data.object to stronger type
+        const failInvoice = event.data.object as StripeInvoiceWithSub;
+        await handlePaymentFailed(failInvoice);
         break;
+        }
 
       default:
         logger.info('Unhandled event type:', event.type);
@@ -526,8 +537,16 @@ async function syncWithStripe(subscriptionId: string) {
   if (!subscription?.stripeSubscriptionId) return;
 
   try {
-    const stripeSubscription = await stripe.subscriptions.retrieve(subscription.stripeSubscriptionId) as Stripe.Subscription;
-    
+    const stripeSubscription = await stripe.subscriptions.retrieve(
+      subscription.stripeSubscriptionId,
+      { expand: ['items'] }
+    ) as unknown as Stripe.Subscription & {
+        current_period_start: number;
+        current_period_end: number;
+        cancel_at_period_end: boolean;
+        status: string;
+      };
+
     await prisma.subscription.update({
       where: { id: subscriptionId },
       data: {
@@ -548,7 +567,9 @@ async function handleCheckoutCompleted(session: Stripe.Checkout.Session) {
 
   if (!userId || !tier) return;
 
-  const stripeSubscription = await stripe.subscriptions.retrieve(session.subscription as string);
+  const stripeSubscription = await stripe.subscriptions.retrieve(
+  session.subscription as string
+  ) as Stripe.Subscription;
   const tierConfig = SUBSCRIPTION_TIERS[tier as keyof typeof SUBSCRIPTION_TIERS];
 
   await prisma.subscription.upsert({
@@ -623,9 +644,16 @@ async function handleSubscriptionDeleted(stripeSubscription: Stripe.Subscription
   });
 }
 
-async function handlePaymentSucceeded(invoice: Stripe.Invoice) {
+async function handlePaymentSucceeded(invoice: StripeInvoiceWithSub) {
+  const stripeSubscriptionId = invoice.subscription;
+
+  if (!stripeSubscriptionId) {
+    logger.warn(`Missing subscription ID for invoice ${invoice.id}`);
+    return;
+  }
+
   const subscription = await prisma.subscription.findFirst({
-    where: { stripeSubscriptionId: invoice.subscription as string }
+    where:{ stripeSubscriptionId }
   });
 
   if (!subscription) return;
@@ -633,7 +661,7 @@ async function handlePaymentSucceeded(invoice: Stripe.Invoice) {
   await prisma.invoice.create({
     data: {
       subscriptionId: subscription.id,
-      stripeInvoiceId: invoice.id,
+      stripeInvoiceId: invoice.id!,
       amount: invoice.amount_paid,
       currency: invoice.currency,
       status: 'PAID',
@@ -646,7 +674,7 @@ async function handlePaymentSucceeded(invoice: Stripe.Invoice) {
   });
 }
 
-async function handlePaymentFailed(invoice: Stripe.Invoice) {
+async function handlePaymentFailed(invoice: StripeInvoiceWithSub) {
   const subscription = await prisma.subscription.findFirst({
     where: { stripeSubscriptionId: invoice.subscription as string }
   });
@@ -656,7 +684,7 @@ async function handlePaymentFailed(invoice: Stripe.Invoice) {
   await prisma.invoice.create({
     data: {
       subscriptionId: subscription.id,
-      stripeInvoiceId: invoice.id,
+      stripeInvoiceId: invoice.id!,
       amount: invoice.amount_due,
       currency: invoice.currency,
       status: 'UNCOLLECTIBLE',
