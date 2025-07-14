@@ -70,7 +70,7 @@ router.get('/', async (req: Request, res: Response) => {
         audioDuration:c.audioDuration,
         status:       c.status,
         createdAt:    t.createdAt,
-        session:      t.session
+        session:      t.sessionId
       };
     });
 

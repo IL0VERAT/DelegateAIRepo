@@ -104,12 +104,17 @@ model Transcript {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
+  content Json
+
   originalText  String
   cleanedText   String
   language      String
   audioDuration Float?
   audioSize     Float?
   confidence    Float?
+
+  isRedacted Boolean   @default(false)
+  redactedAt DateTime?
 
   @@index([userId])
   @@index([sessionId])
