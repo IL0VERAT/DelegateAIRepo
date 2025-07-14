@@ -61,12 +61,12 @@ router.get('/profile', async (req: Request, res: Response) => {
 router.put('/profile', async (req: Request, res: Response) => {
   try {
     const userId = req.user!.id;
-    const { displayName, preferences, timezone, language } = req.body;
+    const { name, preferences, timezone, language } = req.body;
 
     const updatedUser = await prisma.user.update({
       where: { id: userId },
       data: {
-        displayName,
+        name,
         preferences,
         timezone,
         language,
@@ -75,7 +75,7 @@ router.put('/profile', async (req: Request, res: Response) => {
       select: {
         id: true,
         email: true,
-        displayName: true,
+        name: true,
         role: true,
         preferences: true,
         timezone: true,
@@ -152,7 +152,7 @@ router.get('/', requireAdmin, async (req: Request, res: Response) => {
         select: {
           id: true,
           email: true,
-          displayName: true,
+          name: true,
           role: true,
           emailVerified: true,
           isActive: true,
