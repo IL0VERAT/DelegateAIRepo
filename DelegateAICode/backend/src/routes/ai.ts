@@ -538,6 +538,6 @@ router.post('/test/:provider',
       timestamp: new Date().toISOString()
     });
   })
-);
+);*/
 
-export default router;*/
+export default router;
