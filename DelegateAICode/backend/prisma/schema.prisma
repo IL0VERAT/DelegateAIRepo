@@ -280,6 +280,7 @@ model Session {
   // Session data
   messages   Message[]
   recordings Json?
+  transcript Json?
 
   createdAt    DateTime       @default(now())
   updatedAt    DateTime       @updatedAt
