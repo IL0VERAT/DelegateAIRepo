@@ -423,9 +423,12 @@ router.post('/webhook', async (req, res) => {
         break;
 
       case 'customer.subscription.updated':
-        const rawSub = event.data.object as Stripe.Subscription;
-        await handleSubscriptionUpdated(rawSub);
+        {
+        // event.data.object.id is the subscription ID
+        const subId = (event.data.object as Stripe.Subscription).id;
+        await handleSubscriptionUpdated(subId);
         break;
+        }
 
       case 'customer.subscription.deleted':
         await handleSubscriptionDeleted(event.data.object as Stripe.Subscription);
@@ -568,8 +571,16 @@ async function handleCheckoutCompleted(session: Stripe.Checkout.Session) {
   if (!userId || !tier) return;
 
   const stripeSubscription = await stripe.subscriptions.retrieve(
-  session.subscription as string
-  ) as Stripe.Subscription;
+    session.subscription as string,
+    { expand: ['items'] }
+  );
+  const item = stripeSubscription.items.data[0];
+  if (!item) {
+    logger.warn(`No subscription items on ${stripeSubscription.id}`);
+    return;
+  }
+  const periodStart = item.current_period_start; // UNIX seconds
+  const periodEnd   = item.current_period_end;   // UNIX seconds
   const tierConfig = SUBSCRIPTION_TIERS[tier as keyof typeof SUBSCRIPTION_TIERS];
 
   await prisma.subscription.upsert({
@@ -579,19 +590,21 @@ async function handleCheckoutCompleted(session: Stripe.Checkout.Session) {
       status: stripeSubscription.status.toUpperCase() as any,
       stripeSubscriptionId: stripeSubscription.id,
       stripePriceId: tierConfig.stripePriceId!,
-      currentPeriodStart: new Date(stripeSubscription.current_period_start * 1000),
-      currentPeriodEnd: new Date(stripeSubscription.current_period_end * 1000),
+
+      currentPeriodStart: new Date(periodStart * 1000),
+      currentPeriodEnd:   new Date(periodEnd   * 1000),
+
       trialStart: stripeSubscription.trial_start ? new Date(stripeSubscription.trial_start * 1000) : null,
       trialEnd: stripeSubscription.trial_end ? new Date(stripeSubscription.trial_end * 1000) : null,
       limits: {
         upsert: {
           create: {
             ...tierConfig,
-            usageResetDate: new Date(stripeSubscription.current_period_end * 1000)
+            usageResetDate: new Date(periodEnd * 1000)
           },
           update: {
             ...tierConfig,
-            usageResetDate: new Date(stripeSubscription.current_period_end * 1000),
+            usageResetDate: new Date(periodEnd * 1000),
             // Reset usage counters
             usedVoiceMinutes: 0,
             usedCampaigns: 0,
@@ -607,14 +620,14 @@ async function handleCheckoutCompleted(session: Stripe.Checkout.Session) {
       status: stripeSubscription.status.toUpperCase() as any,
       stripeSubscriptionId: stripeSubscription.id,
       stripePriceId: tierConfig.stripePriceId!,
-      currentPeriodStart: new Date(stripeSubscription.current_period_start * 1000),
-      currentPeriodEnd: new Date(stripeSubscription.current_period_end * 1000),
+      currentPeriodStart: new Date(periodStart * 1000),
+      currentPeriodEnd:   new Date(periodEnd   * 1000),
       trialStart: stripeSubscription.trial_start ? new Date(stripeSubscription.trial_start * 1000) : null,
       trialEnd: stripeSubscription.trial_end ? new Date(stripeSubscription.trial_end * 1000) : null,
       limits: {
         create: {
           ...tierConfig,
-          usageResetDate: new Date(stripeSubscription.current_period_end * 1000)
+          usageResetDate: new Date(periodEnd * 1000)
         }
       }
     },
@@ -622,14 +635,25 @@ async function handleCheckoutCompleted(session: Stripe.Checkout.Session) {
   });
 }
 
-async function handleSubscriptionUpdated(stripeSubscription: Stripe.Subscription) {
+async function handleSubscriptionUpdated(subscriptionId: string) {
+  const stripeSub = await stripe.subscriptions.retrieve(subscriptionId, {
+    expand: ['items']
+  });
+  const item = stripeSub.items.data[0];
+  if (!item) {
+    logger.warn(`Subscription ${subscriptionId} has no items`);
+    return;
+  }
+  const periodStart = item.current_period_start!;
+  const periodEnd   = item.current_period_end!;
+
   await prisma.subscription.updateMany({
-    where: { stripeSubscriptionId: stripeSubscription.id },
+    where: { stripeSubscriptionId: subscriptionId },
     data: {
-      status: stripeSubscription.status.toUpperCase() as any,
-      currentPeriodStart: new Date(stripeSubscription.current_period_start * 1000),
-      currentPeriodEnd: new Date(stripeSubscription.current_period_end * 1000),
-      cancelAtPeriodEnd: stripeSubscription.cancel_at_period_end
+      status: stripeSub.status.toUpperCase() as any,
+      currentPeriodStart: new Date(periodStart * 1000),
+      currentPeriodEnd:   new Date(periodEnd   * 1000),
+      cancelAtPeriodEnd: stripeSub.cancel_at_period_end!
     }
   });
 }
