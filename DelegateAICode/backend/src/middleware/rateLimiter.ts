@@ -40,8 +40,8 @@ try {
 }
 
 interface RateLimitOptions {
-  windowMs: number;
-  maxRequests: number;
+  windowMs: number | ((req: Request) => number);
+  maxRequests: number | ((req: Request) => number);
   message?: string;
   skipSuccessfulRequests?: boolean;
   skipFailedRequests?: boolean;
@@ -65,13 +65,17 @@ export const rateLimiter = (options: RateLimitOptions) => {
     onLimitReached
   } = options;
 
+  const resolvedWindowMs = typeof windowMs === 'function' ? windowMs : () => windowMs;
+  const resolvedMaxRequests = typeof maxRequests === 'function' ? maxRequests : () => maxRequests;
+
   const limitConfig: any = {
-    windowMs,
-    max: maxRequests,
+    
+    windowMs: resolvedWindowMs as unknown,
+    max: resolvedMaxRequests,
     message: {
       error: 'Rate limit exceeded',
-      message,
-      retryAfter: Math.ceil(windowMs / 1000)
+      message: options.message || 'Too many requests, please wait 24 hours for your account to refresh',
+      retryAfter: (req: Request) => Math.ceil(resolvedWindowMs(req) / 1000)
     },
     standardHeaders: true,
     legacyHeaders: false,
@@ -105,6 +109,8 @@ export const rateLimiter = (options: RateLimitOptions) => {
     // Handler for when limit is reached
     handler: (req: Request, res: Response) => {
       const key = limitConfig.keyGenerator(req);
+      const userLimit = resolvedMaxRequests(req);
+      const retryAfterSec = Math.ceil(resolvedWindowMs(req) / 1000);
       
       logger.warn('Rate limit exceeded', {
         key,
@@ -121,9 +127,9 @@ export const rateLimiter = (options: RateLimitOptions) => {
       res.status(429).json({
         error: 'Rate limit exceeded',
         message,
-        retryAfter: Math.ceil(windowMs / 1000),
-        limit: maxRequests,
-        windowMs
+        retryAfter: retryAfterSec,
+        limit: userLimit,
+        windowMs:  resolvedWindowMs(req)
       });
     }
   };
