@@ -18,6 +18,10 @@ model User {
   avatar   String?
   role     Role    @default(USER)
 
+  preferences Json? // for UI prefs
+  timezone    String? // e.g. "America/New_York"
+  language    String? // e.g. "en-US"
+
   // Authentication
   emailVerified    DateTime?
   emailVerifyToken String?

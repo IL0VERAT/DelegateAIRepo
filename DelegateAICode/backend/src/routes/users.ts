@@ -25,7 +25,7 @@ router.get('/profile', async (req: Request, res: Response) => {
       select: {
         id: true,
         email: true,
-        displayName: true,
+        name: true,
         role: true,
         emailVerified: true,
         createdAt: true,
