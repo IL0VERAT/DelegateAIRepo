@@ -58,7 +58,7 @@ router.post('/gemini/generate', async (req: Request, res: Response) => {
         voiceType: settings?.voiceType || 'professional',
         language: settings?.language || 'en-US'
       },
-      characterPersonality
+      characterPersonality 
     });
 
     // Save generation record

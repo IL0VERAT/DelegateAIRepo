@@ -46,15 +46,17 @@ model User {
   sessions  Session[]
   campaigns CampaignParticipation[]
 
-  createdAt    DateTime       @default(now())
-  updatedAt    DateTime       @updatedAt
-  AuditLog     AuditLog[]
-  messages     Message[]
-  Transcript   Transcript[]
-  LoginLog     LoginLog[]
-  Crisis       Crisis[]
-  PlayerChoice PlayerChoice[]
-  Character    Character[]
+  createdAt       DateTime          @default(now())
+  updatedAt       DateTime          @updatedAt
+  AuditLog        AuditLog[]
+  messages        Message[]
+  Transcript      Transcript[]
+  LoginLog        LoginLog[]
+  Crisis          Crisis[]
+  PlayerChoice    PlayerChoice[]
+  Character       Character[]
+  AudioGeneration AudioGeneration[]
+  VoiceAssignment VoiceAssignment[]
 
   @@map("users")
 }
@@ -282,14 +284,45 @@ model Session {
   recordings Json?
   transcript Json?
 
-  createdAt    DateTime       @default(now())
-  updatedAt    DateTime       @updatedAt
-  transcripts  Transcript[]
-  Crisis       Crisis[]
-  PlayerChoice PlayerChoice[]
-  Character    Character[]
+  createdAt       DateTime          @default(now())
+  updatedAt       DateTime          @updatedAt
+  transcripts     Transcript[]
+  Crisis          Crisis[]
+  PlayerChoice    PlayerChoice[]
+  Character       Character[]
+  AudioGeneration AudioGeneration[]
+  VoiceAssignment VoiceAssignment[]
 
   @@map("sessions")
+}
+
+// record every time audio is generated
+model AudioGeneration {
+  id     String @id @default(cuid())
+  userId String
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  text      String
+  voiceId   String
+  provider  String
+  settings  Json?
+  timestamp DateTime @default(now())
+  Session   Session? @relation(fields: [sessionId], references: [id])
+  sessionId String?
+}
+
+// store per-session voice-to-character mapping
+model VoiceAssignment {
+  id        String  @id @default(cuid())
+  userId    String
+  user      User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  sessionId String
+  session   Session @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+
+  assignments Json
+  createdAt   DateTime @default(now())
+
+  @@unique([userId, sessionId])
 }
 
 model LoginLog {

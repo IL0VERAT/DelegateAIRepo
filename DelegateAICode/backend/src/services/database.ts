@@ -85,6 +85,63 @@ export const loadCampaignSession = async (
   return session;
 };
 
+export const saveAudioGeneration = async (
+  userId: string,
+  data: {
+    text: string;
+    voiceId: string;
+    provider: string;
+    settings?: Record<string, any>;
+    timestamp: Date;
+  }
+): Promise<void> => {
+  const db = getDatabase();
+  await db.audioGeneration.create({
+    data: {
+      userId,
+      text: data.text,
+      voiceId: data.voiceId,
+      provider: data.provider,
+      settings: data.settings || {},
+      timestamp: data.timestamp
+    }
+  });
+};
+
+export const saveVoiceAssignments = async (
+  userId: string,
+  sessionId: string,
+  assignments: any
+): Promise<void> => {
+  const db = getDatabase();
+  await db.voiceAssignment.upsert({
+    where: {
+      userId_sessionId: { userId, sessionId }
+    },
+    update: {
+      assignments
+    },
+    create: {
+      userId,
+      sessionId,
+      assignments
+    }
+  });
+};
+
+export const getVoiceAssignments = async (
+  userId: string,
+  sessionId: string
+): Promise<any | null> => {
+  const db = getDatabase();
+  const record = await db.voiceAssignment.findUnique({
+    where: {
+      userId_sessionId: { userId, sessionId }
+    }
+  });
+  return record?.assignments ?? null;
+};
+
 /**
  * Health check for database
  */
