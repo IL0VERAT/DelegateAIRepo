@@ -7,6 +7,7 @@
  */
 
 import express from 'express';
+import { NextFunction } from 'express';
 import { Request, Response } from 'express';
 import { auth } from '../middleware/auth';
 import { rateLimiter } from '../middleware/rateLimiter';
@@ -33,6 +34,10 @@ router.post('/gemini/generate', async (req: Request, res: Response) => {
   try {
     const { text, voiceId, settings, characterPersonality } = req.body;
     const userId = req.user?.id;
+
+    if (!userId) {
+      return res.status(401).json({ success: false, error: 'Unauthorized' });
+    }
 
     if (!text || !voiceId) {
       return res.status(400).json({
@@ -153,6 +158,10 @@ router.post('/save-assignments', async (req: Request, res: Response) => {
     const { sessionId, assignments } = req.body;
     const userId = req.user?.id;
 
+    if (!userId) {
+      return res.status(401).json({ success: false, error: 'Unauthorized' });
+    }
+
     if (!sessionId || !assignments) {
       return res.status(400).json({
         success: false,
@@ -187,6 +196,10 @@ router.get('/assignments/:sessionId', async (req: Request, res: Response) => {
     const { sessionId } = req.params;
     const userId = req.user?.id;
 
+    if (!userId) {
+      return res.status(401).json({ success: false, error: 'Unauthorized' });
+    }
+
     if (!sessionId) {
       return res.status(400).json({
         success: false,
@@ -220,7 +233,7 @@ router.get('/assignments/:sessionId', async (req: Request, res: Response) => {
 /**
  * Legacy generate-speech endpoint (redirects to Gemini)
  */
-router.post('/generate-speech', async (req: Request, res: Response) => {
+router.post('/generate-speech', async (req: Request, res: Response, next: NextFunction) => {
   logger.info('Legacy endpoint called, redirecting to Gemini');
   
   // Map legacy parameters to Gemini format
@@ -235,22 +248,36 @@ router.post('/generate-speech', async (req: Request, res: Response) => {
     }
   };
   
-  // Call Gemini endpoint
-  return router.stack.find(layer => 
-    layer.route?.path === '/gemini/generate'
-  )?.route?.stack?.[0]?.handle(req, res);
+   // find the /gemini/generate layer
+    const layer = router.stack.find(layer =>
+      Boolean(layer.route?.path === '/gemini/generate')
+    );
+    
+    if (!layer||!layer.route) {
+      return next();  // nothing to redirect to
+    }
+    
+    // invoke its handler with (req, res, next)
+    return layer.route.stack[0].handle(req, res, next);
 });
 
 /**
  * Legacy available-voices endpoint (redirects to Gemini)
  */
-router.get('/available-voices', async (req: Request, res: Response) => {
+router.get('/available-voices', async (req: Request, res: Response, next: NextFunction) => {
   logger.info('Legacy voices endpoint called, redirecting to Gemini');
-  
-  // Call Gemini voices endpoint
-  return router.stack.find(layer => 
-    layer.route?.path === '/gemini/voices'
-  )?.route?.stack?.[0]?.handle(req, res);
+
+  // find the /gemini/voices layer
+    const layer = router.stack.find(layer =>
+      Boolean(layer.route?.path === '/gemini/voices')
+    );
+    
+    if (!layer||!layer.route) {
+      return next();  // nothing to redirect to
+    }
+    
+    // invoke its handler with (req, res, next)
+    return layer.route.stack[0].handle(req, res, next);
 });
 
 /**
