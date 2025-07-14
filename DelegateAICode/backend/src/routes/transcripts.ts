@@ -30,7 +30,7 @@ router.get('/', async (req: Request, res: Response) => {
       where.sessionId = sessionId;
     }
 
-    const [transcripts, total] = await Promise.all([
+    const [raws, total] = await Promise.all([
       prisma.transcript.findMany({
         where,
         orderBy: { createdAt: 'desc' },
@@ -38,12 +38,7 @@ router.get('/', async (req: Request, res: Response) => {
         take: limitNum,
         select: {
           id: true,
-          originalText: true,
-          cleanedText: true,
-          confidence: true,
-          language: true,
-          audioDuration: true,
-          status: true,
+          content: true,   // <-- JSON blob
           createdAt: true,
           session: {
             select: {
@@ -56,6 +51,28 @@ router.get('/', async (req: Request, res: Response) => {
       }),
       prisma.transcript.count({ where })
     ]);
+
+    const transcripts = raws.map(t => {
+      const c = t.content as {
+        originalText?: string;
+        cleanedText?: string;
+        confidence?: number;
+        language?: string;
+        audioDuration?: number;
+        status?: string;
+      };
+      return {
+        id:           t.id,
+        originalText: c.originalText,
+        cleanedText:  c.cleanedText,
+        confidence:   c.confidence,
+        language:     c.language,
+        audioDuration:c.audioDuration,
+        status:       c.status,
+        createdAt:    t.createdAt,
+        session:      t.session
+      };
+    });
 
     res.json({
       transcripts,

@@ -101,9 +101,12 @@ model Transcript {
   sessionId String
   session   Session @relation(fields: [sessionId], references: [id], onDelete: Cascade)
 
-  content   Json
   createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
+  originalText  String
+  cleanedText   String
+  language      String
   audioDuration Float?
   audioSize     Float?
   confidence    Float?
