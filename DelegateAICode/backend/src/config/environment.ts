@@ -117,7 +117,6 @@ export const environment: Environment = {
   
   // AI Services
   GEMINI_API_KEY: process.env.GEMINI_API_KEY,
-  OPENAI_API_KEY: process.env.OPENAI_API_KEY,
   
   // File Storage
   AWS_ACCESS_KEY_ID: process.env.AWS_ACCESS_KEY_ID,
