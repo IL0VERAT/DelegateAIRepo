@@ -5,10 +5,6 @@
  * Centralized environment variable management with validation
  */
 
-import dotenv from 'dotenv';
-
-// Load environment variables
-dotenv.config();
 
 interface Environment {
   NODE_ENV: string;
