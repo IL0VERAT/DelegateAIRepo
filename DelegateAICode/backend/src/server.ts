@@ -10,6 +10,8 @@ if (process.env.NODE_ENV !== 'production') {
   dotenv.config();
 }
 
+console.log('→ DATABASE_URL =', process.env.DATABASE_URL);
+
 import { initializeDatabase } from './services/database';
 import logger from './utils/logger';
 import { environment } from './config/environment';
