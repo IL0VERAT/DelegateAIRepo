@@ -5,6 +5,12 @@
  * Centralized environment variable management with validation
  */
 
+import dotenv from 'dotenv';
+
+if (process.env.NODE_ENV !== 'production') {
+  dotenv.config();
+}
+
 
 interface Environment {
   NODE_ENV: string;
@@ -41,7 +47,7 @@ interface Environment {
   
   // AI Services
   GEMINI_API_KEY?: string;
-  OPENAI_API_KEY?: string;
+  //OPENAI_API_KEY?: string;
   
   // File Storage
   AWS_ACCESS_KEY_ID?: string;
