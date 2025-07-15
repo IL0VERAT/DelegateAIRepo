@@ -13,6 +13,7 @@ if (process.env.NODE_ENV !== 'production') {
 
 import express from 'express';
 import cors from 'cors';
+import { initializeDatabase } from './services/database';
 import helmet from 'helmet';
 import compression from 'compression';
 import { PrismaClient } from '@prisma/client';
@@ -197,5 +198,28 @@ app.listen(PORT, () => {
   logger.info(`💳 Stripe: ${environment.STRIPE_SECRET_KEY ? 'Configured' : 'Not configured'}`);
   logger.info(`📧 Email: ${environment.SMTP_HOST ? 'Configured' : 'Not configured'}`);
 });
+
+async function boot() {
+  try {
+    // 1) Initialize DB  
+    await initializeDatabase()
+    logger.info('Database initialized')
+
+    // 2) Then start mounting routes
+    const app = express()
+    // … your app.use() calls …
+
+    const PORT = environment.PORT || 3001
+    app.listen(PORT, () => {
+      logger.info(`Server running on port ${PORT}`)
+    })
+
+  } catch (err) {
+    console.error('Failed to start app:', err)
+    process.exit(1)
+  }
+}
+
+boot()
 
 export default app;
