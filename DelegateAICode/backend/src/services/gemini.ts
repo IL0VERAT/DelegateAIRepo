@@ -5,6 +5,7 @@
  * Enhanced Gemini service with native audio generation capabilities.
  * Supports both text generation and voice synthesis for Model UN campaigns.
  */
+console.log('→ GEMINI_API_KEY:', process.env.GEMINI_API_KEY);
 
 import { GoogleGenerativeAI } from '@google/generative-ai';
 import { environment } from '../config/environment';
