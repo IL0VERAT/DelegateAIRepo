@@ -28,6 +28,10 @@ WORKDIR /app
 # Create non-root user
 RUN addgroup -g 1001 -S nodejs && adduser -S nodejs -u 1001
 
+# Create logs folder and give ownership to the non-root user
+RUN mkdir -p logs \
+ && chown -R nodejs:nodejs logs
+
 # Copy build artifacts from builder
 COPY --from=builder --chown=nodejs:nodejs /app/backend/dist ./dist
 COPY --from=builder --chown=nodejs:nodejs /app/backend/node_modules ./node_modules
