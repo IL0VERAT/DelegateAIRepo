@@ -14,30 +14,12 @@
 import { Request, Response, NextFunction } from 'express';
 import rateLimit from 'express-rate-limit';
 import RedisStore, { RedisReply } from 'rate-limit-redis';
-import Redis, { Command, Redis as RedisClient  } from 'ioredis';
-import { redisConfig, securityConfig } from '../config/environment';
+import { Command, Redis as RedisClient  } from 'ioredis';
+import { getRedisClient } from '../services/redis';
 import logger from '../utils/logger';
 
-// Redis client for rate limiting
-let redisClient: Redis | null = null;
-
-try {
-  redisClient = new Redis(redisConfig.REDIS_URL, {
-    maxRetriesPerRequest: redisConfig.REDIS_MAX_RETRIES ?? 5,
-    retryStrategy: (times) => Math.min(times * 50, 2000),
-    keyPrefix: `${redisConfig.REDIS_KEY_PREFIX ?? ''}cache:`
-  });
-
-  redisClient.on('connect', () => {
-    logger.info('✅ Redis connected for rate limiting');
-  });
-
-  redisClient.on('error', (error) => {
-    logger.error('❌ Redis rate limiting error:', error);
-  });
-} catch (error) {
-  logger.warn('⚠️ Redis not available for rate limiting, using memory store');
-}
+// Grab the single shared Redis client (or null if unavailable)
+const redisClient: RedisClient | null = getRedisClient();
 
 interface RateLimitOptions {
   windowMs: number | ((req: Request) => number);
