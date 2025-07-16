@@ -9,8 +9,6 @@ import express, { Request, Response } from 'express';
 import { PrismaClient }  from '@prisma/client';
 import geminiService from '../services/gemini';
 import { logger } from '../utils/logger';
-//import { openaiService } from '../services/openai';
-//import { elevenLabsService } from '../services/elevenlabs';
 
 const router = express.Router();
 const prisma = new PrismaClient();

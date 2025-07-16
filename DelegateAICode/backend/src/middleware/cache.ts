@@ -89,3 +89,5 @@ export const cache = (options: {
     }
   };
 };
+
+export default cache;

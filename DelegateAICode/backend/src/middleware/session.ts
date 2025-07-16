@@ -11,34 +11,14 @@
 
 import { Request, Response, NextFunction } from 'express';
 import session from 'express-session';
-//import RedisStore from 'connect-redis';
-//import RedisStoreModule from 'connect-redis';
-import Redis from 'ioredis';
+import { getRedisClient } from '../services/redis';
 import { redisConfig, securityConfig, environmentInfo } from '../config/environment';
 import logger from '../utils/logger';
 
 const RedisStore = require('connect-redis')(session);
 
-// Redis client for sessions
-let redisClient: Redis | null = null;
-
-try {
-  redisClient = new Redis(redisConfig.REDIS_URL, {
-    maxRetriesPerRequest: redisConfig.REDIS_MAX_RETRIES ?? 5,
-    retryStrategy: (times) => Math.min(times * 50, 2000),
-    keyPrefix: `${redisConfig.REDIS_KEY_PREFIX ?? ''}cache:`
-  });
-
-  redisClient.on('connect', () => {
-    logger.info('✅ Redis connected for sessions');
-  });
-
-  redisClient.on('error', (error) => {
-    logger.error('❌ Redis session error:', error);
-  });
-} catch (error) {
-  logger.warn('⚠️ Redis not available for sessions, using memory store');
-}
+// Grab the single shared Redis client (or null if unavailable)
+const redisClient = getRedisClient();
 
 // Session configuration
 const sessionConfig: session.SessionOptions = {
@@ -62,6 +42,8 @@ if (redisClient) {
     prefix: 'sess:',
     ttl: 24 * 60 * 60 // 24 hours in seconds
   });
+  } else {
+  logger.warn('⚠️ Redis not available for sessions, using memory store');
 }
 
 const sessionMiddleware = session(sessionConfig);
