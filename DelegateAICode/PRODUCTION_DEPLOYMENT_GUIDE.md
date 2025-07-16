@@ -115,61 +115,8 @@ VITE_ENABLE_VOICE_FEATURES=true
 VITE_ENABLE_SUBSCRIPTION_FEATURES=true
 ```
 
-## Database Configuration
 
-### 1. Initialize Database
 
-```bash
-# Navigate to backend directory
-cd backend
-
-# Install dependencies 
-npm install
-
-# Ensure lockfile is up to date; run this only if regenerating
-npm ci || npm install
-
-# Generate Prisma client
-npx prisma generate
-
-# Run database migrations
-npx prisma migrate deploy
-
-# Seed initial data (optional)
-npx prisma db seed
-```
-
-### 2. Database Backup Strategy
-
-Set up automated backups:
-
-```bash
-# Create backup script
-cat > /opt/delegate-ai/backup-db.sh << 'EOF'
-#!/bin/bash
-BACKUP_DIR="/opt/backups/delegate-ai"
-DATE=$(date +%Y%m%d_%H%M%S)
-FILENAME="delegate_ai_backup_${DATE}.sql"
-
-mkdir -p $BACKUP_DIR
-
-pg_dump $DATABASE_URL > "${BACKUP_DIR}/${FILENAME}"
-
-# Compress backup
-gzip "${BACKUP_DIR}/${FILENAME}"
-
-# Remove backups older than 30 days
-find $BACKUP_DIR -name "*.sql.gz" -mtime +30 -delete
-
-echo "Backup completed: ${FILENAME}.gz"
-EOF
-
-chmod +x /opt/delegate-ai/backup-db.sh
-
-# Add to crontab for daily backups at 2 AM
-crontab -e
-# Add: 0 2 * * * /opt/delegate-ai/backup-db.sh
-```
 
 ## Stripe Integration
 
