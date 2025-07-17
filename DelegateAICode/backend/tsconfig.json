@@ -6,6 +6,8 @@
     "moduleResolution": "node",
     "outDir": "./dist",
     "rootDir": "./src",
+    "sourceMap": true,          // ← emit .js.map files
+    "inlineSources": true,  
     "strict": true,
     "esModuleInterop": true,
     "skipLibCheck": true,

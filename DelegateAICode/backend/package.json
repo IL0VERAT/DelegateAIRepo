@@ -5,7 +5,7 @@
   "main": "dist/server.js",
   "scripts": {
     "dev": "tsx watch src/server.ts",
-    "build": "tsc",
+    "build": "tsc && npm run sentry:sourcemaps",
     "start": "node dist/server.js",
     "test": "jest",
     "test:watch": "jest --watch",
@@ -14,11 +14,13 @@
     "prisma:generate": "prisma generate",
     "prisma:migrate": "prisma migrate dev",
     "prisma:deploy": "prisma migrate deploy",
-    "prisma:seed": "tsx src/prisma/seed.ts"
+    "prisma:seed": "tsx src/prisma/seed.ts",
+    "sentry:sourcemaps": "sentry-cli sourcemaps inject --org delegateai --project delegate-ai-backend dist/ && sentry-cli sourcemaps upload --org delegateai --project delegate-ai-backend dist/"
   },
   "dependencies": {
     "@google/generative-ai": "^0.2.1",
     "@prisma/client": "^6.11.1",
+    "@sentry/cli": "^2.47.1",
     "@sentry/node": "^9.40.0",
     "@sentry/profiling-node": "^9.40.0",
     "bcrypt": "^6.0.0",
