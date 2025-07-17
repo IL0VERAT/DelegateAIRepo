@@ -5,7 +5,7 @@
  * Main server file updated to include subscription management
  */
 
-require("../instrument.js");  
+require("./instrument.js");  
 
 const Sentry = require("@sentry/node");
 
