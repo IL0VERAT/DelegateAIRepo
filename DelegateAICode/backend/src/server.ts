@@ -5,9 +5,27 @@
  * Main server file updated to include subscription management
  */
 
-import "./instrument";  
+import * as Sentry from "@sentry/node";
+import { nodeProfilingIntegration } from "@sentry/profiling-node";
 
-const Sentry = require("@sentry/node");
+Sentry.init({
+  dsn: process.env.SENTRY_DSN,
+  integrations: [
+    nodeProfilingIntegration(),
+  ],
+  // Tracing
+  tracesSampleRate: 1.0, //  Capture 100% of the transactions
+  // Set sampling rate for profiling - this is evaluated only once per SDK.init call
+  profileSessionSampleRate: 1.0,
+  // Trace lifecycle automatically enables profiling during active traces
+  profileLifecycle: 'trace',
+
+  // Setting this option to true will send default PII data to Sentry.
+  // For example, automatic IP address collection on events
+  sendDefaultPii: true,
+});
+
+//const Sentry = require("@sentry/node");
 
 import dotenv from 'dotenv';
 if (process.env.NODE_ENV !== 'production') {
@@ -55,12 +73,6 @@ async function boot() {
     // 3) Create and configure Express app
     const app = express();
     app.set('trust proxy', 1);
-
-     // ─── SENTRY MIDDLEWARE ───────────────────────────
-    // Must come BEFORE any other middleware or routes
-    app.use(Sentry.Handlers.requestHandler());
-    app.use(Sentry.Handlers.tracingHandler());
-    // ──────────────────────────────────────────────────
 
     app.use(helmet({
       contentSecurityPolicy: {
@@ -130,10 +142,9 @@ async function boot() {
       });
     });
 
-     // ─── SENTRY ERROR HANDLER ─────────────────────────
-    // Must come AFTER all routes and BEFORE your custom error handler
-    app.use(Sentry.Handlers.errorHandler());
-    // ──────────────────────────────────────────────────
+    //ENTRY ERROR HANDLER 
+    Sentry.setupExpressErrorHandler(app);
+  
 
     app.use(errorHandler);
 
@@ -163,4 +174,3 @@ async function boot() {
 
 // Actually boot the app
 boot();
-
