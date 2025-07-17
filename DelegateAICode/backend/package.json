@@ -15,7 +15,7 @@
     "prisma:migrate": "prisma migrate dev",
     "prisma:deploy": "prisma migrate deploy",
     "prisma:seed": "tsx src/prisma/seed.ts",
-    "sentry:sourcemaps": "sentry-cli sourcemaps inject --org delegateai --project delegate-ai-backend dist/ && sentry-cli sourcemaps upload --org delegateai --project delegate-ai-backend dist/"
+     "sentry:sourcemaps": "echo SENTRY_AUTH_TOKEN=$SENTRY_AUTH_TOKEN && sentry-cli releases new $SENTRY_RELEASE || true && sentry-cli releases files $SENTRY_RELEASE upload-sourcemaps dist --rewrite --strip-common-prefix dist"
   },
   "dependencies": {
     "@google/generative-ai": "^0.2.1",
