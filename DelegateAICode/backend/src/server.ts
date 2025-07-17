@@ -135,12 +135,6 @@ async function boot() {
     app.use(Sentry.Handlers.errorHandler());
     // ──────────────────────────────────────────────────
 
-    // ─── TEST: DEBUG SENTRY ROUTE ──────────────────────────
-app.get('/debug-sentry', (req, res) => {
-  throw new Error('My first Sentry error!');
-});
-// ──────────────────────────────────────────────────
-
     app.use(errorHandler);
 
     // 5) Graceful shutdown
