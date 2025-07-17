@@ -75,8 +75,8 @@ async function boot() {
     app.set('trust proxy', 1);
 
     //SENTRY TEST; REMOVE!!
-    app.get('/debug-sentry', (_req, _res) => {
-      throw new Error('🚨 Sentry is hooked up!');
+    app.get("/debug-sentry", function mainHandler(req, res) {
+      throw new Error("My first Sentry error!");
       });
 
     app.use(helmet({
