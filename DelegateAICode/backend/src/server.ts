@@ -74,6 +74,11 @@ async function boot() {
     const app = express();
     app.set('trust proxy', 1);
 
+    //SENTRY TEST; REMOVE!!
+    app.get('/debug-sentry', (_req, _res) => {
+      throw new Error('🚨 Sentry is hooked up!');
+      });
+
     app.use(helmet({
       contentSecurityPolicy: {
         directives: {
