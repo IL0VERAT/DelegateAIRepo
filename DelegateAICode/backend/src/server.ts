@@ -5,6 +5,10 @@
  * Main server file updated to include subscription management
  */
 
+require("../instrument.js");  
+
+const Sentry = require("@sentry/node");
+
 import dotenv from 'dotenv';
 if (process.env.NODE_ENV !== 'production') {
   dotenv.config();
@@ -51,6 +55,12 @@ async function boot() {
     // 3) Create and configure Express app
     const app = express();
     app.set('trust proxy', 1);
+
+     // ─── SENTRY MIDDLEWARE ───────────────────────────
+    // Must come BEFORE any other middleware or routes
+    app.use(Sentry.Handlers.requestHandler());
+    app.use(Sentry.Handlers.tracingHandler());
+    // ──────────────────────────────────────────────────
 
     app.use(helmet({
       contentSecurityPolicy: {
@@ -119,6 +129,12 @@ async function boot() {
         timestamp: new Date().toISOString()
       });
     });
+
+     // ─── SENTRY ERROR HANDLER ─────────────────────────
+    // Must come AFTER all routes and BEFORE your custom error handler
+    app.use(Sentry.Handlers.errorHandler());
+    // ──────────────────────────────────────────────────
+    
     app.use(errorHandler);
 
     // 5) Graceful shutdown
@@ -147,3 +163,4 @@ async function boot() {
 
 // Actually boot the app
 boot();
+
