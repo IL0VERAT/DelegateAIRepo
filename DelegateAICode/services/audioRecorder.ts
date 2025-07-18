@@ -331,9 +331,9 @@ export class AudioRecorder {
   }
 
   // Static method to check if audio recording is supported
-  static isSupported(): boolean {
+  static async isSupported(): Promise<boolean> {
     return !!(navigator.mediaDevices && 
-             navigator.mediaDevices.getUserMedia && 
+             await navigator.mediaDevices.getUserMedia() && 
              window.MediaRecorder);
   }
 

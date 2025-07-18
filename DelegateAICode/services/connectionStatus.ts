@@ -11,7 +11,7 @@
  * - Graceful offline mode degradation
  */
 
-import { config } from '../config/environment';
+import  config  from '../config/environment'; 
 
 // Error codes for different connection issues
 export enum ConnectionErrorCode {
@@ -121,8 +121,8 @@ export const DEFAULT_RETRY_CONFIGS: Record<string, RetryConfig> = {
   }
 };
 
-// Error code to issue mapping
-export const ERROR_CODE_MAPPINGS: Record<ConnectionErrorCode, Omit<ConnectionIssue, 'timestamp'>> = {
+// Error code to issue mapping --> allowing for partial; may wish to add all at later date
+export const ERROR_CODE_MAPPINGS: Partial<Record<ConnectionErrorCode, Omit<ConnectionIssue, 'timestamp'>>> = {
   [ConnectionErrorCode.NETWORK_OFFLINE]: {
     code: ConnectionErrorCode.NETWORK_OFFLINE,
     severity: IssueSeverity.HIGH,

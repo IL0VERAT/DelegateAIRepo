@@ -81,7 +81,7 @@ class ApiInterceptor {
     try {
       // Add authentication header if we have a token and this is an API call
       if (this.shouldAddAuthHeader(config.url)) {
-        const token = authService.getAccessToken();
+        const token = authService.getAuthToken();
         if (token) {
           config.headers = {
             ...config.headers,
@@ -121,6 +121,7 @@ class ApiInterceptor {
    */
   private async handleUnauthorizedResponse(config: RequestConfig, originalFetch: typeof fetch): Promise<Response> {
     // If we're already refreshing, queue this request
+    const refreshed = await authService.refreshTokens();
     if (this.isRefreshing) {
       console.log('⏳ API Interceptor: Queueing request during token refresh');
       return this.queueRequest(config, originalFetch);
