@@ -10,11 +10,11 @@
  * ENHANCED: Added speech speed control instructions for Gemini
  */
 
-import { toast } from 'sonner@2.0.3';
-import { safeGetEnv } from '../config/env-utils';
+import { toast } from 'sonner';
+import { getEnvVar, getEnvBoolean} from '../config/env-utils';
 
 // Types for AI responses
-export interface AIResponse {
+ interface AIResponse {
   content: string;
   model: string;
   usage?: {
@@ -25,13 +25,13 @@ export interface AIResponse {
   metadata?: Record<string, any>;
 }
 
-export interface AIMessage {
+ interface AIMessage {
   role: 'user' | 'assistant' | 'system';
   content: string;
   timestamp?: Date;
 }
 
-export interface AIConfig {
+ interface AIConfig {
   model: string;
   temperature?: number;
   maxTokens?: number;
@@ -54,7 +54,8 @@ class AIServiceManager {
   private async initialize(): Promise<void> {
     try {
       // Get Gemini API key from environment using safe access
-      this.geminiApiKey = safeGetEnv('VITE_GEMINI_API_KEY') || null;
+      const raw = getEnvVar('VITE_GEMINI_API_KEY', '');
+      this.geminiApiKey = raw ? raw : null;
       
       if (!this.geminiApiKey) {
         console.warn('⚠️ No Gemini API key found - AI features will be limited');
