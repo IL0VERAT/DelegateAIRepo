@@ -133,8 +133,9 @@ class AuthService {
         const response = await apiService.get('/auth/me');
 
         if (response.success) {
-          this.currentUser = response.data;
-          this.updateStoredUserData(this.currentUser);
+          const user = response.data; 
+          this.currentUser = user;
+          this.updateStoredUserData(user);
           return this.currentUser;
         } else {
           this.clearAuthData();
@@ -161,8 +162,9 @@ class AuthService {
       }
 
       if (this.currentUser) {
-        this.currentUser = { ...this.currentUser, ...response.data };
-        this.updateStoredUserData(this.currentUser);
+        const updatedUser: User = { ...this.currentUser, ...response.data };
+        this.currentUser = updatedUser;
+        this.updateStoredUserData(updatedUser);
       }
 
       logger.info('User data updated successfully');
