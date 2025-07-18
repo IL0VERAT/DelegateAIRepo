@@ -18,8 +18,6 @@ export type EnvValue = string | number | boolean | undefined;
 /**
  * Get environment variable with type safety
  */
-export function getEnvVar(key: string): string | undefined;
-export function getEnvVar(key: string, defaultValue: string): string;
 export function getEnvVar(key: string, defaultValue?: string): string | undefined {
   if (typeof window === 'undefined') {
     return defaultValue;
@@ -197,7 +195,7 @@ export function getEnvWithPrefix(prefix: string): Record<string, string> {
 /**
  * Validate environment configuration
  */
-export interface EnvValidationRule {
+interface EnvValidationRule {
   key: string;
   required?: boolean;
   type?: 'string' | 'number' | 'boolean' | 'url' | 'json' | 'array';
