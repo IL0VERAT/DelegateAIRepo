@@ -9,7 +9,7 @@
 // COMMON API TYPES
 // ============================================================================
 
-export interface ApiResponse<T = any> {
+interface ApiResponse<T = any> {
   success: boolean;
   data?: T;
   error?: string;
@@ -17,7 +17,7 @@ export interface ApiResponse<T = any> {
   code?: string;
 }
 
-export interface PaginatedResponse<T> {
+interface PaginatedResponse<T> {
   data: T[];
   pagination: {
     page: number;
@@ -27,7 +27,7 @@ export interface PaginatedResponse<T> {
   };
 }
 
-export interface ApiError {
+interface ApiError {
   code: string;
   message: string;
   details?: any;
@@ -37,13 +37,13 @@ export interface ApiError {
 // REQUEST/RESPONSE TYPES
 // ============================================================================
 
-export interface RequestOptions extends RequestInit {
+interface RequestOptions extends RequestInit {
   timeout?: number;
   retries?: number;
   retryDelay?: number;
 }
 
-export interface UploadProgressCallback {
+interface UploadProgressCallback {
   (progress: number): void;
 }
 
@@ -51,24 +51,24 @@ export interface UploadProgressCallback {
 // AUTHENTICATION TYPES
 // ============================================================================
 
-export interface LoginRequest {
+interface LoginRequest {
   email: string;
   password: string;
 }
 
-export interface RegisterRequest {
+interface RegisterRequest {
   email: string;
   password: string;
   name?: string;
 }
 
-export interface AuthResponse {
+interface AuthResponse {
   user: User;
   token: string;
   refreshToken?: string;
 }
 
-export interface User {
+interface User {
   id: string;
   email: string;
   name?: string;
@@ -83,7 +83,7 @@ export interface User {
 // SUBSCRIPTION TYPES
 // ============================================================================
 
-export interface Subscription {
+interface Subscription {
   id: string;
   tier: 'FREE' | 'PRO' | 'ENTERPRISE' | 'LIFETIME';
   status: 'ACTIVE' | 'TRIALING' | 'PAST_DUE' | 'CANCELED' | 'UNPAID';
@@ -97,7 +97,7 @@ export interface Subscription {
   invoices?: Invoice[];
 }
 
-export interface SubscriptionLimits {
+interface SubscriptionLimits {
   monthlyVoiceMinutes: number;
   monthlyCampaigns: number;
   monthlyAIInteractions: number;
@@ -112,7 +112,7 @@ export interface SubscriptionLimits {
   usageResetDate: string;
 }
 
-export interface Invoice {
+interface Invoice {
   id: string;
   amount: number;
   currency: string;
@@ -130,7 +130,7 @@ export interface Invoice {
 // CAMPAIGN TYPES
 // ============================================================================
 
-export interface Campaign {
+interface Campaign {
   id: string;
   title: string;
   subtitle: string;
@@ -155,7 +155,7 @@ export interface Campaign {
   updatedAt: string;
 }
 
-export interface CampaignSession {
+interface CampaignSession {
   id: string;
   campaignId: string;
   userId: string;
@@ -175,7 +175,7 @@ export interface CampaignSession {
 // MESSAGE TYPES
 // ============================================================================
 
-export interface Message {
+interface Message {
   id: string;
   sessionId: string;
   senderId: string;
@@ -187,7 +187,7 @@ export interface Message {
   timestamp: string;
 }
 
-export interface ChatMessage {
+interface ChatMessage {
   role: 'user' | 'assistant' | 'system';
   content: string;
   timestamp?: string;
@@ -198,7 +198,7 @@ export interface ChatMessage {
 // VOICE TYPES
 // ============================================================================
 
-export interface VoiceSettings {
+interface VoiceSettings {
   enabled: boolean;
   autoplay: boolean;
   speechRate: number;
@@ -206,7 +206,7 @@ export interface VoiceSettings {
   characterVoices: Record<string, string>;
 }
 
-export interface VoiceResponse {
+interface VoiceResponse {
   audioUrl: string;
   text: string;
   duration: number;
@@ -217,7 +217,7 @@ export interface VoiceResponse {
 // ERROR CODES
 // ============================================================================
 
-export enum ApiErrorCode {
+enum ApiErrorCode {
   UNAUTHORIZED = 'UNAUTHORIZED',
   FORBIDDEN = 'FORBIDDEN',
   NOT_FOUND = 'NOT_FOUND',
@@ -234,14 +234,14 @@ export enum ApiErrorCode {
 // USAGE TRACKING TYPES
 // ============================================================================
 
-export interface UsageRecord {
+interface UsageRecord {
   type: 'VOICE_MINUTES' | 'CAMPAIGN_SESSION' | 'AI_INTERACTION' | 'EXPORT';
   amount: number;
   metadata?: any;
   timestamp: string;
 }
 
-export interface UsageLimit {
+interface UsageLimit {
   allowed: boolean;
   remaining?: number;
   limit?: number;
@@ -252,7 +252,7 @@ export interface UsageLimit {
 // ADMIN TYPES
 // ============================================================================
 
-export interface AdminStats {
+interface AdminStats {
   totalUsers: number;
   activeUsers: number;
   totalSessions: number;
@@ -260,14 +260,14 @@ export interface AdminStats {
   revenue: number;
 }
 
-export interface SystemHealth {
+interface SystemHealth {
   status: 'healthy' | 'degraded' | 'unhealthy';
   services: Record<string, ServiceHealth>;
   uptime: number;
   version: string;
 }
 
-export interface ServiceHealth {
+interface ServiceHealth {
   status: 'healthy' | 'unhealthy';
   responseTime?: number;
   lastCheck: string;
