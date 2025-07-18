@@ -6,6 +6,7 @@
  */
 
 import { apiService } from './api';
+import type { ApiResponse } from './api';
 import { logger } from '../utils/logger';
 
 // ============================================================================
@@ -59,45 +60,68 @@ class AuthService {
   }
 
   async login(email: string, password: string): Promise<boolean> {
-    try {
+     try {
       logger.info('Attempting login for user:', email);
 
-      const response = await apiService.post('/auth/login', { email, password });
+      const apiResponse = await apiService
+        .post<AuthResponse>('/auth/login', { email, password })
+        .then(res => res as ApiResponse<AuthResponse>);
 
-      if (!response.success) {
-        logger.error('Login failed:', response.error);
+      if (!apiResponse.success || !apiResponse.data) {
+        logger.error('Login failed:', apiResponse.error);
         return false;
       }
 
-      const authData: AuthResponse = response.data;
-      this.setAuthData(authData);
-
+      this.setAuthData(apiResponse.data);
       logger.info('Login successful');
       return true;
-
     } catch (error) {
       logger.error('Login error:', error);
       return false;
     }
   }
 
+  async refreshTokens(): Promise<boolean> {
+    if (!this.refreshTokens) {
+      logger.warn('No refresh token available');
+      return false;
+    }
+
+  try {
+    const ApiResponse = await apiService.post<AuthResponse>(
+      '/auth/refresh',
+      { refreshToken: this.refreshTokens }
+    )
+    .then(res => res as ApiResponse<AuthResponse>);
+
+    if (ApiResponse.success && ApiResponse.data) {
+      this.setAuthData(ApiResponse.data);
+      return true;
+    }
+    logger.warn('Token refresh responded unsuccessfully');
+    return false;
+  } catch {
+    logger.error('Token refresh error:', Error);
+    return false;
+  }
+}
+
   async register(email: string, password: string, name?: string): Promise<boolean> {
     try {
       logger.info('Attempting registration for user:', email);
 
-      const response = await apiService.post('/auth/register', { email, password, name });
+      const apiResponse = await apiService
+        .post<AuthResponse>('/auth/register', { email, password, name })
+        .then(res => res as ApiResponse<AuthResponse>);
 
-      if (!response.success) {
-        logger.error('Registration failed:', response.error);
+      if (!apiResponse.success || !apiResponse.data) {
+        logger.error('Registration failed:', apiResponse.error);
         return false;
       }
 
-      const authData: AuthResponse = response.data;
-      this.setAuthData(authData);
-
+      this.setAuthData(apiResponse.data);
       logger.info('Registration successful');
       return true;
-
     } catch (error) {
       logger.error('Registration error:', error);
       return false;
@@ -130,13 +154,13 @@ class AuthService {
       }
 
       if (this.authToken) {
-        const response = await apiService.get('/auth/me');
+        const apiResponse = await apiService.get('/auth/me');
 
-        if (response.success) {
-          const user = response.data; 
+        if (apiResponse.success && apiResponse.data) {
+          const user = apiResponse.data as User; 
           this.currentUser = user;
           this.updateStoredUserData(user);
-          return this.currentUser;
+          return user;
         } else {
           this.clearAuthData();
         }
@@ -154,17 +178,17 @@ class AuthService {
     try {
       logger.info('Updating user data');
 
-      const response = await apiService.put('/auth/profile', userData);
+      const apiResponse = await apiService.put('/auth/profile', userData);
 
-      if (!response.success) {
-        logger.error('User update failed:', response.error);
+      if (!apiResponse.success || !apiResponse.data) {
+        logger.error('User update failed:', apiResponse.error);
         return false;
       }
 
       if (this.currentUser) {
-        const updatedUser: User = { ...this.currentUser, ...response.data };
+        const updatedUser: User = { ...this.currentUser, ...apiResponse.data };
         this.currentUser = updatedUser;
-        this.updateStoredUserData(updatedUser);
+        this.updateStoredUserData(updatedUser); 
       }
 
       logger.info('User data updated successfully');
@@ -199,20 +223,28 @@ class AuthService {
   private setAuthData(authData: AuthResponse): void {
     this.currentUser = authData.user;
     this.authToken = authData.token;
+    this.refreshToken = authData.refreshToken ?? null;
 
     if (typeof window !== 'undefined') {
       localStorage.setItem('auth_token', this.authToken);
       localStorage.setItem('user_data', JSON.stringify(this.currentUser));
+      if (this.refreshToken) {
+        localStorage.setItem('refresh_token', this.refreshToken);
+      } else {
+        localStorage.removeItem('refresh_token');
+      }
     }
   }
 
   private clearAuthData(): void {
     this.currentUser = null;
     this.authToken = null;
+    this.refreshToken = null;
 
     if (typeof window !== 'undefined') {
       localStorage.removeItem('auth_token');
       localStorage.removeItem('user_data');
+      localStorage.removeItem('refresh_token');
     }
   }
 

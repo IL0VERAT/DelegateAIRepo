@@ -480,6 +480,17 @@ Provide a single paragraph update (2-3 sentences max).`;
    * Evaluate if campaign can be resolved
    */
   private async evaluateResolution(): Promise<CampaignResolution> {
+     if (!this.timeline) {
+    // you can return a default or throw here --> EDIT BASED ON PERFORMANCE
+    return {
+      type: 'stalemate',
+      description: 'No timeline available',
+      playerScore: 0,
+      relationshipChanges: {},
+      outcomes: [],
+      canEndEarly: false
+    };
+  }
     try {
       // Calculate resolution score based on various factors
       const timeProgress = this.timeline?.progressPercentage || 0;
@@ -553,7 +564,7 @@ Provide a single paragraph update (2-3 sentences max).`;
    * Generate campaign outcomes
    */
   private generateOutcomes(score: number): string[] {
-    const outcomes = [];
+    const outcomes: string[] = [];
     
     if (score >= 0.8) {
       outcomes.push('International cooperation strengthened');
