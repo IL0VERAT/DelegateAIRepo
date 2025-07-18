@@ -128,7 +128,7 @@ export function ComprehensiveGuide(): JSX.Element {
   const { user, isAuthenticated } = useAuth();
   const [activeTab, setActiveTab] = useState('overview');
 
-  const isAdmin = user?.role === 'admin' || user?.email === 'your-admin-email@domain.com';
+  const isAdmin = user?.role === 'ADMIN' || user?.email === 'your-admin-email@domain.com';
 
   return (
     <div className="container mx-auto p-6 max-w-7xl">

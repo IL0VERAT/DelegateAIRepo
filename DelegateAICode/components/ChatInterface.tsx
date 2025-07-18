@@ -176,7 +176,7 @@ How can I assist you today?`,
     if (!content.trim() || isLoading) return;
 
     // Check rate limits
-    const isAdmin = user?.role === 'admin';
+    const isAdmin = user?.role === 'ADMIN';
     const isDemoMode = !isAuthenticated;
     
     if (!isAdmin && !isDemoMode) {

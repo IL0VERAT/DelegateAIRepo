@@ -8,3 +8,14 @@ declare module 'figma:asset/*' {
   const url: string;
   export default url;
 }
+
+interface ImportMetaEnv {
+  readonly VITE_API_BASE_URL: string;
+  readonly VITE_WS_URL: string;
+  // …all the other VITE_ vars you use…
+  readonly VITE_LOG_LEVEL: 'debug' | 'info' | 'warn' | 'error';
+}
+
+interface ImportMeta {
+  readonly env: ImportMetaEnv;
+}

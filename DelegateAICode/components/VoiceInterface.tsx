@@ -546,7 +546,7 @@ export function VoiceInterface(): JSX.Element {
 
     try {
       // Check and record rate limit usage for user input
-      const isAdmin = user?.role === 'admin';
+      const isAdmin = user?.role === 'ADMIN';
       const isDemoMode = !isAuthenticated; // Demo mode if not authenticated
       rateLimitService.recordWordUsage(speechText, isAdmin, isDemoMode);
       

@@ -86,7 +86,7 @@ export function HelpPage(): JSX.Element {
   const isAdmin = useMemo(() => {
     try {
       if (!user || !isAuthenticated) return false;
-      return user.role === 'admin' || user.email === 'your-admin-email@domain.com';
+      return user.role === 'ADMIN' || user.email === 'your-admin-email@domain.com';
     } catch (error) {
       console.warn('Error checking admin status:', error);
       return false;

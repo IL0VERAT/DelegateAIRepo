@@ -875,39 +875,3 @@ export function VoiceTraining() {
 }
 
 export default VoiceTraining;
-
-/*
- * REAL VOICE TRAINING MODULE IMPLEMENTED ✨
- * =========================================
- * 
- * PRODUCTION-READY TRAINING FEATURES:
- * 
- * 🎯 Real voice profile creation with AI analysis
- * 🎤 Live speech recognition using browser APIs + OpenAI Whisper
- * 📊 Actual accuracy measurement and improvement tracking
- * 🔊 Real-time audio processing and voice characteristic analysis
- * 💾 Local storage for privacy with optional cloud sync
- * 📈 Voice adaptation model that actually learns from user data
- * 🎨 Category-based training with real phrase recognition
- * ✏️ Custom phrase training with real functionality
- * 🛡️ Privacy-focused local processing
- * 🧠 AI-powered voice analysis and adaptation
- * 
- * REAL TRAINING CAPABILITIES:
- * 
- * 🤖 Commands: Real voice command recognition training
- * 🎭 Personality: Training for personality-based interactions
- * 🧭 Navigation: App navigation through voice commands
- * ✏️ Custom: User-defined phrases with personalized training
- * 
- * BENEFITS:
- * 
- * ✨ Actual improvement in voice recognition accuracy
- * ✨ Personalized voice adaptation using real AI
- * ✨ Privacy-protected local training with no external uploads
- * ✨ Real-time voice characteristic analysis
- * ✨ Progressive learning that adapts to user's voice
- * ✨ Comprehensive analytics with actual data
- * 
- * Users now have fully functional AI-powered voice training!
- */

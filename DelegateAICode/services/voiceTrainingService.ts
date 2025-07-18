@@ -11,6 +11,8 @@
  * - Voice model personalization
  */
 
+//Update to Gemini
+
 import { openaiConfig, voiceConfig } from '../config/environment';
 
 interface VoiceTrainingConfig {

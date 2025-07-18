@@ -1,5 +1,5 @@
 /**
- * VOICE-TO-VOICE SERVICE WITH LOCAL STORAGE
+ * VOICE-TO-VOICE SERVICE WITH LOCAL STORAGE --> need to be concerned about Postgres or Redis then?
  * =========================================
  * 
  * Enhanced voice-to-voice conversational AI service that works entirely

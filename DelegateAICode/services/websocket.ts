@@ -11,6 +11,8 @@
  * - Connection state management
  */
 
+//Update to Gemini
+
 import { websocketConfig, openaiConfig, config } from '../config/environment';
 
 interface WebSocketConfig {

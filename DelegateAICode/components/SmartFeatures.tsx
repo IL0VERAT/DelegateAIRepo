@@ -62,7 +62,6 @@ import {
   Keyboard,
   Eye,
   Ear,
-  Microphone,
   Speaker
 } from 'lucide-react';
 
@@ -72,7 +71,7 @@ export function SmartFeatures(): JSX.Element {
   const [activeTab, setActiveTab] = useState('overview');
   const [demoMode, setDemoMode] = useState('voice-recognition');
 
-  const isAdmin = user?.role === 'admin' || user?.email === 'your-admin-email@domain.com';
+  const isAdmin = user?.role === 'ADMIN' || user?.email === 'your-admin-email@domain.com';
 
   return (
     <div className="container mx-auto p-6 max-w-7xl">
