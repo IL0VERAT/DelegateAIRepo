@@ -33,59 +33,15 @@ import { Separator } from './ui/separator';
 import { toast } from 'sonner';
 import { adminCampaignService } from '../services/adminCampaignService';
 import { logger } from '../utils/logger';
+import type {
+  CampaignTemplate,
+  CampaignDocument
+} from "../services/campaigns";
 
 // ============================================================================
 // TYPES AND INTERFACES
 // ============================================================================
 
-interface CampaignTemplate {
-  id?: string;
-  title: string;
-  subtitle: string;
-  description: string;
-  category: 'crisis' | 'negotiation' | 'security' | 'humanitarian' | 'economic' | 'environmental' | 'political' | 'social';
-  difficulty: 'beginner' | 'intermediate' | 'advanced' | 'expert';
-  duration: number;
-  playerCount: number;
-  aiDelegates: number;
-  theme: string;
-  context: string;
-  objectives: string[];
-  scenarios: string[];
-  keyIssues: string[];
-  icon: string;
-  color: string;
-  bgGradient: string;
-  featured: boolean;
-  new: boolean;
-  published: boolean;
-  createdAt?: string;
-  updatedAt?: string;
-  createdBy?: string;
-  documents?: CampaignDocument[];
-  aiAnalysis?: {
-    documentSummary?: string;
-    enhancedObjectives?: string[];
-    suggestedScenarios?: string[];
-    keyInsights?: string[];
-  };
-}
-
-interface CampaignDocument {
-  id: string;
-  name: string;
-  type: string;
-  size: number;
-  url: string;
-  uploadedAt: string;
-  processed: boolean;
-  analysis?: {
-    summary: string;
-    keyPoints: string[];
-    relevantTopics: string[];
-    suggestedIntegration: string;
-  };
-}
 
 interface DocumentUploadProgress {
   file: File;

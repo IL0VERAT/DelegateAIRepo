@@ -11,59 +11,16 @@
 
 import { api } from './api';
 import { logger } from '../utils/logger';
+import type {
+  CampaignTemplate,
+  CampaignDocument,
+  DocumentAnalysis
+} from "./campaigns";
 
 // ============================================================================
 // TYPES AND INTERFACES
 // ============================================================================
 
-interface CampaignTemplate {
-  id?: string;
-  title: string;
-  subtitle: string;
-  description: string;
-  category: string;
-  difficulty: string;
-  duration: number;
-  playerCount: number;
-  aiDelegates: number;
-  theme: string;
-  context: string;
-  objectives: string[];
-  scenarios: string[];
-  keyIssues: string[];
-  icon: string;
-  color: string;
-  bgGradient: string;
-  featured: boolean;
-  new: boolean;
-  published: boolean;
-  createdAt?: string;
-  updatedAt?: string;
-  createdBy?: string;
-  documents?: CampaignDocument[];
-  aiAnalysis?: any;
-}
-
-interface CampaignDocument {
-  id: string;
-  name: string;
-  type: string;
-  size: number;
-  url: string;
-  uploadedAt: string;
-  processed: boolean;
-  analysis?: DocumentAnalysis;
-}
-
-interface DocumentAnalysis {
-  summary: string;
-  keyPoints: string[];
-  relevantTopics: string[];
-  suggestedIntegration: string;
-  suggestedScenarios?: string[];
-  enhancedObjectives?: string[];
-  keyInsights?: string[];
-}
 
 interface UploadProgress {
   loaded: number;

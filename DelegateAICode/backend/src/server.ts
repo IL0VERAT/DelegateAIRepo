@@ -8,11 +8,13 @@
 import * as Sentry from "@sentry/node";
 import { nodeProfilingIntegration } from "@sentry/profiling-node";
 
+console.log("→ SENTRY_DSN:", process.env.SENTRY_DSN); //REMOVE
 Sentry.init({
   dsn: process.env.SENTRY_DSN,
   integrations: [
     nodeProfilingIntegration(),
   ],
+  debug: true,  //REMOVE
   // Tracing
   tracesSampleRate: 1.0, //  Capture 100% of the transactions
   // Set sampling rate for profiling - this is evaluated only once per SDK.init call
@@ -25,7 +27,7 @@ Sentry.init({
   sendDefaultPii: true,
 });
 
-//const Sentry = require("@sentry/node");
+Sentry.captureMessage("Sentry is configured!"); //REMOVE
 
 import dotenv from 'dotenv';
 if (process.env.NODE_ENV !== 'production') {
@@ -75,7 +77,7 @@ async function boot() {
     app.set('trust proxy', 1);
 
     //SENTRY TEST; REMOVE!!
-    app.get("/debug-sentry", function mainHandler(req, res) {
+    app.get("/debug-sentry", (_req, _res) => {
       throw new Error("My first Sentry error!");
       });
 
