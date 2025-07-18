@@ -27,7 +27,6 @@ Sentry.init({
   sendDefaultPii: true,
 });
 
-Sentry.captureMessage("Sentry is configured!"); //REMOVE
 
 import dotenv from 'dotenv';
 if (process.env.NODE_ENV !== 'production') {
@@ -75,11 +74,6 @@ async function boot() {
     // 3) Create and configure Express app
     const app = express();
     app.set('trust proxy', 1);
-
-    //SENTRY TEST; REMOVE!!
-    app.get("/debug-sentry", (_req, _res) => {
-      throw new Error("My first Sentry error!");
-      });
 
     app.use(helmet({
       contentSecurityPolicy: {
