@@ -16,6 +16,7 @@
 import { useState } from 'react';
 import { useApp } from './AppContext';
 import { useAuth } from './AuthContext';
+import type { CurrentView } from './AppContext';
 import { Button } from './ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from './ui/card';
 import { Badge } from './ui/badge';
@@ -54,15 +55,15 @@ import {
   ExternalLink,
   Target
 } from 'lucide-react';
-import { config } from '../config/environment';
+import  config  from '../config/environment';
 
-// Import the logo image
-import projectDelegateLogo from 'figma:asset/4f2992a59b773cf322400bb3e2ac13b4f63fe517.png';
+// Import the logo image --> FIX LATER
+//import projectDelegateLogo from 'figma:asset/4f2992a59b773cf322400bb3e2ac13b4f63fe517.png';
 
 interface MenuItem {
   title: string;
   icon: React.ComponentType<{ className?: string }>;
-  view: string;
+  view: CurrentView;
   badge?: string;
   description?: string;
   adminOnly?: boolean;
@@ -80,7 +81,7 @@ export function AppSidebar() {
   const [showUserMenu, setShowUserMenu] = useState(false);
 
   // Check if user is admin
-  const isAdmin = user?.role === 'admin' || user?.email === 'your-admin-email@domain.com'; // Replace with your email
+  const isAdmin = user?.role === 'ADMIN' || user?.email === 'your-admin-email@domain.com'; // Replace with your email
 
   // Define menu sections with admin access
   const menuSections: MenuSection[] = [
@@ -202,7 +203,7 @@ export function AppSidebar() {
     return true;
   });
 
-  const handleMenuClick = (view: string) => {
+  const handleMenuClick = (view: CurrentView) => {
     setCurrentView(view);
   };
 
@@ -237,7 +238,7 @@ export function AppSidebar() {
               {/* Full-width rectangular logo container with elegant styling */}
               <div className="relative flex items-center justify-center p-2.5 bg-white/3 backdrop-blur-sm rounded-lg border border-brand-blue/10 hover:border-brand-blue/20 transition-all duration-300 hover:scale-102 cursor-pointer shadow-sm hover:shadow-md w-full">
                 <img 
-                  src={projectDelegateLogo}
+                  //src={projectDelegateLogo} --> FIX HERE!!
                   alt="Project Delegate Logo"
                   className="w-full h-10 object-contain rounded-lg transition-all duration-300 group-hover:scale-105"
                   style={{
@@ -371,7 +372,7 @@ export function AppSidebar() {
                   </div>
                   <div className="flex-1 min-w-0">
                     <p className="font-medium truncate text-sm">
-                      {user.displayName || user.email?.split('@')[0]}
+                      {user.name || user.email?.split('@')[0]}
                     </p>
                     <div className="flex items-center gap-2 mt-1">
                       <p className="text-xs text-muted-foreground truncate flex-1">
@@ -438,7 +439,7 @@ export function AppSidebar() {
             </Card>
 
             {/* Demo Mode Indicator */}
-            {config.enableMockData && (
+            {config.ENABLE_MOCK_DATA && (
               <Card className="border-amber-200 bg-amber-50 dark:bg-amber-950/20 dark:border-amber-800">
                 <CardContent className="p-3">
                   <div className="flex items-center gap-2">
@@ -462,9 +463,9 @@ export function AppSidebar() {
             <CardContent className="p-3">
               <div className="text-center space-y-2">
                 <p className="text-sm text-muted-foreground">
-                  {config.enableMockData ? 'Demo Mode - No sign in required' : 'Please sign in to continue'}
+                  {config.ENABLE_MOCK_DATA ? 'Demo Mode - No sign in required' : 'Please sign in to continue'}
                 </p>
-                {!config.enableMockData && (
+                {!config.ENABLE_MOCK_DATA && (
                   <Button
                     variant="outline"
                     size="sm"
@@ -485,69 +486,3 @@ export function AppSidebar() {
     </Sidebar>
   );
 }
-
-/**
- * SIDEBAR WITH EXTRA PROMINENT HEADER TEXT AND OPTIMAL POSITIONING
- * ================================================================
- * 
- * ✨ MAXIMUM PROMINENCE ACHIEVED:
- * - Extra prominent "Delegate AI" header text with 22px font size for maximum impact
- * - Enhanced font weight (700 for "Delegate", 800 for "AI") for superior visibility
- * - Advanced typography with subtle text shadows, letter spacing, and glow effects
- * - Header text positioned optimally higher in sidebar for better visual hierarchy
- * - Full-width logo maintained for strong brand presence
- * - Rectangular styling with rounded-lg corners preserved throughout
- * 
- * 🎨 ENHANCED LAYOUT STRUCTURE:
- * ```
- * ┌─────────────────────────────────────┐
- * │ ████████ FULL-WIDTH LOGO ██████████ │  ← Spans entire width
- * │ AI ASSISTANT PLATFORM               │  ← Branding (higher position)
- * │                                     │  ← Minimal spacing (4px)
- * │      DELEGATE AI                    │  ← EXTRA PROMINENT (22px)
- * │            [👑 Admin]               │  ← Admin badge when present
- * ├─────────────────────────────────────┤
- * │ Main Features                       │  ← Navigation menu
- * │ • Chat                              │
- * │ • Voice                             │
- * └─────────────────────────────────────┘
- * ```
- * 
- * 🎯 MAXIMUM IMPACT FEATURES:
- * - **22px font size**: Up from 20px for maximum visual prominence and readability
- * - **Enhanced weights**: 700 for "Delegate", 800 for "AI" for superior contrast
- * - **Advanced effects**: Multi-layered text shadows, subtle glow, and filter effects
- * - **Optimal positioning**: Branding text spacing reduced from 8px to 4px (`mt-2` → `mt-1`)
- * - **Perfect hierarchy**: Logo → Branding → Header → Status → Navigation
- * - **Brand color matching**: "AI" uses exact logo blue with enhanced prominence effects
- * 
- * 🎨 EXTRA PROMINENT STYLING:
- * - **Typography**: 1.375rem (22px) with enhanced line-height (1.15) for better proportion
- * - **Weight distribution**: Graduated weights from 700 to 800 for visual emphasis
- * - **Advanced shadows**: Multi-layer text shadows with brand blue tinting
- * - **Subtle glow**: Drop-shadow filters for enhanced depth and visibility
- * - **Letter spacing**: Fine-tuned -0.015em for optimal readability at larger size
- * - **Background effects**: Gradient text effects for subtle depth (CSS compliant)
- * 
- * 📍 OPTIMIZED POSITIONING:
- * - **Logo section**: Maintained prominence with full-width rectangular design
- * - **Branding closer**: Reduced from `mt-2` (8px) to `mt-1` (4px) for tighter hierarchy
- * - **Header higher**: Positioned optimally closer to branding for better visual flow
- * - **Status below**: Admin badge positioned below header for clean organization
- * - **Navigation clear**: Proper separation maintained between header and menu
- * 
- * 📱 RESPONSIVE EXCELLENCE:
- * - **Desktop**: Full 22px prominence with all advanced effects and styling
- * - **Mobile**: Scales to 20px while maintaining prominence and all visual effects
- * - **Accessibility**: High contrast support removes effects when needed
- * - **Reduced motion**: Respects user preferences by disabling effects appropriately
- * 
- * 🎭 PRESERVED FEATURES:
- * - **All hover effects**: Logo animations and scaling preserved perfectly
- * - **Smooth transitions**: 300ms duration maintained for all interactions
- * - **Hardware acceleration**: Performance optimizations retained
- * - **Brand consistency**: All colors and effects maintain perfect brand alignment
- * 
- * The "Delegate AI" header now achieves maximum visual prominence while being
- * optimally positioned higher in the sidebar for perfect professional impact!
- */

@@ -18,6 +18,7 @@ interface Environment {
   APP_NAME: string;
   APP_URL: string;
   ENVIRONMENT: string;
+  ENABLE_MOCK_DATA: boolean;
   
   // Feature Flags
   ENABLE_ANALYTICS: boolean;
@@ -73,6 +74,7 @@ export const environment: Environment = {
   APP_NAME: getEnvVar('VITE_APP_NAME', 'Delegate AI'),
   APP_URL: getEnvVar('VITE_APP_URL', 'http://localhost:5173'),
   ENVIRONMENT: getEnvVar('VITE_ENVIRONMENT', 'development'),
+  ENABLE_MOCK_DATA: getEnvBoolean('VITE_ENABLE_MOCK_DATA', false),
   
   // Feature Flags
   ENABLE_ANALYTICS: getEnvBoolean('VITE_ENABLE_ANALYTICS', false),
