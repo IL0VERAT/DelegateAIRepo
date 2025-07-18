@@ -11,7 +11,7 @@
  * - Local storage persistence with fallback
  */
 
-import { toast } from 'sonner@2.0.3';
+import { toast } from 'sonner';
 
 // Rate limiting constants
 const DAILY_WORD_LIMIT = 3000;

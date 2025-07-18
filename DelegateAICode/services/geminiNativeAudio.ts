@@ -2,8 +2,7 @@
  * GEMINI NATIVE AUDIO SERVICE
  * ===========================
  * 
- * Production-ready service for generating speech using Gemini 2.5 Native Audio.
- * Replaces ElevenLabs TTS with Google's native audio generation.
+ * Service for generating speech using Gemini 2.5 Native Audio.
  */
 
 //NOTE TO SELF --> AI can pick from any of the available for voices and assign it to the correct character; --> ensure this functions

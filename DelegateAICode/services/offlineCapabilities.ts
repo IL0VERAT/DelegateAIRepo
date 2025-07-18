@@ -10,7 +10,7 @@
  * - Seamless online/offline transitions
  */
 
-import { config } from '../config/environment';
+import  config  from '../config/environment';
 
 export enum OfflineCapability {
   // Core Features
@@ -163,7 +163,7 @@ class OfflineCapabilitiesService {
     
     try {
       // Register service worker if available
-      if ('serviceWorker' in navigator && !config.enableMockData) {
+      if ('serviceWorker' in navigator && !config.ENABLE_MOCK_DATA) {
         // In production, you would register your service worker here
         // await navigator.serviceWorker.register('/sw.js');
         console.log('Service worker would be registered in production');
