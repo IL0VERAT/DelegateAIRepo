@@ -11,10 +11,23 @@ declare module 'figma:asset/*' {
 }
 
 interface ImportMetaEnv {
+  // your custom vars:
   readonly VITE_API_BASE_URL: string;
   readonly VITE_WS_URL: string;
-  // …all the other VITE_ vars you use…
+  readonly VITE_APP_NAME: string;
+  readonly VITE_APP_URL: string;
+  readonly VITE_ENVIRONMENT: string;
+  readonly VITE_ENABLE_MOCK_DATA: string;        // note: env vars are strings
+  readonly VITE_ENABLE_ANALYTICS: string;
+  readonly VITE_ENABLE_VOICE_FEATURES: string;
+  readonly VITE_ENABLE_SUBSCRIPTION_FEATURES: string;
+  readonly VITE_DEBUG_MODE: string;
+  readonly VITE_STRIPE_PUBLISHABLE_KEY?: string;
+  readonly VITE_GOOGLE_ANALYTICS_ID?: string;
+  readonly VITE_HOTJAR_ID?: string;
   readonly VITE_LOG_LEVEL: 'debug' | 'info' | 'warn' | 'error';
+  readonly VITE_ENABLE_REMOTE_LOGGING: string;
+  readonly VITE_ENABLE_LOG_STORAGE: string;
 }
 
 interface ImportMeta {
