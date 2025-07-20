@@ -68,7 +68,7 @@ interface AutonomousAction {
 class CampaignOrchestrator {
   private timeline: CampaignTimeline | null = null;
   private session: any = null;
-  private orchestrationInterval: NodeJS.Timeout | null = null;
+  private orchestrationInterval: ReturnType<typeof setInterval> | null = null;
   private autonomousActions: AutonomousAction[] = [];
   private resolutionThreshold = 0.8; // 80% resolution threshold for early completion
   private isActive = false;
@@ -335,7 +335,7 @@ class CampaignOrchestrator {
    * Generate system-driven action when AI response fails
    */
   private generateSystemAction(phase: CampaignPhase): AutonomousAction {
-    const systemActions = {
+    const systemActions: Record<string, string[]> = {
       'opening': [
         'A new diplomatic position paper is circulated',
         'Additional stakeholders express interest in the negotiations',
