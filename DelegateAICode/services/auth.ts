@@ -37,6 +37,7 @@ export interface AuthResponse {
 class AuthService {
   private currentUser: User | null = null;
   private authToken: string | null = null;
+  private refreshToken: string | null = null;
 
   constructor() {
     this.initializeAuth();
@@ -82,7 +83,7 @@ class AuthService {
   }
 
   async refreshTokens(): Promise<boolean> {
-    if (!this.refreshTokens) {
+    if (!this.refreshToken) {
       logger.warn('No refresh token available');
       return false;
     }
@@ -90,7 +91,7 @@ class AuthService {
   try {
     const ApiResponse = await apiService.post<AuthResponse>(
       '/auth/refresh',
-      { refreshToken: this.refreshTokens }
+      { refreshToken: this.refreshToken }
     )
     .then(res => res as ApiResponse<AuthResponse>);
 
