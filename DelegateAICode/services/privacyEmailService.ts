@@ -18,7 +18,7 @@ interface PrivacyRequestEmailData {
 
 class PrivacyEmailService {
   private developerEmail: string = 'privacy@delegate-ai.com'; // Replace with actual developer email
-  private isProduction: boolean = process.env.NODE_ENV === 'production';
+  private isProduction: boolean = import.meta.env.NODE_ENV === 'production';
 
   /**
    * Send privacy request notification to development team

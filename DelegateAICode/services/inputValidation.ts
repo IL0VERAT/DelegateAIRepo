@@ -507,7 +507,7 @@ class InputValidator {
     }
 
     // Log to console in development
-    if (process.env.NODE_ENV === 'development') {
+    if (import.meta.env.NODE_ENV === 'development') {
       console.warn('🔒 Input Security Alert:', logEntry);
     }
   }
