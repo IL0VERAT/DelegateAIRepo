@@ -1,4 +1,14 @@
 /// <reference types="vite/client" />
+declare module '*.png';
+declare module '*.jpg';
+declare module '*.jpeg';
+declare module '*.svg';
+
+declare module 'figma:asset/*' {
+  /** When you do `import img from 'figma:asset/...png'`, you’ll get back a string URL */
+  const url: string;
+  export default url;
+}
 
 interface ImportMetaEnv {
   readonly VITE_API_BASE_URL: string
