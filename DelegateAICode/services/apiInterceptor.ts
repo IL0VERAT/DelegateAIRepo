@@ -105,13 +105,13 @@ class ApiInterceptor {
 
       // Log successful requests (in development)
       if (process.env.NODE_ENV === 'development' && config.url.includes('/api/')) {
-        console.log(`✅ API ${config.method} ${config.url} - ${response.status}`);
+        console.log(`API ${config.method} ${config.url} - ${response.status}`);
       }
 
       return response;
 
     } catch (error) {
-      console.error(`❌ API ${config.method} ${config.url} - Error:`, error);
+      console.error(`API ${config.method} ${config.url} - Error:`, error);
       throw error;
     }
   }
@@ -193,7 +193,7 @@ class ApiInterceptor {
    */
   private async retryRequest(config: RequestConfig, originalFetch: typeof fetch): Promise<Response> {
     // Get the new token
-    const newToken = authService.getAccessToken();
+    const newToken = authService.getAuthToken();
     
     if (newToken) {
       config.headers = {
@@ -216,7 +216,7 @@ class ApiInterceptor {
   /**
    * PROCESS QUEUED REQUESTS
    */
-  private async processQueuedRequests(originalFetch: typeof fetch): void {
+  private async processQueuedRequests(originalFetch: typeof fetch): Promise<void> {
     const requests = [...this.pendingRequests];
     this.pendingRequests = [];
 
@@ -310,7 +310,7 @@ export async function enhancedFetch(url: string, options: FetchOptions = {}): Pr
     
     // Add auth header if not skipped
     if (!skipAuth && url.includes('/api/')) {
-      const token = authService.getAccessToken();
+      const token = authService.getAuthToken();
       if (token) {
         headers.set('Authorization', `Bearer ${token}`);
       }
@@ -334,7 +334,7 @@ export async function enhancedFetch(url: string, options: FetchOptions = {}): Pr
       const refreshed = await authService.refreshTokens();
       if (refreshed) {
         // Retry with new token
-        const newToken = authService.getAccessToken();
+        const newToken = authService.getAuthToken();
         if (newToken) {
           headers.set('Authorization', `Bearer ${newToken}`);
         }
