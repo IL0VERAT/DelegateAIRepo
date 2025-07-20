@@ -13,12 +13,12 @@
 
 //Update to Gemini
 
-import { openaiConfig, voiceConfig } from '../config/environment';
+import { geminiConfig, voiceConfig } from '../config/environment';
 
 interface VoiceTrainingConfig {
   enableMockData: boolean;
   localStorageKey: string;
-  openaiApiKey: string;
+  geminiApiKey: string;
   sampleRate: number;
   channels: number;
   enableCloudSync: boolean;
@@ -123,7 +123,7 @@ class VoiceTrainingService {
     this.config = {
       enableMockData: config.enableMockData || false,
       localStorageKey: config.localStorageKey || 'voice-training-data',
-      openaiApiKey: config.openaiApiKey || openaiConfig.apiKey,
+      geminiApiKey: config.geminiApiKey || geminiConfig.apiKey,
       sampleRate: config.sampleRate || voiceConfig.audioSampleRate,
       channels: config.channels || voiceConfig.audioChannels,
       enableCloudSync: config.enableCloudSync || false,
@@ -132,7 +132,7 @@ class VoiceTrainingService {
     };
 
     this.initializeServices();
-    console.log('🎓 Voice Training Service initialized');
+    console.log('Voice Training Service initialized');
   }
 
   /**
@@ -203,7 +203,7 @@ class VoiceTrainingService {
     await this.saveVoiceProfile(profile);
     this.currentProfile = profile;
     
-    console.log('✅ Voice profile created:', profile.id);
+    console.log('Voice profile created:', profile.id);
     return profile;
   }
 
@@ -292,17 +292,15 @@ class VoiceTrainingService {
     };
 
     this.currentSession = session;
-    console.log('🎯 Training session started:', session.sessionId);
+    console.log('Training session started:', session.sessionId);
     return session;
   }
 
   /**
    * Record and analyze a training phrase
    */
-  async recordTrainingPhrase(
-    phrase: TrainingPhrase, 
-    onProgress?: (progress: number) => void
-  ): Promise<TrainingRecording> {
+  /*
+  async recordTrainingPhrase(phrase: TrainingPhrase, onProgress?: (progress: number) => void): Promise<TrainingRecording> {
     if (!this.currentProfile || !this.currentSession) {
       throw new Error('No active training session');
     }
@@ -338,6 +336,10 @@ class VoiceTrainingService {
 
             // Update adaptation model
             await this.updateAdaptationModel(recording);
+
+            if (!this.currentSession) {
+              throw new Error('No active training session');
+            }
             
             // Save recording to session
             this.currentSession.recordings.push(recording);
@@ -345,7 +347,7 @@ class VoiceTrainingService {
             this.currentSession.averageAccuracy = this.currentSession.recordings
               .reduce((sum, r) => sum + r.accuracy, 0) / this.currentSession.recordings.length;
 
-            console.log('✅ Training phrase recorded and analyzed:', {
+            console.log('Training phrase recorded and analyzed:', {
               phrase: phrase.text,
               recognized: recognitionResult.text,
               accuracy: Math.round(accuracy * 100) + '%'
@@ -414,24 +416,16 @@ class VoiceTrainingService {
   /**
    * Perform speech recognition on audio
    */
+  /*
   private async recognizeSpeech(audioBlob: Blob, expectedText: string): Promise<RecognitionResult> {
     if (this.config.enableMockData) {
       return this.mockSpeechRecognition(expectedText);
     }
 
-    // Try browser speech recognition first
-    if (this.speechRecognition) {
-      try {
-        return await this.browserSpeechRecognition(audioBlob, expectedText);
-      } catch (error) {
-        console.warn('Browser speech recognition failed, trying OpenAI Whisper:', error);
-      }
-    }
-
     // Fallback to OpenAI Whisper
-    if (this.config.openaiApiKey) {
+    if (this.config.geminiApiKey) {
       try {
-        return await this.openAIWhisperRecognition(audioBlob);
+        return await this.geminiTranscription(audioBlob);
       } catch (error) {
         console.warn('OpenAI Whisper recognition failed:', error);
       }
@@ -496,17 +490,18 @@ class VoiceTrainingService {
   /**
    * OpenAI Whisper speech recognition
    */
+  /*
   private async openAIWhisperRecognition(audioBlob: Blob): Promise<RecognitionResult> {
     const formData = new FormData();
     formData.append('file', audioBlob, 'audio.wav');
     formData.append('model', 'whisper-1');
     formData.append('response_format', 'verbose_json');
 
-    const response = await fetch('https://api.openai.com/v1/audio/transcriptions', {
+    const response = await fetch('https://api.openai.com/v1/audio/transcriptions', { //CHANGE THIS TO GEMINI
       method: 'POST',
       headers: {
-        'Authorization': `Bearer ${this.config.openaiApiKey}`,
-        ...(openaiConfig.organizationId && { 'OpenAI-Organization': openaiConfig.organizationId })
+        'Authorization': `Bearer ${this.config.geminiApiKey}`,
+        ...(geminiConfig.organizationId && { 'OpenAI-Organization': geminiConfig.organizationId })
       },
       body: formData
     });
@@ -910,7 +905,7 @@ class VoiceTrainingService {
    * Sync voice profile to cloud (placeholder)
    */
   private async syncToCloud(profile: VoiceProfile): Promise<void> {
-    if (!this.config.enableCloudSync || !this.config.openaiApiKey) {
+    if (!this.config.enableCloudSync || !this.config.geminiApiKey) {
       return;
     }
 

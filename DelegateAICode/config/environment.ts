@@ -93,6 +93,16 @@ export const environment: Environment = {
   ENABLE_LOG_STORAGE: getEnvBoolean('VITE_ENABLE_LOG_STORAGE', false),
 };
 
+export const geminiConfig = {
+  apiKey: process.env.GEMINI_API_KEY || '',
+  transcriptionUrl: process.env.GEMINI_TRANSCRIPTION_URL || 'https://api.your-domain.com/v1/audio/transcriptions'
+};
+
+export const voiceConfig = {
+  audioSampleRate: Number(process.env.AUDIO_SAMPLE_RATE) || 16000,
+  audioChannels:    Number(process.env.AUDIO_CHANNELS)   || 1
+};
+
 // ============================================================================
 // VALIDATION
 // ============================================================================
