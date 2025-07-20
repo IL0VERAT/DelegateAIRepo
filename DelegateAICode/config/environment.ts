@@ -93,14 +93,25 @@ export const environment: Environment = {
   ENABLE_LOG_STORAGE: getEnvBoolean('VITE_ENABLE_LOG_STORAGE', false),
 };
 
+// Gemini transcription API
 export const geminiConfig = {
-  apiKey: process.env.GEMINI_API_KEY || '',
-  transcriptionUrl: process.env.GEMINI_TRANSCRIPTION_URL || 'https://api.your-domain.com/v1/audio/transcriptions'
+  apiKey:           import.meta.env.VITE_GEMINI_API_KEY,
+  transcriptionUrl: import.meta.env.VITE_GEMINI_TRANSCRIPTION_URL,
 };
 
+// Voice/audio defaults
 export const voiceConfig = {
-  audioSampleRate: Number(process.env.AUDIO_SAMPLE_RATE) || 16000,
-  audioChannels:    Number(process.env.AUDIO_CHANNELS)   || 1
+  audioSampleRate: Number(import.meta.env.VITE_AUDIO_SAMPLE_RATE ?? '16000'),
+  audioChannels:   Number(import.meta.env.VITE_AUDIO_CHANNELS   ?? '1'),
+};
+
+//websockets
+export const websocketConfig = {
+  url: import.meta.env.VITE_WS_URL,
+  reconnectAttempts: Number(import.meta.env.VITE_WS_RECONNECT_ATTEMPTS) || 5,
+  reconnectInterval: Number(import.meta.env.VITE_WS_RECONNECT_INTERVAL) || 2000,
+  heartbeatInterval: Number(import.meta.env.VITE_WS_HEARTBEAT_INTERVAL) || 30000,
+  enableMockData: import.meta.env.VITE_WS_MOCK_MODE === 'true'
 };
 
 // ============================================================================

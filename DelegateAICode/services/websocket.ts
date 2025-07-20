@@ -13,7 +13,7 @@
 
 //Update to Gemini
 
-import { websocketConfig, openaiConfig, config } from '../config/environment';
+import { websocketConfig, geminiConfig } from '../config/environment';
 
 interface WebSocketConfig {
   url: string;
@@ -117,13 +117,13 @@ class WebSocketService {
   private async connectRealWebSocket(): Promise<void> {
     return new Promise((resolve, reject) => {
       try {
-        // Prepare URL with authentication for OpenAI
+        // Prepare URL with authentication for Gemini
         let wsUrl = this.config.url;
         
-        // Add API key as query parameter for OpenAI Realtime API
-        if (openaiConfig.apiKey && wsUrl.includes('openai.com')) {
+        // Add API key as query parameter for Gemini Realtime API
+        if (geminiConfig.apiKey && wsUrl.includes('gemini.com')) {
           const separator = wsUrl.includes('?') ? '&' : '?';
-          wsUrl += `${separator}api_key=${openaiConfig.apiKey}`;
+          wsUrl += `${separator}api_key=${geminiConfig.apiKey}`;
         }
 
         console.log('🔌 Connecting to WebSocket:', wsUrl.replace(/api_key=[^&]+/, 'api_key=***'));
