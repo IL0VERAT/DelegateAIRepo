@@ -46,8 +46,8 @@ export function AudioWaveform({
   const sourceRef = useRef<MediaStreamAudioSourceNode | null>(null);
   const [isInitialized, setIsInitialized] = useState(false);
 
-  const { currentPersonality } = useApp(); 
-  const activePersonality = personality || currentPersonality;
+  const { debateMode } = useApp(); 
+  const activePersonality = personality || debateMode;
 
   // Personality-aware colors for waveforms
   const personalityColors = {

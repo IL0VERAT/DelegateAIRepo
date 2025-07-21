@@ -79,8 +79,8 @@ export function CampaignStatusCard({
           </Button>
         </div>
         <div className="flex items-center gap-2 mt-2">
-          <Badge className={getPhaseColor(session.phase)}>
-            {session.phase.charAt(0).toUpperCase() + session.phase.slice(1)}
+          <Badge className={getPhaseColor(session.phases)}>
+            {session.phases.charAt(0).toUpperCase() + session.phases.slice(1)}
           </Badge>
           <Badge variant="outline" className="text-xs">
             {session.campaign.difficulty.charAt(0).toUpperCase() + session.campaign.difficulty.slice(1)}
@@ -111,12 +111,12 @@ export function CampaignStatusCard({
           <div className="flex items-center gap-2">
             <Clock className="h-3 w-3 text-muted-foreground" />
             <span className="text-muted-foreground">Time:</span>
-            <span className="font-medium">{Math.round(session.timeElapsed)}m</span>
+            <span className="font-medium">{Math.round(session.timeRemaining)}m</span>
           </div>
           <div className="flex items-center gap-2">
             <Users className="h-3 w-3 text-muted-foreground" />
             <span className="text-muted-foreground">Stakeholders:</span>
-            <span className="font-medium">{session.activeStakeholders.length}</span>
+            <span className="font-medium">{session.aiCharacters.length}</span>
           </div>
         </div>
 
@@ -127,7 +127,7 @@ export function CampaignStatusCard({
             Active Stakeholders
           </h4>
           <div className="flex flex-wrap gap-1">
-            {session.activeStakeholders.map((stakeholder, index) => (
+            {session.aiCharacters.map((stakeholder, index) => (
               <Badge 
                 key={index} 
                 variant="secondary" 
@@ -163,24 +163,24 @@ export function CampaignStatusCard({
         )}
 
         {/* Current Focus */}
-        {session.currentTopic && (
+        {session.currentCrisis && (
           <>
             <Separator />
             <div className="space-y-1">
               <h4 className="text-sm font-medium">Current Focus</h4>
               <p className="text-xs text-muted-foreground">
-                {session.currentTopic}
+                {session.currentCrisis.title}
               </p>
             </div>
           </>
         )}
 
         {/* User Position */}
-        {session.userPosition && (
+        {session.playerCharacter && (
           <div className="space-y-1">
             <h4 className="text-sm font-medium">Your Role</h4>
             <Badge variant="outline" className="text-xs">
-              {session.userPosition}
+              {session.playerCharacter}
             </Badge>
           </div>
         )}
@@ -189,7 +189,7 @@ export function CampaignStatusCard({
         <div className="space-y-1">
           <h4 className="text-sm font-medium">Phase Description</h4>
           <p className="text-xs text-muted-foreground">
-            {getPhaseDescription(session.phase)}
+            {getPhaseDescription(session.phases)}
           </p>
         </div>
       </CardContent>

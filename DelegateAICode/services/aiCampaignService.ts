@@ -60,6 +60,10 @@ interface CampaignChoice {
 interface CampaignSession {
   id: string;
   title: string;
+  campaign: {
+    title: string;
+    difficulty: 'easy' | 'medium' | 'hard';
+  };
   theme: string;
   description: string;
   scenario: any;
@@ -67,11 +71,13 @@ interface CampaignSession {
   aiCharacters: CampaignCharacter[];
   currentCrisis?: CampaignCrisis;
   activeCrises: CampaignCrisis[];
+  negotiationProgress: number;
   sessionState: string;
   currentPhase: any;
-  phases: any[];
+  phases: 'introduction' | 'preparation' | 'negotiation' | 'resolution' | 'debrief';
   timeRemaining: number;
   playerStats: any;
+  achievements: string[];
   campaignLog: any[];
   voiceSettings: any;
   outcomes: any[];
@@ -517,3 +523,4 @@ class AICampaignService {
 
 export const aiCampaignService = new AICampaignService();
 export default aiCampaignService;
+export type { CampaignSession };
