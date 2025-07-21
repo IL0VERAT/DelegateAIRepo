@@ -7,10 +7,11 @@
  * Supports seamless voice conversations with real-time processing.
  */
 
-import { aiServiceManager } from './aiServiceManager';
+import { aiServiceManager, AIMessage } from './aiServiceManager';
 import AudioRecorder from './audioRecorder';
 import AudioPlayer from './audioPlayer';
 import { characterVoiceService } from './characterVoiceService';
+import { geminiNativeAudio } from './geminiNativeAudio';
 
 export interface VoiceToVoiceConfig {
   // AI Configuration
@@ -87,7 +88,7 @@ export class VoiceToVoiceService {
   private config: VoiceToVoiceConfig;
   
   private conversationHistory: VoiceMessage[] = [];
-  private responseTimeouts: Map<string, NodeJS.Timeout> = new Map();
+  private responseTimeouts: Map<string, ReturnType<typeof setTimeout>> = new Map();
   private qualityMetrics: {
     noiseLevel: number;
     clarity: number;
@@ -219,7 +220,7 @@ export class VoiceToVoiceService {
     
     // Stop any ongoing operations
     await this.stopListening();
-    await this.stopSpeaking();
+    //await this.stopSpeaking();
     
     this.currentConversation.endTime = new Date();
     
@@ -259,9 +260,9 @@ export class VoiceToVoiceService {
       this.isListening = true;
       
       // Stop speaking if we're currently speaking
-      if (this.isSpeaking) {
+      /*if (this.isSpeaking) {
         await this.stopSpeaking();
-      }
+      }*/
       
       await this.recorder.start();
       
@@ -385,17 +386,17 @@ export class VoiceToVoiceService {
   public async generateResponse(userInput: string): Promise<string> {
     try {
       // Build conversation context
-      const recentMessages = this.conversationHistory
+      const recentMessages: AIMessage[] = this.conversationHistory
         .slice(-this.config.contextWindow)
-        .map(msg => ({
-          role: msg.type === 'user' ? 'user' : 'assistant' as const,
+        .map((msg): AIMessage => ({
+          role: msg.type,
           content: msg.content
         }));
       
-      const messages = [
-        { role: 'system' as const, content: this.config.systemPrompt },
+      const messages: AIMessage[] = [
+        { role: 'system', content: this.config.systemPrompt },
         ...recentMessages,
-        { role: 'user' as const, content: userInput }
+        { role: 'user', content: userInput }
       ];
       
       const response = await aiServiceManager.generateResponse(messages, {
@@ -447,22 +448,24 @@ export class VoiceToVoiceService {
   }
   
   // Text-to-speech
-  public async speakText(text: string, messageId?: string): Promise<void> {
+  public async speakText(text: string, id: string): Promise<void> {
     if (this.isSpeaking) {
-      await this.stopSpeaking();
+      await this.player.stop();
     }
     
     try {
       this.isSpeaking = true;
       
-      // Use browser TTS through characterVoiceService
-      await characterVoiceService.generateSpeech({
-        text,
-        role: 'facilitator',
-        speed: this.config.speechSpeed
+      // Ask Gemini to synthesize spoken audio
+      const audioBlob = await geminiNativeAudio.generateSpeech(text, this.config.voiceId,{
+        language: this.config.outputLanguage,
+        speed: this.config.speechSpeed,
+        pitch: this.config.speechPitch
       });
-      
-      console.log('🔊 Speaking response');
+
+      // Play it 
+      await this.player.playAudio(audioBlob);
+     console.log('🔊 Speaking response (Gemini)');
       
     } catch (error) {
       console.error('Failed to speak text:', error);
@@ -471,13 +474,13 @@ export class VoiceToVoiceService {
     }
   }
   
-  public async stopSpeaking(): Promise<void> {
+  /*public async stopSpeaking(): Promise<void> {
     if (!this.isSpeaking) return;
     
     characterVoiceService.stopSpeech();
     this.isSpeaking = false;
     console.log('🔇 Stopped speaking');
-  }
+  }*/
   
   // Audio quality analysis
   private async analyzeAudioQuality(audioBlob: Blob): Promise<any> {
@@ -524,7 +527,7 @@ export class VoiceToVoiceService {
       
       // Store in localStorage with chunking for large files
       const chunkSize = 100000; // 100KB chunks
-      const chunks = [];
+      const chunks: string[] = [];
       
       for (let i = 0; i < base64Audio.length; i += chunkSize) {
         chunks.push(base64Audio.slice(i, i + chunkSize));
@@ -643,7 +646,7 @@ export class VoiceToVoiceService {
   // Cleanup
   public destroy(): void {
     this.stopListening();
-    this.stopSpeaking();
+    //this.stopSpeaking();
     
     // Clear timeouts
     this.responseTimeouts.forEach(timeout => clearTimeout(timeout));
