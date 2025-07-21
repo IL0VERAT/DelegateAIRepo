@@ -21,7 +21,7 @@ import { Input } from './ui/input';
 import { Label } from './ui/label';
 import { Textarea } from './ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from './ui/select';
-import { toast } from 'sonner@2.0.3';
+import { toast } from 'sonner';
 import { 
   Shield, 
   Download, 
@@ -344,7 +344,7 @@ export function PrivacySettings(): JSX.Element {
                 </div>
                 <Switch
                   checked={state.privacy_settings.opt_out_of_sale}
-                  onCheckedChange={(checked) => {
+                  onCheckedChange={(checked: any) => {
                     if (checked) {
                       optOutOfSale();
                     } else {

@@ -66,7 +66,7 @@ import {
 } from 'lucide-react';
 
 export function SmartFeatures(): JSX.Element {
-  const { setCurrentView, currentPersonality, voiceEnabled, language, speechSpeed } = useApp();
+  const { setCurrentView, debateMode, voiceEnabled, language, speechSpeed } = useApp();
   const { user, isAuthenticated } = useAuth();
   const [activeTab, setActiveTab] = useState('overview');
   const [demoMode, setDemoMode] = useState('voice-recognition');
@@ -211,7 +211,7 @@ export function SmartFeatures(): JSX.Element {
                     <Info className="h-4 w-4" />
                     <AlertTitle>Current Status</AlertTitle>
                     <AlertDescription>
-                      Mode: {currentPersonality} • Voice: {voiceEnabled ? 'Active' : 'Inactive'} • Language: {language.toUpperCase()}
+                      Mode: {debateMode} • Voice: {voiceEnabled ? 'Active' : 'Inactive'} • Language: {language.toUpperCase()}
                     </AlertDescription>
                   </Alert>
                 </CardContent>

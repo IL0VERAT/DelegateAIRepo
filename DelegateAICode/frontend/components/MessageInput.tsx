@@ -39,7 +39,7 @@ export function MessageInput({
 }: MessageInputProps) {
   const [message, setMessage] = useState('');
   const textareaRef = useRef<HTMLTextAreaElement>(null);
-  const { currentPersonality } = useApp();
+  const { debateMode } = useApp();
 
   /**
    * Handle input change - simple and fast
@@ -195,9 +195,9 @@ export function MessageInput({
           </div>
 
           {/* AI Personality Indicator */}
-          {currentPersonality && (
+          {debateMode && (
             <div className="absolute -top-2 left-4 px-2 py-1 bg-card border rounded text-xs text-muted-foreground">
-              AI Mode: <span className="font-medium">{currentPersonality.charAt(0).toUpperCase() + currentPersonality.slice(1)}</span>
+              AI Mode: <span className="font-medium">{debateMode.charAt(0).toUpperCase() + debateMode.slice(1)}</span>
             </div>
           )}
         </div>

@@ -54,7 +54,7 @@ export function MessageBubble({
     return {
       id: String(message.id || 'unknown'),
       content: String(message.content || ''),
-      sender: message.sender || (isUser ? 'user' : 'assistant'),
+      sender: message.senderId || (isUser ? 'user' : 'assistant'), //modified
       timestamp: String(message.timestamp || new Date().toISOString()),
       sessionId: String(message.sessionId || 'unknown'),
     };

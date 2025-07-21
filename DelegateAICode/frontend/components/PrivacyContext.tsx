@@ -8,7 +8,7 @@
  */
 
 import React, { createContext, useContext, useReducer, useEffect, useCallback, useMemo } from 'react';
-import { toast } from 'sonner@2.0.3';
+import { toast } from 'sonner';
 import { privacyEmailService } from '../services/privacyEmailService';
 import { useAuth } from './AuthContext';
 

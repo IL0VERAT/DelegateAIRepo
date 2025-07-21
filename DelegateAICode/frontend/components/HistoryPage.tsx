@@ -189,7 +189,7 @@ export function HistoryPage() {
         </Badge>
       </div>
 
-      <Tabs value={activeTab} onValueChange={(value) => setActiveTab(value as 'all' | 'chat' | 'voice')}>
+      <Tabs value={activeTab} onValueChange={(value: string) => setActiveTab(value as 'all' | 'chat' | 'voice')}>
         <TabsList className="grid w-full max-w-md grid-cols-3">
           <TabsTrigger value="all">
             All ({counts.all})
