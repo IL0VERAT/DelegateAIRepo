@@ -159,8 +159,8 @@ export function ChatInterface({
 
 How can I assist you today?`,
         role: 'assistant',
-        timestamp: new Date(),
-        model: 'gemini-1.5-pro-latest'
+        timestamp: new Date().toISOString(),
+        //model: 'gemini-1.5-pro-latest'
       };
       
       setMessages([welcomeMessage]);
@@ -199,7 +199,7 @@ How can I assist you today?`,
       id: Date.now().toString(),
       content: content.trim(),
       role: 'user',
-      timestamp: new Date()
+      timestamp: new Date().toISOString()
     };
 
     setMessages(prev => [...prev, userMessage]);
@@ -213,7 +213,7 @@ How can I assist you today?`,
       const response = await apiService.sendMessage({
         message: content.trim(),
         conversationId: conversationId || undefined,
-        model: options?.model || settings.selectedModel || 'gemini-1.5-pro-latest',
+        //model: options?.model || settings.selectedModel || 'gemini-1.5-pro-latest',
         temperature: options?.temperature || settings.temperature || 0.7,
         maxTokens: settings.maxTokens || 2048,
         systemPrompt: options?.systemPrompt,
@@ -224,9 +224,9 @@ How can I assist you today?`,
         id: response.messageId,
         content: response.response,
         role: 'assistant',
-        timestamp: new Date(),
-        model: response.model,
-        usage: response.usage
+        timestamp: new Date().toISOString(),
+        //model: response.model,
+        //usage: response.usage
       };
 
       setMessages(prev => [...prev, assistantMessage]);
@@ -245,8 +245,8 @@ How can I assist you today?`,
         id: (Date.now() + 1).toString(),
         content: `I apologize, but I encountered an error: ${error instanceof Error ? error.message : 'Unknown error'}. Please try again.`,
         role: 'assistant',
-        timestamp: new Date(),
-        model: 'error'
+        timestamp: new Date().toISOString(),
+        //model: 'error'
       };
 
       setMessages(prev => [...prev, errorMessage]);
@@ -288,8 +288,8 @@ How can I assist you today?`,
         messages: messages.map(msg => ({
           role: msg.role,
           content: msg.content,
-          timestamp: msg.timestamp.toISOString(),
-          model: msg.model
+          timestamp: msg.timestamp?? new Date().toISOString(),
+          //model: msg.model
         }))
       }
     };
@@ -499,9 +499,11 @@ function ModernMessageBubble({ message, isLoading, isFirst, isLast }: ModernMess
     }
   }, [message.content]);
 
-  const formatTime = useCallback((date: Date) => {
-    return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-  }, []);
+  const formatTime = useCallback((ts?: string) => {
+  if (!ts) return ''; 
+  const d = new Date(ts);
+  return d.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+}, []);
 
   return (
     <div className={`flex ${isUser ? 'justify-end' : 'justify-start'} group`}>

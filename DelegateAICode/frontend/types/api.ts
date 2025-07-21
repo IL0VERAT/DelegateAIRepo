@@ -190,8 +190,10 @@ interface Message {
 interface ChatMessage {
   role: 'user' | 'assistant' | 'system';
   content: string;
+  id: string;
   timestamp?: string;
   metadata?: any;
+  model?: string; 
 }
 
 // ============================================================================

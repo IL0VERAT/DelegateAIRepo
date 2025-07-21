@@ -25,7 +25,7 @@ export type FontSize = 'small' | 'medium' | 'large';
 export type VoiceSpeed = 'slow' | 'normal' | 'fast';
 export type DebateMode = 'collaborative' | 'gentle' | 'balanced' | 'challenging' | 'aggressive';
 
-export type CurrentView = 
+export type CurrentView =  
   | 'chat' 
   | 'voice'
   | 'campaigns'
@@ -109,6 +109,8 @@ interface AppSettings {
   // System
   enableMockData: boolean;
   showDebugInfo: boolean;
+  maxTokens: number; 
+  temperature: number;
 }
 
 interface AppState extends AppSettings {
@@ -214,34 +216,39 @@ const DEFAULT_SETTINGS: AppSettings = {
   // Appearance
   theme: 'system',
   fontSize: 'medium',
-  
+
   // Voice and Audio
   voiceEnabled: true,
   voiceSpeed: 'normal',
   speechSpeed: 1.0,
   autoPlayAudio: true,
-  
+
   // User Voice Selection
   userVoiceEnabled: true,
   selectedUserVoice: 'leda', // Default diplomatic voice
-  
+
+
+
   // Language
   language: 'en-US',
   autoDetectLanguage: false,
-  
+
   // Debate and Interaction
   debateMode: 'balanced',
-  
+
   // Notifications
   notificationsEnabled: true,
-  
+
   // Privacy and Data
   dataCollection: false,
   analyticsEnabled: false,
-  
+
   // System
   enableMockData: true,
   showDebugInfo: false,
+  maxTokens: 0 //should correlate with subscription type
+  ,
+  temperature: 0.7
 };
 
 const DEFAULT_STATE: AppState = {
@@ -437,6 +444,9 @@ const appReducer = (state: AppState, action: AppAction): AppState => {
     analyticsEnabled: newState.analyticsEnabled,
     enableMockData: newState.enableMockData,
     showDebugInfo: newState.showDebugInfo,
+    maxTokens: 0 //correlate with subscription type
+    ,
+    temperature: 0 //correlate with subscription type
   };
   
   // Save to localStorage (debounced in real implementation)
@@ -656,6 +666,8 @@ export function AppProvider({ children }: AppProviderProps): JSX.Element {
       analyticsEnabled: state.analyticsEnabled,
       enableMockData: state.enableMockData,
       showDebugInfo: state.showDebugInfo,
+      maxTokens: 0, //correlate with subscription type
+      temperature: 0 //correlate with subscription type
     };
     
     console.log('📤 Settings exported');
@@ -705,6 +717,8 @@ export function AppProvider({ children }: AppProviderProps): JSX.Element {
     analyticsEnabled: state.analyticsEnabled,
     enableMockData: state.enableMockData,
     showDebugInfo: state.showDebugInfo,
+    maxTokens: 0, //correlate with subscription type
+    temperature: 0 //correlate with subscription type
   }), [state]);
   
   // ============================================================================

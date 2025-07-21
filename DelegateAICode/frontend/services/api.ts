@@ -107,6 +107,44 @@ class ApiService {
     }
   }
 
+   async sendMessage(payload: {
+    message: string;
+    conversationId?: string;
+    model?: string;
+    temperature?: number;
+    maxTokens?: number;
+    systemPrompt?: string;
+    speechSpeed?: number;
+  }): Promise<{
+    messageId: string;
+    response: string;
+    conversationId: string;
+    model: string;
+    usage: {
+      promptTokens: number;
+      completionTokens: number;
+      totalTokens: number;
+    };
+  }> {
+    // adjust endpoint path to match your server’s route
+    const res = await this.post<{
+      messageId: string;
+      response: string;
+      conversationId: string;
+      model: string;
+      usage: {
+        promptTokens: number;
+        completionTokens: number;
+        totalTokens: number;
+      };
+    }>('/chat/send', payload);
+
+    if (!res.success) {
+      throw new Error(res.error || 'Failed to send chat message');
+    }
+    return res.data!;
+  }
+
   /**
    * Make API request
    */
@@ -114,7 +152,7 @@ class ApiService {
     endpoint: string,
     options: RequestOptions = {}
   ): Promise<ApiResponse<T>> {
-    try {
+    try { 
       const { timeout = 30000, ...fetchOptions } = options;
       
       const url = endpoint.startsWith('http') ? endpoint : `${this.baseUrl}${endpoint}`;
@@ -223,6 +261,7 @@ class ApiService {
     }
   }
 }
+
 
 // ============================================================================
 // EXPORT SERVICE INSTANCE
