@@ -14,7 +14,12 @@
  * PRODUCTION READY: All error handling and fallbacks in place
  */
 
-import React, { createContext, useContext, useReducer, useEffect, useCallback, useMemo } from 'react';
+import React, { createContext, useContext, useReducer, useEffect, useCallback, useMemo, useState } from 'react';
+import {
+  connectionStatusManager,
+  ConnectionIssue,
+  ConnectionErrorCode
+} from '../services/connectionStatus'
 
 // ============================================================================
 // TYPES AND INTERFACES
@@ -170,6 +175,12 @@ interface AppContextType {
   isCampaignActive: boolean;
   isInitialized: boolean;
   lastSyncTime: Date | null;
+  isOnline: boolean
+  isWebSocketConnected: boolean
+  apiHealthy: boolean
+  errors: ConnectionIssue[]
+  reconnectWebSocket: () => Promise<void>
+  checkApiHealth: () => Promise<void>
   
   // Settings object for easy access
   settings: AppSettings;
@@ -264,6 +275,7 @@ const DEFAULT_STATE: AppState = {
   isInitialized: false,
   lastSyncTime: null,
 };
+
 
 // ============================================================================
 // LOCAL STORAGE UTILITIES
@@ -493,6 +505,25 @@ export function AppProvider({ children }: AppProviderProps): JSX.Element {
       root.classList.toggle('dark', state.theme === 'dark');
     }
   }, [state.theme]);
+
+  const [isOnline, setIsOnline] = useState(navigator.onLine)
+  useEffect(() => {
+    window.addEventListener('online',  () => setIsOnline(true))
+    window.addEventListener('offline', () => setIsOnline(false))
+    return () => {
+      window.removeEventListener('online',  () => setIsOnline(true))
+      window.removeEventListener('offline', () => setIsOnline(false))
+    }
+  }, []);
+
+  // 2) Subscribe to connection issues
+  const [errors, setErrors] = useState<ConnectionIssue[]>(connectionStatusManager.getCurrentIssues())
+  useEffect(() => connectionStatusManager.subscribe(setErrors), []);
+
+   // 3) Derive booleans from the list of issues
+  const apiHealthy = !errors.some(e => e.code === ConnectionErrorCode.API_SERVER_DOWN)
+  const isWebSocketConnected = !errors.some(e => e.code === ConnectionErrorCode.WEBSOCKET_CONNECTION_FAILED)
+
   
   // Apply font size to document
   useEffect(() => {
@@ -747,7 +778,7 @@ export function AppProvider({ children }: AppProviderProps): JSX.Element {
     isInitialized: state.isInitialized,
     lastSyncTime: state.lastSyncTime,
     settings,
-    
+
     // Actions
     setCurrentView,
     setTheme,
@@ -765,21 +796,31 @@ export function AppProvider({ children }: AppProviderProps): JSX.Element {
     setNotificationsEnabled,
     setDataCollection,
     setAnalyticsEnabled,
-    
+
     // Campaign actions
     startCampaignSession,
     stopCampaignSession,
     updateCampaignSession,
-    
+
     // Speech utilities
     getSpeechSpeedInfo,
     validateSpeechSpeed,
-    
+
     // Settings management
     exportSettings,
     importSettings,
     resetSettings,
     updateSettings,
+    isOnline: true,
+    isWebSocketConnected: true,
+    apiHealthy: true,
+    errors: [],
+    reconnectWebSocket: function (): Promise<void> {
+      throw new Error('Function not implemented.');
+    },
+    checkApiHealth: function (): Promise<void> {
+      throw new Error('Function not implemented.');
+    }
   }), [
     state,
     settings,

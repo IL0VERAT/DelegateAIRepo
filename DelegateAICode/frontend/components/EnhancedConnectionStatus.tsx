@@ -46,7 +46,7 @@ import {
   ServiceStatus,
   ServiceStatusInfo
 } from '../services/connectionStatus';
-import { config } from '../config/environment';
+import  config  from '../config/environment';
 
 interface EnhancedConnectionStatusProps {
   className?: string;
@@ -159,7 +159,7 @@ export function EnhancedConnectionStatus({ className = "" }: EnhancedConnectionS
   };
 
   // Demo mode handling
-  if (config.enableMockData) {
+  if (config.ENABLE_MOCK_DATA) {
     if (!isOnline) {
       return (
         <div className={`border-b bg-yellow-50 dark:bg-yellow-950/20 ${className}`}>
