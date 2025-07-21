@@ -546,7 +546,7 @@ export function AdminCampaignManager() {
             <Button
               size="sm"
               variant="ghost"
-              onClick={(e) => {
+              onClick={(e: { stopPropagation: () => void; }) => { //MODIFIYED 
                 e.stopPropagation();
                 editCampaign(campaign);
               }}
@@ -556,7 +556,7 @@ export function AdminCampaignManager() {
             <Button
               size="sm"
               variant="ghost"
-              onClick={(e) => {
+              onClick={(e: { stopPropagation: () => void; }) => { //MODIFIED
                 e.stopPropagation();
                 togglePublished(campaign);
               }}
@@ -567,7 +567,7 @@ export function AdminCampaignManager() {
               size="sm"
               variant="ghost"
               className="text-red-600 hover:text-red-700"
-              onClick={(e) => {
+              onClick={(e: { stopPropagation: () => void; }) => { //modififed
                 e.stopPropagation();
                 deleteCampaign(campaign.id!);
               }}
@@ -764,7 +764,7 @@ export function AdminCampaignManager() {
                   <Label htmlFor="category">Category</Label>
                   <Select 
                     value={editForm.category} 
-                    onValueChange={(value) => updateFormField('category', value)}
+                    onValueChange={(value: any) => updateFormField('category', value)} //modified
                   >
                     <SelectTrigger>
                       <SelectValue />
@@ -780,7 +780,7 @@ export function AdminCampaignManager() {
                   <Label htmlFor="difficulty">Difficulty</Label>
                   <Select 
                     value={editForm.difficulty} 
-                    onValueChange={(value) => updateFormField('difficulty', value)}
+                    onValueChange={(value: any) => updateFormField('difficulty', value)} //modified 
                   >
                     <SelectTrigger>
                       <SelectValue />
@@ -1075,7 +1075,7 @@ export function AdminCampaignManager() {
                 </div>
                 <Switch
                   checked={editForm.featured}
-                  onCheckedChange={(checked) => updateFormField('featured', checked)}
+                  onCheckedChange={(checked: any) => updateFormField('featured', checked)} //modififed
                 />
               </div>
 
@@ -1086,7 +1086,7 @@ export function AdminCampaignManager() {
                 </div>
                 <Switch
                   checked={editForm.new}
-                  onCheckedChange={(checked) => updateFormField('new', checked)}
+                  onCheckedChange={(checked: any) => updateFormField('new', checked)} //modified
                 />
               </div>
 
@@ -1097,7 +1097,7 @@ export function AdminCampaignManager() {
                 </div>
                 <Switch
                   checked={editForm.published}
-                  onCheckedChange={(checked) => updateFormField('published', checked)}
+                  onCheckedChange={(checked: any) => updateFormField('published', checked)} //modified 
                 />
               </div>
 
