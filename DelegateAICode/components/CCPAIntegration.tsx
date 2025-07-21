@@ -9,7 +9,7 @@
 import React, { useEffect, useCallback, useMemo } from 'react';
 import { usePrivacy } from './PrivacyContext';
 import { useAuth } from './AuthContext';
-import { toast } from 'sonner@2.0.3';
+import { toast } from 'sonner';
 import ErrorBoundary from './ErrorBoundary';
 
 // ============================================================================
@@ -64,7 +64,7 @@ export class PrivacyAwareErrorBoundary extends React.Component<
     this.logPrivacyCompliantError(error, sanitizedErrorInfo);
   }
 
-  private sanitizeStackTrace(stack?: string): string {
+  private sanitizeStackTrace(stack: string | null | undefined): string {
     if (!stack) return 'No stack trace available';
     
     // Remove potentially sensitive file paths and user-specific information

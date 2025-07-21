@@ -90,7 +90,6 @@ import {
   Package,
   Boxes,
   Wrench,
-  Tool,
   Scan,
   Search,
   Key,
@@ -124,7 +123,7 @@ import {
 } from 'lucide-react';
 
 export function ComprehensiveGuide(): JSX.Element {
-  const { setCurrentView, currentPersonality, voiceEnabled, language } = useApp();
+  const { setCurrentView, debateMode, voiceEnabled, language } = useApp();
   const { user, isAuthenticated } = useAuth();
   const [activeTab, setActiveTab] = useState('overview');
 
@@ -330,7 +329,7 @@ export function ComprehensiveGuide(): JSX.Element {
                       <div>
                         <div className="flex justify-between text-sm">
                           <span>AI Personality</span>
-                          <span className="font-medium">{currentPersonality}</span>
+                          <span className="font-medium">{debateMode}</span>
                         </div>
                       </div>
                       

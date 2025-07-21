@@ -29,7 +29,7 @@ import { Button } from './ui/button';
 import { Badge } from './ui/badge';
 import { Card } from './ui/card';
 import { Alert, AlertDescription } from './ui/alert';
-import { apiService, ChatMessage } from '../services/api';
+import { apiService} from '../services/api'; 
 import { rateLimitService } from '../services/rateLimitService';
 import { aiServiceManager } from '../services/aiServiceManager';
 import { 
@@ -42,7 +42,8 @@ import {
   Sparkles,
   MessageSquare
 } from 'lucide-react';
-import { toast } from 'sonner@2.0.3';
+import { toast } from 'sonner';
+import { ChatMessage } from 'types/api';
 
 // Chat Actions Context
 interface ChatActionsContextType {

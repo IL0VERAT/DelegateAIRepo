@@ -39,7 +39,7 @@ class ErrorBoundary extends Component<Props, State> {
     }
 
     // Report error to monitoring service in production
-    if (process.env.NODE_ENV === 'production') {
+    if (import.meta.env.NODE_ENV === 'production') {
       // Example: Sentry.captureException(error, { extra: errorInfo });
     }
   }
@@ -73,7 +73,7 @@ class ErrorBoundary extends Component<Props, State> {
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
-              {process.env.NODE_ENV === 'development' && this.state.error && (
+              {import.meta.env.NODE_ENV === 'development' && this.state.error && (
                 <details className="p-3 bg-muted rounded-lg">
                   <summary className="cursor-pointer text-sm font-medium mb-2">
                     Error Details (Development)

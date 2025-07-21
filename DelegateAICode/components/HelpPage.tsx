@@ -78,7 +78,7 @@ interface HelpSection {
 }
 
 export function HelpPage(): JSX.Element {
-  const { currentPersonality, voiceEnabled, language, setCurrentView } = useApp();
+  const { debateMode, voiceEnabled, language, setCurrentView } = useApp();
   const { user, isAuthenticated } = useAuth();
   const [activeSection, setActiveSection] = useState<string>('getting-started');
 
@@ -143,7 +143,7 @@ export function HelpPage(): JSX.Element {
             <AlertDescription>
               Voice: {voiceEnabled ? 'Enabled' : 'Disabled'} • 
               Language: {language.toUpperCase()} • 
-              Personality: {currentPersonality}
+              Personality: {debateMode}
             </AlertDescription>
           </Alert>
         </div>
