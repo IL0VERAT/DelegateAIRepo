@@ -344,7 +344,7 @@ export function PrivacySettings(): JSX.Element {
                 </div>
                 <Switch
                   checked={state.privacy_settings.opt_out_of_sale}
-                  onCheckedChange={(checked: any) => {
+                  onCheckedChange={(checked: boolean) => {
                     if (checked) {
                       optOutOfSale();
                     } else {
@@ -384,7 +384,7 @@ export function PrivacySettings(): JSX.Element {
                 </div>
                 <Switch
                   checked={state.privacy_settings.limit_sensitive_data_use}
-                  onCheckedChange={(checked) => limitSensitiveDataUse(checked)}
+                  onCheckedChange={(checked: boolean) => limitSensitiveDataUse(checked)}
                 />
               </div>
               
@@ -516,7 +516,7 @@ export function PrivacySettings(): JSX.Element {
                   </div>
                   <Switch
                     checked={state.privacy_settings.data_collection_consent}
-                    onCheckedChange={(checked) => handlePrivacySettingChange('data_collection_consent', checked)}
+                    onCheckedChange={(checked: boolean) => handlePrivacySettingChange('data_collection_consent', checked)}
                   />
                 </div>
 
@@ -531,7 +531,7 @@ export function PrivacySettings(): JSX.Element {
                   </div>
                   <Switch
                     checked={state.privacy_settings.analytics_consent}
-                    onCheckedChange={(checked) => handlePrivacySettingChange('analytics_consent', checked)}
+                    onCheckedChange={(checked: boolean) => handlePrivacySettingChange('analytics_consent', checked)}
                   />
                 </div>
 
@@ -546,7 +546,7 @@ export function PrivacySettings(): JSX.Element {
                   </div>
                   <Switch
                     checked={state.privacy_settings.marketing_consent}
-                    onCheckedChange={(checked) => handlePrivacySettingChange('marketing_consent', checked)}
+                    onCheckedChange={(checked: boolean) => handlePrivacySettingChange('marketing_consent', checked)}
                   />
                 </div>
 
@@ -561,7 +561,7 @@ export function PrivacySettings(): JSX.Element {
                   </div>
                   <Switch
                     checked={state.privacy_settings.third_party_sharing_consent}
-                    onCheckedChange={(checked) => handlePrivacySettingChange('third_party_sharing_consent', checked)}
+                    onCheckedChange={(checked: boolean) => handlePrivacySettingChange('third_party_sharing_consent', checked)}
                   />
                 </div>
 
@@ -576,7 +576,7 @@ export function PrivacySettings(): JSX.Element {
                   </div>
                   <Switch
                     checked={state.privacy_settings.sensitive_data_processing_consent}
-                    onCheckedChange={(checked) => handlePrivacySettingChange('sensitive_data_processing_consent', checked)}
+                    onCheckedChange={(checked: boolean) => handlePrivacySettingChange('sensitive_data_processing_consent', checked)}
                   />
                 </div>
               </div>
@@ -737,7 +737,7 @@ export function PrivacySettings(): JSX.Element {
                   </div>
                   <Switch
                     checked={state.privacy_settings.communication_preferences.email}
-                    onCheckedChange={(checked) => 
+                    onCheckedChange={(checked: boolean) => 
                       handlePrivacySettingChange('communication_preferences', {
                         ...state.privacy_settings.communication_preferences,
                         email: checked
@@ -755,7 +755,7 @@ export function PrivacySettings(): JSX.Element {
                   </div>
                   <Switch
                     checked={state.privacy_settings.communication_preferences.privacy_updates}
-                    onCheckedChange={(checked) => 
+                    onCheckedChange={(checked: boolean) => 
                       handlePrivacySettingChange('communication_preferences', {
                         ...state.privacy_settings.communication_preferences,
                         privacy_updates: checked
@@ -787,7 +787,7 @@ export function PrivacySettings(): JSX.Element {
                 </div>
                 <Switch
                   checked={state.privacy_settings.data_retention_preferences.delete_after_inactivity}
-                  onCheckedChange={(checked) => 
+                  onCheckedChange={(checked: boolean) => 
                     handlePrivacySettingChange('data_retention_preferences', {
                       ...state.privacy_settings.data_retention_preferences,
                       delete_after_inactivity: checked
@@ -805,7 +805,7 @@ export function PrivacySettings(): JSX.Element {
                 </div>
                 <Switch
                   checked={state.privacy_settings.data_retention_preferences.auto_delete_transcripts}
-                  onCheckedChange={(checked) => 
+                  onCheckedChange={(checked: boolean) => 
                     handlePrivacySettingChange('data_retention_preferences', {
                       ...state.privacy_settings.data_retention_preferences,
                       auto_delete_transcripts: checked
