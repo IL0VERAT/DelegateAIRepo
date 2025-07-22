@@ -19,6 +19,7 @@ interface AuthContextType {
   subscription: Subscription | null;
   isAuthenticated: boolean;
   isLoading: boolean;
+  enterDemoMode: () => void;
   login: (email: string, password: string) => Promise<boolean>;
   register: (email: string, password: string, name?: string) => Promise<boolean>;
   logout: () => Promise<void>;
@@ -82,6 +83,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   // ============================================================================
   // AUTHENTICATION METHODS
   // ============================================================================
+
+  const enterDemoMode = () => {
+     // e.g. mark user as “demo” and bypass real auth
+    setUser({ id: 'demo', name: 'Demo User', role: 'DEMO' });
+  };
 
   const login = async (email: string, password: string): Promise<boolean> => {
     try {
@@ -217,7 +223,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     logout,
     updateUser,
     refreshSubscription,
-    checkUsageLimit
+    checkUsageLimit,
+    enterDemoMode: () => {}
   };
 
   return (

@@ -5,14 +5,14 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from './ui/
 import { Separator } from './ui/separator';
 import { Badge } from './ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from './ui/tabs';
-import { useApp } from './AppContext';
+import { useAuth } from './AuthContext';
 
 interface LegalPageProps {
   onBack: () => void;
 }
 
 export function LegalPage({ onBack }: LegalPageProps) {
-  const { user } = useApp();
+  const { user } = useAuth();
   const currentDate = new Date().toLocaleDateString('en-US', { 
     year: 'numeric', 
     month: 'long', 
