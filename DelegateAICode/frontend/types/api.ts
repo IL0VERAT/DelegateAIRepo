@@ -196,6 +196,15 @@ interface ChatMessage {
   model?: string; 
 }
 
+interface ChatSession {
+  id: string;
+  title: string;
+  updatedAt: string;      // ISO timestamp
+  createdAt: string;
+  messageCount?: number;
+  lastMessage?: string;   // for preview
+}
+
 // ============================================================================
 // VOICE TYPES
 // ============================================================================
@@ -213,6 +222,16 @@ interface VoiceResponse {
   text: string;
   duration: number;
   voiceId: string;
+}
+
+interface Transcript {
+  id: string;
+  title: string;
+  type: 'voice';          // or 'chat' if you ever mix them
+  updatedAt: string;
+  createdAt: string;
+  messageCount?: number;
+  status?: string;        // e.g. 'processing' | 'completed'
 }
 
 // ============================================================================
@@ -306,10 +325,12 @@ export type {
   // Message types
   Message,
   ChatMessage,
+  ChatSession,
   
   // Voice types
   VoiceSettings,
   VoiceResponse,
+  Transcript,
   
   // Usage types
   UsageRecord,
