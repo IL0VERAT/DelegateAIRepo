@@ -227,11 +227,12 @@ interface VoiceResponse {
 interface Transcript {
   id: string;
   title: string;
-  type: 'voice';          // or 'chat' if you ever mix them
+  type: 'voice'|'chat';          // or 'chat' if you ever mix them
   updatedAt: string;
   createdAt: string;
   messageCount?: number;
   status?: string;        // e.g. 'processing' | 'completed'
+  messages: Message[];
 }
 
 // ============================================================================

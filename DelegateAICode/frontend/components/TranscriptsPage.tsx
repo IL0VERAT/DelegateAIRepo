@@ -127,7 +127,7 @@ export function TranscriptsPage() {
           const sender = msg.sender === 'user' ? 'You' : 'Delegate AI';
           const content = msg.content || '';
           return `${sender}: ${content}`;
-        }).filter(line => line !== '')
+        }).filter((line: string) => line !== '')
       ].join('\n');
       
       const blob = new Blob([textContent], { type: 'text/plain' });
@@ -208,7 +208,7 @@ export function TranscriptsPage() {
 
   // Safe voice sessions count
   const getVoiceCount = () => {
-    return transcripts.filter(t => t && (t.type === 'voice' || t.type === 'voice-session')).length;
+    return transcripts.filter(t => t && (t.type === 'voice')).length;
   };
 
   // Safe total messages count
@@ -307,7 +307,7 @@ export function TranscriptsPage() {
             
             {/* Sort */}
             <div className="space-y-2">
-              <Select value={`${sortBy}-${sortOrder}`} onValueChange={(value) => {
+              <Select value={`${sortBy}-${sortOrder}`} onValueChange={(value: { split: (arg0: string) => [any, any]; }) => {
                 const [newSortBy, newSortOrder] = value.split('-');
                 setSortBy(newSortBy as any);
                 setSortOrder(newSortOrder as any);
@@ -426,7 +426,7 @@ export function TranscriptsPage() {
                           return (
                             <div key={index} className="flex gap-3">
                               <div className="flex-shrink-0">
-                                {message.sender === 'user' ? (
+                                {message.senderId === 'user' ? (
                                   <div className="w-6 h-6 rounded-full bg-brand-blue text-white flex items-center justify-center text-xs font-medium">
                                     U
                                   </div>
@@ -439,7 +439,7 @@ export function TranscriptsPage() {
                               <div className="flex-1 space-y-1">
                                 <div className="flex items-center gap-2">
                                   <span className="text-sm font-medium">
-                                    {message.sender === 'user' ? 'You' : 'Delegate AI'}
+                                    {message.senderId === 'user' ? 'You' : 'Delegate AI'}
                                   </span>
                                   <span className="text-xs text-muted-foreground">
                                     {message.timestamp ? new Date(message.timestamp).toLocaleTimeString() : 'Unknown time'}
