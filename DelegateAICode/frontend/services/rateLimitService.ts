@@ -387,8 +387,11 @@ class RateLimitService {
     percentage: number;
     warningLevel: string;
     isLimitExceeded: boolean;
+    resetTime: string;
   } {
     this.checkDailyReset();
+    const { nextResetTime } = this.getTimeUntilReset();
+    
     
     const remaining = Math.max(0, DAILY_WORD_LIMIT - this.currentUsage.totalWords);
     const percentage = (this.currentUsage.totalWords / DAILY_WORD_LIMIT) * 100;
@@ -399,7 +402,8 @@ class RateLimitService {
       remaining,
       percentage,
       warningLevel: this.currentUsage.warningLevel,
-      isLimitExceeded: this.currentUsage.isLimitExceeded
+      isLimitExceeded: this.currentUsage.isLimitExceeded,
+      resetTime: nextResetTime.toISOString(),
     };
   }
 
