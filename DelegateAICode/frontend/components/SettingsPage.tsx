@@ -248,16 +248,14 @@ export function SettingsPage(): JSX.Element {
   useEffect(() => {
     const initializeVoiceService = async () => {
       try {
-        if (!characterVoiceService.isReady()) {
-          await characterVoiceService.initialize();
-        }
+          await characterVoiceService.waitForReady(); 
         
         if (characterVoiceService.isReady()) {
           const voices = characterVoiceService.getAvailableVoices();
-          setAvailableVoices(voices);
+          setAvailableVoices(await voices);
           
-          const genderGroups = characterVoiceService.getVoicesByGender();
-          setVoicesByGender(genderGroups);
+          /*const genderGroups = characterVoiceService.getVoicesByGender();
+          setVoicesByGender(genderGroups);*/
         }
       } catch (error) {
         console.error('Failed to initialize voice service:', error);
@@ -342,13 +340,7 @@ export function SettingsPage(): JSX.Element {
     setIsTestingUserVoice(true);
     try {
       // Use the character voice service to test the selected user voice
-      await characterVoiceService.generateSpeech({
-        text: userTestText,
-        stakeholder: selectedUserVoice, // Use the selected voice ID
-        role: 'stakeholder', // User role
-        speed: speechSpeed,
-        emphasize_emotion: false
-      });
+      await characterVoiceService.testVoice(selectedUserVoice, userTestText);
       
       setIsTestingUserVoice(false);
     } catch (error) {
