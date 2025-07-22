@@ -224,6 +224,9 @@ interface AppContextType {
   importSettings: (settings: Partial<AppSettings>) => Promise<void>;
   resetSettings: () => Promise<void>;
   updateSettings: (settings: Partial<AppSettings>) => void;
+
+  showDebugInfo: boolean;
+  setShowDebugInfo: (flag: boolean) => void;
 }
 
 // ============================================================================
@@ -492,6 +495,7 @@ export function AppProvider({ children }: AppProviderProps): JSX.Element {
   const [state, dispatch] = useReducer(appReducer, DEFAULT_STATE);
   const [chatSessions, setChatSessions] = useState<ChatSession[]>([]);
   const [transcripts,  setTranscripts]   = useState<Transcript[]>([]);
+  const [showDebugInfo, setShowDebugInfo] = useState(false);
   
   // Initialize from localStorage on mount
   useEffect(() => {
@@ -864,6 +868,10 @@ export function AppProvider({ children }: AppProviderProps): JSX.Element {
       throw new Error('Function not implemented.');
     },
     deleteTranscript: function (id: string): Promise<void> {
+      throw new Error('Function not implemented.');
+    },
+    showDebugInfo: false,
+    setShowDebugInfo: function (flag: boolean): void {
       throw new Error('Function not implemented.');
     }
   }), [

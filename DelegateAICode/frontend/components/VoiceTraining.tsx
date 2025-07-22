@@ -176,7 +176,7 @@ const TRAINING_PHRASES: TrainingPhrase[] = [
 ];
 
 export function VoiceTraining() {
-  const { showDebugInfo } = useApp();
+  const { showDebugInfo } = useApp(); 
   
   // Training service
   const [trainingService] = useState(() => createVoiceTrainingService({

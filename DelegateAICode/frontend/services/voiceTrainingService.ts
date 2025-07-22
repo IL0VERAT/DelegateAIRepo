@@ -299,7 +299,7 @@ class VoiceTrainingService {
   /**
    * Record and analyze a training phrase
    */
-  /*
+  
   async recordTrainingPhrase(phrase: TrainingPhrase, onProgress?: (progress: number) => void): Promise<TrainingRecording> {
     if (!this.currentProfile || !this.currentSession) {
       throw new Error('No active training session');
@@ -313,6 +313,7 @@ class VoiceTrainingService {
             const audioAnalysis = await this.analyzeAudio(audioBlob);
             
             // Perform speech recognition
+            
             const recognitionResult = await this.recognizeSpeech(audioBlob, phrase.text);
             
             // Calculate accuracy
