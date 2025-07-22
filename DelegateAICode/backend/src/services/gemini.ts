@@ -33,6 +33,8 @@ interface AudioGenerationRequest {
   voiceId: string;
   settings?: GeminiAudioSettings;
   characterPersonality?: string;
+  role?: 'facilitator' | 'stakeholder';
+  stakeholderId?: string;
 }
 
 class GeminiServiceEnhanced {
@@ -170,14 +172,21 @@ class GeminiServiceEnhanced {
    * Generate native audio using Gemini 2.5
    */
   async generateNativeAudio(request: AudioGenerationRequest): Promise<string> {
+    const voiceId = request.voiceId; //|| this.selectVoiceForRequest(request) --> allow it to randomly pick voice
     try {
       logger.info('Generating native audio with Gemini 2.5', { 
         voiceId: request.voiceId,
-        textLength: request.text.length 
+        textLength: request.text.length, 
+        stakeholderId: request.stakeholderId,
+        personality: request.characterPersonality
       });
 
       // Build audio generation prompt
-      const audioPrompt = this.buildAudioPrompt(request);
+      const audioPrompt = this.buildAudioPrompt({
+      ...request,
+      voiceId,
+      characterPersonality: request.characterPersonality
+      });
 
       // Generate audio using Gemini's native capabilities
       const result = await this.audioModel.generateContent({

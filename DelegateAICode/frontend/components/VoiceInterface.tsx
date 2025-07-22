@@ -21,6 +21,7 @@ import { Badge } from './ui/badge';
 import { ScrollArea } from './ui/scroll-area';
 import { AnimatedVoiceIcon } from './AnimatedVoiceIcon';
 import { AudioWaveform } from './AudioWaveform';
+import { geminiNativeAudio } from '../services/geminiNativeAudio';
 import { aiCampaignService, CampaignSession } from '../services/aiCampaignService';
 import { rateLimitService } from '../services/rateLimitService';
 import { 
@@ -240,13 +241,71 @@ export function VoiceInterface(): JSX.Element {
   const [showMessages, setShowMessages] = useState(false);
   const [rateLimitData, setRateLimitData] = useState(() => rateLimitService.getUsageSummary());
 
-  const recognitionRef = useRef<SpeechRecognition | null>(null);
+  //const recognitionRef = useRef<SpeechRecognition | null>(null);
   const synthRef = useRef<SpeechSynthesis | null>(null);
+  const mediaRecorderRef = useRef<MediaRecorder|null>(null)
+  const audioChunksRef   = useRef<BlobPart[]>([])
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const audioContextRef = useRef<AudioContext | null>(null);
   const analyserRef = useRef<AnalyserNode | null>(null);
   const animationFrameRef = useRef<number>();
   const currentAudioRef = useRef<HTMLAudioElement | null>(null);
+
+  // ——————————————————————————————————————————————————————————————————————————
+  // NEW: Gemini-based TTS helper
+  // ——————————————————————————————————————————————————————————————————————————
+    const speakWithGemini = useCallback(async (
+    text: string,
+    messageId: string,
+    stakeholder?: string,
+    role?: 'facilitator' | 'stakeholder'
+  ) => {
+    if (!text) return;
+    setCurrentlyPlaying(messageId);
+    setVoiceState('speaking');
+
+    try {
+      // 1️⃣ Pick a voice ID:
+      //    - If it's a system/facilitator message, use a diplomatic voice
+      //    - If stakeholder is provided, pick one of the preconfigured voices by personality
+      //    - Fallback to a default
+      let voiceId = 'gemini-diplomat-male-1';
+      if (role === 'facilitator') {
+        voiceId = 'gemini-diplomat-female-1';
+      } else if (stakeholder && activeCampaignSession) {
+        // assume stakeholder corresponds to a character in session
+        const char = activeCampaignSession.aiCharacters.find(c => c.id === stakeholder);
+        if (char?.personality) {
+          // pick voice matching that personality
+          const all = await geminiNativeAudio.getAvailableVoices();
+          const match = all.find(v => v.personality === char.personality);
+          if (match) voiceId = match.id;
+        }
+      }
+
+      // 2️⃣ Generate audio blob
+      const blob = await geminiNativeAudio.generateSpeech(
+        text,
+        voiceId,
+        { speed: speechSpeed, volume: 0.8 }
+      );
+
+      // 3️⃣ Play it
+      const url = URL.createObjectURL(blob);
+      const audio = new Audio(url);
+      currentAudioRef.current = audio;
+      audio.onended = () => {
+        setCurrentlyPlaying(null);
+        setVoiceState('idle');
+        URL.revokeObjectURL(url);
+      };
+      await audio.play();
+    } catch (err) {
+      console.error('Gemini TTS error:', err);
+      setCurrentlyPlaying(null);
+      setVoiceState('idle');
+    }
+  }, [speechSpeed, activeCampaignSession]);
 
   // ============================================================================
   // CAMPAIGN INTEGRATION
@@ -309,66 +368,29 @@ export function VoiceInterface(): JSX.Element {
   // SPEECH RECOGNITION
   // ============================================================================
 
-  useEffect(() => {
-    if (!('webkitSpeechRecognition' in window) && !('SpeechRecognition' in window)) {
-      console.warn('Speech recognition not supported');
-      return;
-    }
-
-    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-    const recognition = new SpeechRecognition();
-
-    recognition.continuous = true;
-    recognition.interimResults = true;
-    recognition.lang = 'en-US';
-
-    recognition.onstart = () => {
-      setVoiceState('listening');
-      setIsRecording(true);
-      console.log('🎤 Speech recognition started');
-    };
-
-    recognition.onresult = (event) => {
-      let finalTranscript = '';
-      let interimTranscript = '';
-
-      for (let i = event.resultIndex; i < event.results.length; i++) {
-        const transcript = event.results[i][0].transcript;
-        if (event.results[i].isFinal) {
-          finalTranscript += transcript;
-        } else {
-          interimTranscript += transcript;
+useEffect(() => {
+    if (!isCampaignActive) return;
+    const unsub = aiCampaignService.subscribeToSession((session: CampaignSession | null) => {
+      if (session && session.messages.length) {
+        const msg = session.messages[ session.messages.length - 1 ];
+        if (msg.role !== 'user') {
+          const voiceMsg: VoiceMessage = {
+            id: msg.id,
+            content: msg.content,
+            type: 'campaign',
+            timestamp: msg.timestamp,
+            stakeholder: msg.stakeholder,
+            role: msg.role
+          };
+          setMessages(prev => prev.some(m => m.id===voiceMsg.id) ? prev : [...prev, voiceMsg]);
+          if (settings.autoPlayAudio) {
+            speakWithGemini(voiceMsg.content, voiceMsg.id, voiceMsg.stakeholder, voiceMsg.role);
+          }
         }
       }
-
-      setTranscript(finalTranscript + interimTranscript);
-
-      if (finalTranscript) {
-        handleUserSpeech(finalTranscript.trim());
-      }
-    };
-
-    recognition.onerror = (event) => {
-      console.error('Speech recognition error:', event.error);
-      setVoiceState('error');
-      setIsRecording(false);
-    };
-
-    recognition.onend = () => {
-      setIsRecording(false);
-      if (voiceState === 'listening') {
-        setVoiceState('idle');
-      }
-    };
-
-    recognitionRef.current = recognition;
-
-    return () => {
-      if (recognitionRef.current) {
-        recognitionRef.current.stop();
-      }
-    };
-  }, [voiceState]);
+    });
+    return unsub;
+  }, [isCampaignActive, settings.autoPlayAudio, speakWithGemini]);
 
   // ============================================================================
   // BROWSER TTS SPEECH SYNTHESIS
@@ -551,7 +573,7 @@ export function VoiceInterface(): JSX.Element {
       rateLimitService.recordWordUsage(speechText, isAdmin, isDemoMode);
       
       if (isCampaignActive) {
-        await aiCampaignService.processUserInput(speechText, speechSpeed);
+        await aiCampaignService.processPlayerInput(speechText, speechSpeed);
       } else {
         const assistantMessage: VoiceMessage = {
           id: (Date.now() + 1).toString(),
@@ -589,19 +611,64 @@ export function VoiceInterface(): JSX.Element {
   // UI HELPERS
   // ============================================================================
 
-  const startListening = useCallback(() => {
-    if (recognitionRef.current && voiceState === 'idle') {
-      recognitionRef.current.start();
-      startAudioLevelMonitoring();
-    }
-  }, [voiceState, startAudioLevelMonitoring]);
+  const startListening = useCallback(async () => {
+    // ask for mic perms and start recording
+    const stream = await navigator.mediaDevices.getUserMedia({ audio: true })
+    const recorder = new MediaRecorder(stream, { mimeType: 'audio/webm' })
+    audioChunksRef.current = []
+    recorder.ondataavailable = e => audioChunksRef.current.push(e.data)
+    recorder.onstart       = () => setVoiceState('listening')
+    recorder.onstop        = async () => {
+      setVoiceState('processing')
+      const userBlob = new Blob(audioChunksRef.current, { type: 'audio/webm' })
 
-  const stopListening = useCallback(() => {
-    if (recognitionRef.current) {
-      recognitionRef.current.stop();
-      stopAudioLevelMonitoring();
+      // send to your backend which calls Gemini’s conversational API
+      const convResp = await api('/voice/gemini/converse', {
+        method: 'POST',
+        body: userBlob,
+      })
+      // assume { transcript: string, replyAudioBase64: string, role: 'facilitator'|'stakeholder', stakeholderId?: string }
+      const { transcript, replyAudioBase64, role, stakeholderId } = await convResp.json()
+
+      // display the transcript
+      // setTranscript(transcript)
+
+      // turn the base64 reply into a blob
+      const audioBuffer = Uint8Array.from(atob(replyAudioBase64), c=>c.charCodeAt(0))
+      const replyBlob   = new Blob([audioBuffer], { type: 'audio/mpeg' })
+
+      setVoiceState('speaking')
+      // choose voiceId based on role/personality
+      const voiceId = role==='facilitator'
+        ? 'gemini-diplomat-female-1'
+        : stakeholderId?.startsWith('gemini-') ? stakeholderId : 'gemini-diplomat-male-1'
+
+      // play it
+      await geminiNativeAudio.generateSpeech(
+        transcript, 
+        voiceId, 
+        { speed: 1.0, volume: 0.8 }
+      ).then(blob => {
+        const url = URL.createObjectURL(blob)
+        const a   = new Audio(url)
+        a.onended = () => {
+          URL.revokeObjectURL(url)
+          setVoiceState('idle')
+        }
+        a.play()
+      })
     }
-  }, [stopAudioLevelMonitoring]);
+
+    mediaRecorderRef.current = recorder
+    recorder.start()
+  }, []);
+
+ const stopListening = useCallback(() => {
+    if (mediaRecorderRef.current && voiceState === 'listening') {
+      mediaRecorderRef.current.stop()
+      setVoiceState('processing')
+    }
+  }, [voiceState])
 
   const stopSpeaking = useCallback(() => {
     stopCurrentAudio();

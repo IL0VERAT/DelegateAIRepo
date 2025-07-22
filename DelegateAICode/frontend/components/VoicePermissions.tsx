@@ -4,7 +4,7 @@ import { Button } from './ui/button';
 import { Alert, AlertDescription } from './ui/alert';
 import { Badge } from './ui/badge';
 import { AudioRecorderService } from '../services/audioRecorder';
-import { config } from '../config/environment';
+import { environment } from '../config/environment';
 import { 
   Mic, 
   MicOff, 
@@ -60,18 +60,21 @@ export function VoicePermissions({
 
   useEffect(() => {
     // If we're in demo mode with mock voice permissions, grant automatically
-    if (config.enableMockData && config.mockVoicePermissions) {
+    if (environment.ENABLE_MOCK_DATA) {
       setPermissionState('granted');
       setIsSupported(true);
       // Create mock devices
-      setDevices([
-        { deviceId: 'mock-mic-1', label: 'Mock Microphone', kind: 'audioinput', groupId: 'mock-group' },
-        { deviceId: 'mock-mic-2', label: 'Demo Audio Input', kind: 'audioinput', groupId: 'mock-group' }
-      ]);
+      const mockDevices = [
+      { deviceId: 'mock-mic-1', label: 'Mock Microphone', kind: 'audioinput', groupId: 'mock-group' },
+      { deviceId: 'mock-mic-2', label: 'Demo Audio Input',   kind: 'audioinput', groupId: 'mock-group' },
+      ] as unknown as MediaDeviceInfo[];
+      setDevices(mockDevices);
       setSelectedDevice('mock-mic-1');
       onPermissionGranted?.();
       return;
     }
+
+    
 
     // Gather environment information for debugging
     const currentUrl = window.location.href;
@@ -93,25 +96,24 @@ export function VoicePermissions({
     };
     setDebugInfo(envInfo);
 
-    // Check if recording is supported
-    const supported = AudioRecorderService.isSupported();
-    setIsSupported(supported);
-
-    if (!supported) {
-      setError('Voice recording is not supported in this environment');
-      return;
-    }
-
-    // Check initial permission state
-    checkPermissions();
-
-    // Auto-request if enabled and environment supports it
-    if (autoRequest && supported && envInfo.isSecureContext && !envInfo.isInIframe) {
-      // Delay auto-request to avoid being blocked
-      setTimeout(() => {
-        requestPermission();
-      }, 1000);
-    }
+AudioRecorderService.isSupported()
+    .then(supported => {
+      setIsSupported(supported);
+      if (!supported) {
+        setError('Voice recording is not supported in this environment');
+        return;
+      }
+      return checkPermissions();
+    })
+    .then(() => {
+      if (autoRequest && isSupported && debugInfo?.isSecureContext && !debugInfo?.isInIframe) {
+        setTimeout(requestPermission, 1000);
+      }
+    })
+    .catch(err => {
+      console.error('Error initializing voice permissions:', err);
+      setError('Error initializing voice permissions');
+    });
   }, [autoRequest]);
 
   const checkPermissions = async () => {
@@ -168,8 +170,7 @@ export function VoicePermissions({
         throw new Error('getUserMedia is not available in this browser');
       }
 
-      const recorder = new AudioRecorderService();
-      const granted = await recorder.requestPermission();
+      const granted = await AudioRecorderService.requestPermission();;
       
       if (granted) {
         setPermissionState('granted');
@@ -181,7 +182,7 @@ export function VoicePermissions({
         onPermissionDenied?.();
       }
       
-      recorder.dispose();
+      //recorder.dispose();
     } catch (error) {
       console.error('Failed to request microphone permission:', error);
       
@@ -233,7 +234,7 @@ export function VoicePermissions({
   };
 
   const getPermissionBadge = () => {
-    if (config.enableMockData && config.mockVoicePermissions) {
+    if (environment.ENABLE_MOCK_DATA) {
       return <Badge variant="default" className="bg-blue-100 text-blue-800 border-blue-200">Demo Mode</Badge>;
     }
     
@@ -248,7 +249,7 @@ export function VoicePermissions({
   };
 
   const getPermissionDescription = () => {
-    if (config.enableMockData && config.mockVoicePermissions) {
+    if (environment.ENABLE_MOCK_DATA) {
       return 'Demo mode active - voice features are simulated without requiring microphone access.';
     }
     
@@ -263,7 +264,7 @@ export function VoicePermissions({
   };
 
   const getInstructions = () => {
-    if (config.enableMockData && config.mockVoicePermissions) {
+    if (environment.ENABLE_MOCK_DATA) {
       return (
         <div className="space-y-3 text-sm text-muted-foreground">
           <div className="flex items-center gap-2 p-3 bg-blue-50 dark:bg-blue-950/20 rounded border border-blue-200 dark:border-blue-800/30">
@@ -361,7 +362,7 @@ export function VoicePermissions({
   };
 
   // In demo mode, always show as supported
-  if (!isSupported && !(config.enableMockData && config.mockVoicePermissions)) {
+  if (!isSupported && !(environment.ENABLE_MOCK_DATA)) {
     return (
       <Card className={className}>
         <CardHeader>
@@ -433,7 +434,7 @@ export function VoicePermissions({
           </Alert>
         )}
 
-        {debugInfo?.isInIframe && !debugInfo?.canOpenNewTab && !(config.enableMockData && config.mockVoicePermissions) && (
+        {debugInfo?.isInIframe && !debugInfo?.canOpenNewTab && !(environment.ENABLE_MOCK_DATA) && (
           <Alert>
             <Upload className="h-4 w-4" />
             <AlertDescription>
@@ -443,7 +444,7 @@ export function VoicePermissions({
         )}
 
         {/* Action Buttons - Only show if not in demo mode */}
-        {!(config.enableMockData && config.mockVoicePermissions) && (
+        {!(environment.ENABLE_MOCK_DATA) && (
           <div className="space-y-2">
             {permissionState === 'prompt' && !debugInfo?.isInIframe && (
               <Button 
@@ -494,7 +495,7 @@ export function VoicePermissions({
           <Alert>
             <CheckCircle className="h-4 w-4" />
             <AlertDescription>
-              {config.enableMockData && config.mockVoicePermissions 
+              {environment.ENABLE_MOCK_DATA 
                 ? 'Demo mode active! Voice features are simulated and ready to test.'
                 : 'Microphone access granted! Voice features are now available.'
               }
@@ -505,7 +506,7 @@ export function VoicePermissions({
         {showDeviceSelector && permissionState === 'granted' && devices.length > 1 && (
           <div className="space-y-2">
             <label className="text-sm font-medium">
-              Select {config.enableMockData && config.mockVoicePermissions ? 'Demo ' : ''}Microphone:
+              Select {environment.ENABLE_MOCK_DATA ? 'Demo ' : ''}Microphone:
             </label>
             <select
               value={selectedDevice}
@@ -526,7 +527,7 @@ export function VoicePermissions({
             <div className="flex items-center gap-2 text-xs text-muted-foreground">
               <Info className="h-3 w-3" />
               <span>
-                {config.enableMockData && config.mockVoicePermissions ? 'Demo: ' : ''}
+                {environment.ENABLE_MOCK_DATA ? 'Demo: ' : ''}
                 {devices.length} microphone{devices.length !== 1 ? 's' : ''} detected
               </span>
             </div>
@@ -548,8 +549,8 @@ export function VoicePermissions({
           {showDebugInfo && debugInfo && (
             <div className="mt-2 text-xs text-muted-foreground space-y-1 p-2 bg-muted rounded">
               <div className="font-medium">Environment Information:</div>
-              <div>Demo Mode: {config.enableMockData ? '✓ Enabled' : '✗ Disabled'}</div>
-              <div>Mock Voice: {config.mockVoicePermissions ? '✓ Enabled' : '✗ Disabled'}</div>
+              <div>Demo Mode: {environment.ENABLE_MOCK_DATA ? '✓ Enabled' : '✗ Disabled'}</div>
+              <div>Mock Voice: {environment.ENABLE_MOCK_DATA ? '✓ Enabled' : '✗ Disabled'}</div>
               <div>Secure Context (HTTPS): {debugInfo.isSecureContext ? '✓ Yes' : '✗ No'}</div>
               <div>Media Devices API: {debugInfo.hasMediaDevices ? '✓ Available' : '✗ Missing'}</div>
               <div>getUserMedia: {debugInfo.hasUserMedia ? '✓ Available' : '✗ Missing'}</div>

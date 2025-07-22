@@ -43,7 +43,7 @@ interface CampaignCrisis {
   stakeholders: string[];
   keyFacts: string[];
   possibleOutcomes: string[];
-  playerChoices: CampaignChoice[];
+  playerChoices: CampaignChoice[]; 
   status: 'active' | 'resolved' | 'escalated' | 'ignored';
 }
 
