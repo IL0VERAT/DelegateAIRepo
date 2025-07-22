@@ -238,17 +238,17 @@ export const LoginPage: React.FC<LoginPageProps> = ({ onSuccess, redirectTo }) =
 
     try {
       let result;
-      
+      let ok: boolean;
       if (activeTab === 'login') {
-        result = await login(formData.email, formData.password);
+        ok = await login(formData.email, formData.password);
       } else {
-        result = await register(formData.email, formData.password, formData.displayName);
+        ok = await register(formData.email, formData.password, formData.displayName);
       }
 
-      if (result.success) {
+      if (ok) {
         onSuccess?.();
       } else {
-        setFormErrors({ general: result.error });
+        setFormErrors({ general: authError ?? 'Authentication failed' });
       }
     } catch (error) {
       console.error('Form submission error:', error);

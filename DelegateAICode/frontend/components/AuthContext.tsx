@@ -19,7 +19,9 @@ interface AuthContextType {
   subscription: Subscription | null;
   isAuthenticated: boolean;
   isLoading: boolean;
+  clearError: () => void; 
   enterDemoMode: () => void;
+  error: string | null;
   login: (email: string, password: string) => Promise<boolean>;
   register: (email: string, password: string, name?: string) => Promise<boolean>;
   logout: () => Promise<void>;
@@ -42,6 +44,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
   const [subscription, setSubscription] = useState<Subscription | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const clearError = () => setError(null);
 
   // ============================================================================
   // INITIALIZATION
@@ -84,21 +88,32 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   // AUTHENTICATION METHODS
   // ============================================================================
 
+
   const enterDemoMode = () => {
      // e.g. mark user as “demo” and bypass real auth
-    setUser({ id: 'demo', name: 'Demo User', role: 'DEMO' });
+    setError(null);
+    setUser({ 
+      id: 'demo', 
+      name: 'Demo User', 
+      role: 'DEMO',
+      email: 'demo@delegate.ai', //NEED TO CREATE THIS?
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
+   });
   };
 
   const login = async (email: string, password: string): Promise<boolean> => {
     try {
       setIsLoading(true);
+      setError(null);
 
       const success = await authService.login(email, password);
       
       if (success) {
         const userData = await authService.getCurrentUser();
         setUser(userData);
-        
+        setError(null);
+
         // Load subscription after login
         await loadSubscription();
         
@@ -108,8 +123,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
       return false;
 
-    } catch (error) {
+    } catch (error:any) {
       logger.error('Login error:', error);
+      setError(error.message || 'Login failed');
       return false;
     } finally {
       setIsLoading(false);
@@ -119,13 +135,15 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const register = async (email: string, password: string, name?: string): Promise<boolean> => {
     try {
       setIsLoading(true);
+      setError(null);
 
       const success = await authService.register(email, password, name);
       
       if (success) {
         const userData = await authService.getCurrentUser();
         setUser(userData);
-        
+        setError(null);
+
         // Load subscription after registration (should create free tier)
         await loadSubscription();
         
@@ -135,8 +153,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
       return false;
 
-    } catch (error) {
+    } catch (error:any) {
       logger.error('Registration error:', error);
+      setError(error.message || 'Registration failed');
       return false;
     } finally {
       setIsLoading(false);
@@ -224,7 +243,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     updateUser,
     refreshSubscription,
     checkUsageLimit,
-    enterDemoMode: () => {}
+    enterDemoMode,
+    error,
+    clearError,
   };
 
   return (
