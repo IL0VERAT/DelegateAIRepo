@@ -1,8 +1,8 @@
-import { ReactNode, useEffect, useState } from 'react';
+import { ReactElement, useEffect, useState } from 'react';
 import { ResponsiveContainer } from 'recharts';
 
 interface ResponsiveChartProps {
-  children: ReactNode;
+  children: ReactElement;
   height?: number | string;
   width?: number | string;
   minHeight?: number;

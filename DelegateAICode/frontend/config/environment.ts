@@ -19,6 +19,7 @@ interface Environment {
   APP_URL: string;
   ENVIRONMENT: string;
   ENABLE_MOCK_DATA: boolean;
+  version: string;
   
   // Feature Flags
   ENABLE_ANALYTICS: boolean;
@@ -75,6 +76,7 @@ export const environment: Environment = {
   APP_URL: getEnvVar('VITE_APP_URL', 'http://localhost:5173'),
   ENVIRONMENT: getEnvVar('VITE_ENVIRONMENT', 'development'),
   ENABLE_MOCK_DATA: getEnvBoolean('VITE_ENABLE_MOCK_DATA', false),
+  version: import.meta.env.REACT_APP_VERSION || '1.0.0',
   
   // Feature Flags
   ENABLE_ANALYTICS: getEnvBoolean('VITE_ENABLE_ANALYTICS', false),

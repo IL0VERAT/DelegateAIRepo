@@ -1,6 +1,7 @@
 import { useEffect } from 'react';
 import { useApp } from './AppContext';
-import { config, environmentInfo } from '../config/environment';
+import { environment } from '../config/environment';
+import { useAuth } from './AuthContext';
 
 interface SEOData {
   title: string;
@@ -131,13 +132,13 @@ const generateStructuredData = (seoData: SEOData) => {
       "Text-to-Speech Technology"
     ],
     "screenshot": `${baseUrl}/og-image-default.png`,
-    "softwareVersion": environmentInfo.version,
+    "softwareVersion": environment.version,
     "releaseNotes": "Advanced AI assistant with personality modes",
     "applicationSubCategory": "AI Assistant",
     "downloadUrl": currentUrl,
     "installUrl": currentUrl,
-    "memoryRequirements": "512MB",
-    "storageRequirements": "50MB"
+    //"memoryRequirements": "512MB",
+    //"storageRequirements": "50MB"
   };
 
   const webPageData = {
@@ -192,14 +193,15 @@ const updateStructuredData = (seoData: SEOData) => {
 
 // Hook for managing SEO
 export const useSEO = (customSEO?: Partial<SEOData>) => {
-  const { currentView, user } = useApp();
+  const { currentView} = useApp();
+  const {user} = useAuth();
   
   useEffect(() => {
     const viewSEO = SEO_CONFIG[currentView] || DEFAULT_SEO;
     const finalSEO: SEOData = { ...viewSEO, ...customSEO };
     
     // Update document title
-    const titleSuffix = config.enableMockData ? ' (Demo)' : '';
+    const titleSuffix = environment.ENABLE_MOCK_DATA ? ' (Demo)' : '';
     const fullTitle = `${finalSEO.title}${titleSuffix}`;
     document.title = fullTitle;
     
