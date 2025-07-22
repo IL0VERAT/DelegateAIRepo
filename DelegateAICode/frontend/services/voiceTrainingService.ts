@@ -417,23 +417,34 @@ class VoiceTrainingService {
   /**
    * Perform speech recognition on audio
    */
-  /*
+  
   private async recognizeSpeech(audioBlob: Blob, expectedText: string): Promise<RecognitionResult> {
     if (this.config.enableMockData) {
       return this.mockSpeechRecognition(expectedText);
     }
 
-    // Fallback to OpenAI Whisper
-    if (this.config.geminiApiKey) {
-      try {
-        return await this.geminiTranscription(audioBlob);
-      } catch (error) {
-        console.warn('OpenAI Whisper recognition failed:', error);
-      }
-    }
+    const form = new FormData();
+    form.append('file', audioBlob, 'recording.wav');
 
-    // Final fallback to mock
-    return this.mockSpeechRecognition(expectedText);
+    const resp = await fetch('/api/voice/gemini/transcribe', {
+    method: 'POST',
+    body: form,
+    headers: {
+      // no Content-Type: browser will set multipart/form-data boundary for FormData
+      ...(this.config.geminiApiKey && { Authorization: `Bearer ${this.config.geminiApiKey}` })
+    }
+  });
+
+    if (!resp.ok) {
+    throw new Error(`Transcription failed: ${resp.statusText}`);
+  }
+  const data = await resp.json();
+  return {
+    text: data.text,
+    confidence: data.confidence,
+    words: data.words,          // expect [{ word, confidence, startTime, endTime }]
+    alternatives: data.alternatives  // expect [{ text, confidence }]
+  };
   }
 
   /**
