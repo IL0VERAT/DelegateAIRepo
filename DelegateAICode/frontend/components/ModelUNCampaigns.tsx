@@ -20,6 +20,7 @@ import { Badge } from './ui/badge';
 import { Progress } from './ui/progress';
 import { Separator } from './ui/separator';
 import { aiCampaignService } from '../services/aiCampaignService';
+import type { CampaignSession } from '../services/aiCampaignService';
 import { characterVoiceService } from '../services/characterVoiceService';
 import { campaignOrchestrator, type CampaignTimeline } from '../services/campaignOrchestrator';
 import { logger } from '../utils/logger';
@@ -72,7 +73,7 @@ interface CampaignCrisis {
   possibleOutcomes: string[];
 }
 
-interface CampaignSession {
+/*interface CampaignSession {
   id: string;
   title: string;
   playerCharacter: CampaignCharacter;
@@ -82,7 +83,7 @@ interface CampaignSession {
   voiceSettings: any;
   sessionState: string;
   outcomes?: string[];
-}
+}*/
 
 type CampaignPhase = 'selection' | 'details' | 'active';
 
@@ -389,7 +390,22 @@ export function ModelUNCampaigns() {
           volume: 0.8,
           characterVoices: {}
         },
-        sessionState: 'active'
+        sessionState: 'active',
+        campaign: {
+          title: '',
+          difficulty: 'medium'
+        },
+        theme: '',
+        description: '',
+        scenario: undefined,
+        activeCrises: [],
+        negotiationProgress: 0,
+        currentPhase: undefined,
+        phases: 'negotiation',
+        timeRemaining: 0,
+        playerStats: undefined,
+        achievements: [],
+        outcomes: []
       };
 
       // Assign voices to characters
@@ -557,6 +573,8 @@ export function ModelUNCampaigns() {
   // ============================================================================
 
   // Campaign Selection Phase
+
+  
   if (currentPhase === 'selection') {
     return (
       <div className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50">
@@ -917,6 +935,14 @@ export function ModelUNCampaigns() {
 
   // Active Campaign Phase (full-screen secret interface)
   if (currentPhase === 'active' && session) {
+     //check first:
+  if (!session.currentCrisis) {
+    return (
+      <div className="h-screen flex items-center justify-center text-red-600">
+        ⚠️ Campaign data is incomplete (no crisis data). Please restart.
+      </div>
+    );
+  }
     return (
       <div className="h-screen bg-gradient-to-br from-slate-900 via-blue-900 to-indigo-900 flex flex-col">
         {/* Header with role and controls */}
