@@ -70,12 +70,12 @@ export function VoiceCommands({
 }: VoiceCommandsProps) {
   const { 
     setCurrentView, 
-    currentPersonality, 
-    setCurrentPersonality,
+    debateMode,  
+    setDebateMode,
     voiceEnabled,
     setVoiceEnabled,
-    continuousMode,
-    setContinuousMode
+    //continuousMode,
+    //setContinuousMode
   } = useApp();
   
   const { user, isAuthenticated } = useAuth();
@@ -419,27 +419,24 @@ export function VoiceCommands({
 
         // Personality commands
         case 'set_personality_collaborative':
-          setCurrentPersonality('collaborative');
+          setDebateMode('collaborative');
           break;
         case 'set_personality_gentle':
-          setCurrentPersonality('gentle');
+          setDebateMode('gentle');
           break;
         case 'set_personality_balanced':
-          setCurrentPersonality('balanced');
+          setDebateMode('balanced');
           break;
         case 'set_personality_challenging':
-          setCurrentPersonality('challenging');
+          setDebateMode('challenging');
           break;
         case 'set_personality_aggressive':
-          setCurrentPersonality('aggressive');
+          setDebateMode('aggressive');
           break;
 
         // Voice control commands
         case 'toggle_voice':
           setVoiceEnabled(!voiceEnabled);
-          break;
-        case 'toggle_continuous':
-          setContinuousMode(!continuousMode);
           break;
 
         // General commands
@@ -465,11 +462,11 @@ export function VoiceCommands({
     }
   }, [
     setCurrentView, 
-    setCurrentPersonality, 
+    setDebateMode, 
     setVoiceEnabled, 
-    setContinuousMode,
+    //setContinuousMode,
     voiceEnabled,
-    continuousMode,
+    //continuousMode,
     onCommandExecuted
   ]);
 
