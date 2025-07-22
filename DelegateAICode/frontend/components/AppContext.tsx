@@ -20,6 +20,8 @@ import {
   ConnectionIssue,
   ConnectionErrorCode
 } from '../services/connectionStatus'
+import { ChatSession, Transcript } from 'types/api';
+import apiService from 'services/api';
 
 // ============================================================================
 // TYPES AND INTERFACES
@@ -156,6 +158,8 @@ type AppAction =
 // Context interface
 interface AppContextType {
   // State
+  chatSessions: ChatSession[]
+  transcripts:  Transcript[]
   currentView: CurrentView;
   theme: Theme;
   fontSize: FontSize;
@@ -181,6 +185,9 @@ interface AppContextType {
   errors: ConnectionIssue[]
   reconnectWebSocket: () => Promise<void>
   checkApiHealth: () => Promise<void>
+  selectChatSession: (id: string) => Promise<void>
+  deleteChatSession:  (id: string) => Promise<void>
+  deleteTranscript:   (id: string) => Promise<void>
   
   // Settings object for easy access
   settings: AppSettings;
@@ -483,6 +490,8 @@ interface AppProviderProps {
 
 export function AppProvider({ children }: AppProviderProps): JSX.Element {
   const [state, dispatch] = useReducer(appReducer, DEFAULT_STATE);
+  const [chatSessions, setChatSessions] = useState<ChatSession[]>([]);
+  const [transcripts,  setTranscripts]   = useState<Transcript[]>([]);
   
   // Initialize from localStorage on mount
   useEffect(() => {
@@ -493,6 +502,16 @@ export function AppProvider({ children }: AppProviderProps): JSX.Element {
     });
     console.log('🚀 App context initialized with stored settings');
   }, []);
+
+    useEffect(() => {
+    apiService.get<ChatSession[]>('/chat/sessions')
+      .then(res => res.success && setChatSessions(res.data!))
+      .catch(console.error)
+
+    apiService.get<Transcript[]>('/voice/transcripts')
+      .then(res => res.success && setTranscripts(res.data!))
+      .catch(console.error)
+  }, [])
   
   // Apply theme to document
   useEffect(() => {
@@ -524,6 +543,21 @@ export function AppProvider({ children }: AppProviderProps): JSX.Element {
   const apiHealthy = !errors.some(e => e.code === ConnectionErrorCode.API_SERVER_DOWN)
   const isWebSocketConnected = !errors.some(e => e.code === ConnectionErrorCode.WEBSOCKET_CONNECTION_FAILED)
 
+    // 5) Implement the action functions
+  const selectChatSession = async (id: string) => {
+    // e.g. preload messages here if needed...
+    setCurrentView('chat')
+  }
+
+  const deleteChatSession = async (id: string) => {
+    const res = await apiService.delete(`/chat/sessions/${id}`)
+    if (res.success) setChatSessions(s => s.filter(x => x.id !== id))
+  }
+
+  const deleteTranscript = async (id: string) => {
+    const res = await apiService.delete(`/voice/transcripts/${id}`)
+    if (res.success) setTranscripts(t => t.filter(x => x.id !== id))
+  }
   
   // Apply font size to document
   useEffect(() => {
@@ -820,12 +854,31 @@ export function AppProvider({ children }: AppProviderProps): JSX.Element {
     },
     checkApiHealth: function (): Promise<void> {
       throw new Error('Function not implemented.');
+    },
+    chatSessions: [],
+    transcripts: [],
+    selectChatSession: function (id: string): Promise<void> {
+      throw new Error('Function not implemented.');
+    },
+    deleteChatSession: function (id: string): Promise<void> {
+      throw new Error('Function not implemented.');
+    },
+    deleteTranscript: function (id: string): Promise<void> {
+      throw new Error('Function not implemented.');
     }
   }), [
     state,
     settings,
     setCurrentView,
     setTheme,
+    chatSessions,
+    transcripts,
+    selectChatSession,
+    deleteChatSession,
+    deleteTranscript,
+    setCurrentView,
+    apiHealthy,
+    isWebSocketConnected,
     setFontSize,
     setVoiceEnabled,
     setVoiceSpeed,

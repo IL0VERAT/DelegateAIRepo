@@ -17,7 +17,7 @@ import {
   Eye
 } from 'lucide-react';
 import { Separator } from './ui/separator';
-import { ChatSession, Transcript } from '../types/api';
+import { ChatSession, Transcript } from '../types/api'; 
 
 type ConversationItem = {
   id: string;
@@ -52,7 +52,7 @@ export function HistoryPage() {
       updatedAt: session.updatedAt,
       createdAt: session.createdAt,
       messageCount: session.messageCount || 0,
-      preview: session.lastMessage || session.preview,
+      preview: session.lastMessage,
     }));
 
     const voiceItems: ConversationItem[] = (transcripts || [])
