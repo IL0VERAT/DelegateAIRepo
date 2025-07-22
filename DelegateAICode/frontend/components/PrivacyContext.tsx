@@ -440,14 +440,18 @@ export function PrivacyProvider({ children }: { children: React.ReactNode }) {
     
     // Ensure boolean values are actually booleans
     const booleanFields = [
-      'data_collection_consent', 'analytics_consent', 'marketing_consent',
-      'third_party_sharing_consent', 'sensitive_data_processing_consent',
-      'opt_out_of_sale', 'limit_sensitive_data_use'
-    ];
+      'data_collection_consent', 
+      'analytics_consent', 
+      'marketing_consent',
+      'sensitive_data_processing_consent',
+      'limit_sensitive_data_use'
+    ] as const;
+
+    type BooleanField = typeof booleanFields[number];
     
-    booleanFields.forEach(field => {
-      if (typeof validatedSettings[field as keyof PrivacySettings] !== 'boolean') {
-        validatedSettings[field as keyof PrivacySettings] = false as any;
+    booleanFields.forEach((field: BooleanField) => {
+      if (typeof validatedSettings[field] !== 'boolean') {
+        validatedSettings[field] = false;
       }
     });
     
