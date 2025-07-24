@@ -1,12 +1,15 @@
 //NOTE TO SELF: Make bundler actually resolve figma:asset/*
 
-import { defineConfig } from 'vite'
+import { defineConfig, type ConfigEnv } from 'vite'
 import react from '@vitejs/plugin-react'
 import path from 'path'
 
 // https://vitejs.dev/config/
-export default defineConfig({
-  plugins: [react(),
+export default defineConfig((env: ConfigEnv) =>{
+const isProduction = env.mode === 'production'
+
+  return {
+  plugins: [
 
     {
       name: 'strip-use-client',
@@ -17,12 +20,13 @@ export default defineConfig({
         }
       },
     },
+    react(),
   ],
 
   // Define the entry point
   root: '.',
 
-    // Path resolution
+  // Path resolution
   resolve: {
     alias: {
       '@': path.resolve(__dirname, '.'),
@@ -36,16 +40,16 @@ export default defineConfig({
   },
 
   // Development server configuration
-  server: {
+  /*server: {
     port: 5173,
     host: true,
     open: true
-  },
+  },*/
   
   // Build configuration
   build: {
     outDir: 'dist',
-    sourcemap: true, //turn off for production!!!
+    sourcemap: !isProduction, //turn off for production!!!
     rollupOptions: {
       input: {
         main: path.resolve(__dirname, 'index.html')
@@ -73,4 +77,5 @@ export default defineConfig({
       '@stripe/stripe-js'
     ]
   }
+}
 })
