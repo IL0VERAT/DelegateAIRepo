@@ -14,7 +14,7 @@ export default defineConfig({
   // Build configuration
   build: {
     outDir: 'dist',
-    sourcemap: true,
+    sourcemap: true, //turn off for production!!!
     rollupOptions: {
       input: {
         main: path.resolve(__dirname, 'index.html')
