@@ -6,30 +6,23 @@ import path from 'path'
 
 // https://vitejs.dev/config/
 export default defineConfig({
-  plugins: [react()],
-  
+  plugins: [react(),
+
+    {
+      name: 'strip-use-client',
+      enforce: 'pre',
+      transform(code, id) {
+        if (id.includes('node_modules') && /^\s*['"]use client['"]/.test(code)) {
+          return code.replace(/^\s*['"]use client['"];\r?\n?/, '')
+        }
+      },
+    },
+  ],
+
   // Define the entry point
   root: '.',
-  
-  // Build configuration
-  build: {
-    outDir: 'dist',
-    sourcemap: true, //turn off for production!!!
-    rollupOptions: {
-      input: {
-        main: path.resolve(__dirname, 'index.html')
-      }
-    }
-  },
-  
-  // Development server configuration
-  server: {
-    port: 5173,
-    host: true,
-    open: true
-  },
-  
-  // Path resolution
+
+    // Path resolution
   resolve: {
     alias: {
       '@': path.resolve(__dirname, '.'),
@@ -41,6 +34,25 @@ export default defineConfig({
       '@/styles': path.resolve(__dirname, 'styles')
     }
   },
+
+  // Development server configuration
+  server: {
+    port: 5173,
+    host: true,
+    open: true
+  },
+  
+  // Build configuration
+  build: {
+    outDir: 'dist',
+    sourcemap: true, //turn off for production!!!
+    rollupOptions: {
+      input: {
+        main: path.resolve(__dirname, 'index.html')
+      }
+    }
+  },
+
   
   // Environment variables
   envPrefix: 'VITE_',
