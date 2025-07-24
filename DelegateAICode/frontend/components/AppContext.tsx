@@ -21,7 +21,7 @@ import {
   ConnectionErrorCode
 } from '../services/connectionStatus'
 import { ChatSession, Transcript } from 'types/api';
-import apiService from 'services/api';
+import apiService from '../services/api';
 import type { CampaignSession } from '../services/aiCampaignService';
 
 // ============================================================================
