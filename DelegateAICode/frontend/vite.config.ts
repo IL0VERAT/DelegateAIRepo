@@ -14,7 +14,7 @@ const isProduction = env.mode === 'production'
     {
       name: 'strip-use-client',
       enforce: 'pre',
-      transform(code, id) {
+      transform(code: string, id: string) {
         if (id.includes('node_modules') && /^\s*['"]use client['"]/.test(code)) {
           return code.replace(/^\s*['"]use client['"];\r?\n?/, '')
         }
@@ -63,7 +63,7 @@ const isProduction = env.mode === 'production'
   
   // CSS configuration
   css: {
-    postcss: './postcss.config.js'
+    postcss: 'frontend/postcss.config.js'
   },
   
   // Optimize dependencies
