@@ -405,7 +405,8 @@ export function ModelUNCampaigns() {
         timeRemaining: 0,
         playerStats: undefined,
         achievements: [],
-        outcomes: []
+        outcomes: [],
+        messages: []
       };
 
       // Assign voices to characters
