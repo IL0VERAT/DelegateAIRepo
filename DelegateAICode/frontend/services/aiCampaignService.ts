@@ -106,6 +106,17 @@ class AICampaignService {
   private baseUrl = '/api';
   private retryAttempts = 3;
   private retryDelay = 1000;
+  private sessionSubscribers: Array<(session: CampaignSession | null) => void> = [];
+
+  public subscribeToSession(cb: (session: CampaignSession | null) => void): () => void {
+    this.sessionSubscribers.push(cb);
+    return () => {
+      this.sessionSubscribers = this.sessionSubscribers.filter(fn => fn !== cb);
+    };
+  }
+  private notifySessionSubscribers(session: CampaignSession | null) {
+    this.sessionSubscribers.forEach(fn => fn(session));
+  }
 
   /**
    * Generate player character based on scenario
@@ -319,12 +330,15 @@ class AICampaignService {
       if (!response.success) {
         throw new Error(response.error || 'Failed to load campaign session');
       }
-
+      const session = response.data as CampaignSession;
+      //May need to include this in other places where session mutates (e.g. after generateCrisis, processPlayerInput if need to reload the full session there, or after saveCampaignSession if it returns an updated session object).
       logger.info('Successfully loaded campaign session');
-      return response.data;
+       this.notifySessionSubscribers(session);
+      return session;
 
     } catch (error) {
       logger.error('Error loading campaign session:', error);
+      this.notifySessionSubscribers(null);
       return null;
     }
   }
