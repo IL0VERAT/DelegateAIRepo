@@ -14,7 +14,7 @@ import { campaignOrchestrator } from './campaignOrchestrator';
 // TYPES AND INTERFACES
 // ============================================================================
 
-interface CampaignCharacter {
+interface CampaignCharacter { 
   id: string;
   name: string;
   title: string;

@@ -274,7 +274,7 @@ export function VoiceInterface(): JSX.Element {
         voiceId = 'gemini-diplomat-female-1';
       } else if (stakeholder && activeCampaignSession) {
         // assume stakeholder corresponds to a character in session
-        const char = activeCampaignSession.aiCharacters.find(c => c.id === stakeholder);
+        const char = activeCampaignSession.aiCharacters.find(c => c.id === stakeholder); 
         if (char?.personality) {
           // pick voice matching that personality
           const all = await geminiNativeAudio.getAvailableVoices();

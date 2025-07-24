@@ -22,6 +22,7 @@ import {
 } from '../services/connectionStatus'
 import { ChatSession, Transcript } from 'types/api';
 import apiService from 'services/api';
+import type { CampaignSession } from '../services/aiCampaignService';
 
 // ============================================================================
 // TYPES AND INTERFACES
@@ -60,6 +61,7 @@ export interface SpeechSpeedInfo {
   description: string;
 }
 
+/*
 interface CampaignSession {
   id: string;
   campaign: {
@@ -83,6 +85,7 @@ interface CampaignSession {
   isActive: boolean;
   startedAt: Date;
 }
+*/
 
 interface AppSettings {
   // Appearance
@@ -188,6 +191,7 @@ interface AppContextType {
   selectChatSession: (id: string) => Promise<void>
   deleteChatSession:  (id: string) => Promise<void>
   deleteTranscript:   (id: string) => Promise<void>
+  
   
   // Settings object for easy access
   settings: AppSettings;
