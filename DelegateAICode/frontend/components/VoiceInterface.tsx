@@ -22,6 +22,7 @@ import { ScrollArea } from './ui/scroll-area';
 import { AnimatedVoiceIcon } from './AnimatedVoiceIcon';
 import { AudioWaveform } from './AudioWaveform';
 import { geminiNativeAudio } from '../services/geminiNativeAudio';
+import { api } from '../services/api';
 import { aiCampaignService, CampaignSession } from '../services/aiCampaignService';
 import { rateLimitService } from '../services/rateLimitService';
 import { 
@@ -554,6 +555,10 @@ useEffect(() => {
   const handleUserSpeech = useCallback(async (speechText: string) => {
     if (!speechText.trim()) return;
 
+     if (!isCampaignActive || !activeCampaignSession) {
+      return;
+    }
+
     const userMessage: VoiceMessage = {
       id: Date.now().toString(),
       content: speechText,
@@ -573,11 +578,11 @@ useEffect(() => {
       rateLimitService.recordWordUsage(speechText, isAdmin, isDemoMode);
       
       if (isCampaignActive) {
-        await aiCampaignService.processPlayerInput(speechText, speechSpeed);
+        await aiCampaignService.processPlayerInput(speechText, activeCampaignSession);
       } else {
         const assistantMessage: VoiceMessage = {
           id: (Date.now() + 1).toString(),
-          content: "I understand you're interested in discussing this topic. Would you like to start a Model UN campaign to explore this issue in depth?",
+          content: "I understand you're interested in discussing this topic. Would you like to start a campaign to explore this issue in depth?",
           type: 'assistant',
           timestamp: new Date()
         };
@@ -585,7 +590,7 @@ useEffect(() => {
         setMessages(prev => [...prev, assistantMessage]);
         
         if (settings.autoPlayAudio) {
-          speakTextWithBrowserTTS(assistantMessage.content, assistantMessage.id);
+          speakWithGemini(assistantMessage.content, assistantMessage.id);
         }
       }
     } catch (error) {
@@ -627,8 +632,23 @@ useEffect(() => {
         method: 'POST',
         body: userBlob,
       })
+
+      if (!convResp.success) {
+        throw new Error(convResp.error || 'Gemini converse failed')
+      }
+
       // assume { transcript: string, replyAudioBase64: string, role: 'facilitator'|'stakeholder', stakeholderId?: string }
-      const { transcript, replyAudioBase64, role, stakeholderId } = await convResp.json()
+      const {
+       transcript,
+      replyAudioBase64,
+      role,
+      stakeholderId
+      } = convResp.data as {
+      transcript: string
+      replyAudioBase64: string
+      role: 'facilitator' | 'stakeholder'
+      stakeholderId?: string
+      }
 
       // display the transcript
       // setTranscript(transcript)
@@ -856,7 +876,7 @@ useEffect(() => {
           {/* Audio Waveform - Below Button */}
           {isRecording && (
             <div className="mt-8 flex justify-center">
-              <AudioWaveform audioLevel={audioLevel} isActive={isRecording} />
+              <AudioWaveform audioLevel={audioLevel} isSpeaking={voiceState === 'speaking'} isActive={isRecording} />
             </div>
           )}
           

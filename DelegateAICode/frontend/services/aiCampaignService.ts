@@ -81,6 +81,7 @@ interface CampaignSession {
   campaignLog: any[];
   voiceSettings: any;
   outcomes: any[];
+  messages: any[]; //may need to change
 }
 
 interface AIResponse {

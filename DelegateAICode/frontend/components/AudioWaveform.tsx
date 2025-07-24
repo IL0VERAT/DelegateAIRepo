@@ -17,6 +17,7 @@ import { useApp } from './AppContext';
 interface AudioWaveformProps {
   isActive: boolean;
   isSpeaking: boolean;
+  audioLevel: number;
   audioStream?: MediaStream;
   personality?: string;
   className?: string;
@@ -33,6 +34,7 @@ interface WaveformData {
 export function AudioWaveform({
   isActive,
   isSpeaking,
+  audioLevel,
   audioStream,
   personality = 'balanced',
   className = '',
