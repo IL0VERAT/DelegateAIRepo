@@ -209,16 +209,18 @@ export const LoginPage: React.FC<LoginPageProps> = ({ onSuccess, redirectTo }) =
   /**
    * Tab change handler
    */
-  const handleTabChange = useCallback((tab: 'login' | 'register') => {
-    setActiveTab(tab);
-    setFormErrors({});
-    setFormData({
-      email: '',
-      password: '',
-      displayName: '',
-      confirmPassword: ''
-    });
+  const handleTabChange = useCallback((value: string) => {
+    if (value === 'login' || value === 'register') {
+      setActiveTab(value);
+      setFormErrors({});
+      setFormData({
+       email: '',
+        password: '',
+        displayName: '',
+        confirmPassword: ''
+      });
     clearError();
+    }
   }, [clearError]);
 
   /**

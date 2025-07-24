@@ -307,7 +307,7 @@ export function TranscriptsPage() {
             
             {/* Sort */}
             <div className="space-y-2">
-              <Select value={`${sortBy}-${sortOrder}`} onValueChange={(value: { split: (arg0: string) => [any, any]; }) => {
+              <Select value={`${sortBy}-${sortOrder}`} onValueChange={(value: string) => {
                 const [newSortBy, newSortOrder] = value.split('-');
                 setSortBy(newSortBy as any);
                 setSortOrder(newSortOrder as any);
