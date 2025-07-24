@@ -9,7 +9,7 @@ import React from 'react';
 import { AppProvider } from './components/AppContext';
 import { AuthProvider } from './components/AuthContext';
 import { PrivacyProvider } from './components/PrivacyContext';
-import { ErrorBoundary } from './components/ErrorBoundary';
+import  ErrorBoundary  from './components/ErrorBoundary';
 import { SidebarProvider } from './components/ui/sidebar';
 import { AppSidebar } from './components/AppSidebar';
 import { EnhancedConnectionStatus } from './components/EnhancedConnectionStatus';
@@ -157,7 +157,9 @@ function AppContent() {
                   title="Legal & Privacy - Delegate AI" 
                   description="Privacy policy, terms of service, and legal information"
                 />
-                <LegalPage />
+                <LegalPage onBack={function (): void {
+                  throw new Error('Function not implemented.');
+                } } />
               </>
             )}
             

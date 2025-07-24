@@ -47,6 +47,8 @@ export type CurrentView =
   | 'admin'
   | 'admin-users'
   | 'admin-monitor'
+  | 'history'
+  | 'guide'
   | 'admin-security'
   | 'admin-analytics'
   | 'admin-database'
