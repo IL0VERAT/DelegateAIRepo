@@ -196,14 +196,14 @@ function AppContent() {
 function App() {
   return (
     <ErrorBoundary>
-      <PrivacyProvider>
-        <AuthProvider>
+      <AuthProvider>
+        <PrivacyProvider>
           <AppProvider>
             <AppContent />
             <Toaster position="top-right" />
           </AppProvider>
-        </AuthProvider>
-      </PrivacyProvider>
+        </PrivacyProvider>
+      </AuthProvider>
     </ErrorBoundary>
   );
 }
