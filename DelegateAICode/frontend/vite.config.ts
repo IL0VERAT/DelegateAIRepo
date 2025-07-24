@@ -50,6 +50,7 @@ const isProduction = env.mode === 'production'
   build: {
     outDir: 'dist',
     sourcemap: !isProduction, //turn off for production!!!
+    chunkSizeWarningLimit: 1000,
     rollupOptions: {
       input: {
         main: path.resolve(__dirname, 'index.html')
