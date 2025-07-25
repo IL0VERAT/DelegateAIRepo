@@ -88,8 +88,33 @@ async function boot() {
         },
       },
     }));
+
+    const exactOrigins = [
+      process.env.FRONTEND_URL,    // e.g. https://delegate-ai.vercel.app
+      'http://localhost:5173',     // Vite dev
+    ].filter(Boolean) as string[]
+
+    // A regex to match any Vercel preview URL
+    const vercelPreviewRegex = /^https:\/\/[a-z0-9-]+\.vercel\.app$/
+
     app.use(cors({
-      origin: process.env.FRONTEND_URL,
+        origin: (incomingOrigin, callback) => {
+        // allow non-browser (curl/postman) requests
+        if (!incomingOrigin) return callback(null, true)
+
+        //exact matches
+        if (exactOrigins.includes(incomingOrigin)) {
+          return callback(null, true)
+        }
+
+        //any vercel.app subdomain
+        if (vercelPreviewRegex.test(incomingOrigin)) {
+          return callback(null, true)
+        }
+
+        //else reject
+        return callback(new Error(`CORS not allowed for origin ${incomingOrigin}`), false)
+        },
       credentials: true,
       methods: ['GET','POST','PUT','DELETE','PATCH'],
       allowedHeaders: ['Content-Type','Authorization'],
