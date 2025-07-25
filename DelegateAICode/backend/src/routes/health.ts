@@ -26,7 +26,7 @@ router.get('/', async (req: Request, res: Response) => {
       environment: process.env.NODE_ENV || 'development'
     };
 
-    res.json(health);
+    return res.json(health); //Changed this to 'return...'
   } catch (error) {
     logger.error('Health check failed:', error);
     res.status(503).json({
