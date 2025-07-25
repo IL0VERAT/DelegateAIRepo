@@ -9,7 +9,7 @@ import * as Sentry from "@sentry/node";
 import { nodeProfilingIntegration } from "@sentry/profiling-node";
 
 console.log("→ SENTRY_DSN:", process.env.SENTRY_DSN); //REMOVE
-/*Sentry.init({
+Sentry.init({
   dsn: process.env.SENTRY_DSN,
   integrations: [
     nodeProfilingIntegration(),
@@ -25,7 +25,7 @@ console.log("→ SENTRY_DSN:", process.env.SENTRY_DSN); //REMOVE
   // Setting this option to true will send default PII data to Sentry.
   // For example, automatic IP address collection on events
   sendDefaultPii: true,
-});*/ //COMMENT OUT FOR NOW
+}); 
 
 
 import dotenv from 'dotenv';
