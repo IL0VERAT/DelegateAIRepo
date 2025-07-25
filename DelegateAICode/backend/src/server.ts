@@ -73,6 +73,12 @@ async function boot() {
     
     // 3) Create and configure Express app
     const app = express();
+    //DEBUG
+    app.get('/api/health', (_req, res) => {
+      console.log('🏓 /api/health pinged');
+      return res.json({ status: 'ok', timestamp: new Date().toISOString() });
+    });
+
     app.set('trust proxy', 1);
 
     app.use(helmet({
@@ -129,7 +135,7 @@ async function boot() {
     app.use(cache);
 
     // 4) Mount routes
-    app.use('/api/health', healthRoutes);
+    //app.use('/api/health', healthRoutes); DEBUG
     app.use('/api/auth', authRoutes);
     app.use('/api/subscriptions', subscriptionRoutes);
     app.use('/api/users', userRoutes);
