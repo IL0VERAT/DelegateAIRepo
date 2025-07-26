@@ -1,20 +1,36 @@
+#!/usr/bin/env bash
 set -e
 
-# Fall back to a git hash if Railway/Git SHA isn’t provided
-SENTRY_RELEASE=${RAILWAY_GIT_COMMIT_SHA:-$(git rev-parse --short HEAD)}
+# Determine a release name
+# Railway injects RAILWAY_GIT_COMMIT_SHA, fallback to git short SHA if not present
+RELEASE=${RAILWAY_GIT_COMMIT_SHA:-$(git rev-parse --short HEAD)}
 
-# Only run if we have the necessary vars
-if [ -n "$SENTRY_ORG" ] && [ -n "$SENTRY_PROJECT" ] && [ -n "$SENTRY_AUTH_TOKEN" ]; then
-  npx sentry-cli releases new $SENTRY_RELEASE --org "$SENTRY_ORG" --project "$SENTRY_PROJECT" || true
-  npx sentry-cli releases files $SENTRY_RELEASE upload-sourcemaps dist \
-      --org "$SENTRY_ORG" \
-      --project "$SENTRY_PROJECT" \
-      --auth-token "$SENTRY_AUTH_TOKEN" \
-      --rewrite --strip-common-prefix dist
-  npx sentry-cli releases finalize $SENTRY_RELEASE
+echo "Starting container, release = $RELEASE"
+
+# Only run Sentry steps if all three variables are present
+if [[ -n "$SENTRY_ORG" && -n "$SENTRY_PROJECT" && -n "$SENTRY_AUTH_TOKEN" ]]; then
+  echo "Running Sentry release steps…"
+
+  echo "  • sentry-cli releases new $RELEASE"
+  npx sentry-cli releases new "$RELEASE" \
+    --org "$SENTRY_ORG" \
+    --project "$SENTRY_PROJECT" || true
+
+  echo "  • sentry-cli releases files $RELEASE upload-sourcemaps dist"
+  npx sentry-cli releases files "$RELEASE" upload-sourcemaps dist \
+    --org "$SENTRY_ORG" \
+    --project "$SENTRY_PROJECT" \
+    --auth-token "$SENTRY_AUTH_TOKEN" \
+    --rewrite --strip-common-prefix dist
+
+  echo "  • sentry-cli releases finalize $RELEASE"
+  npx sentry-cli releases finalize "$RELEASE"
 else
-  echo "⚠️ Skipping Sentry release: missing SENTRY_ORG/PROJECT/AUTH_TOKEN"
+  echo "⚠️  Skipping Sentry steps: one or more env vars missing"
+  echo "   SENTRY_ORG=$SENTRY_ORG"
+  echo "   SENTRY_PROJECT=$SENTRY_PROJECT"
+  echo "   SENTRY_AUTH_TOKEN=${#SENTRY_AUTH_TOKEN} chars"
 fi
 
-# Finally start the server
-exec "$@"
+# Hand off to the main command (npm start)
+exec "$@
