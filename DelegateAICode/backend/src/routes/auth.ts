@@ -63,7 +63,7 @@ router.post('/register', async (req: Request, res: Response) => {
         updatedAt: new Date()
       }
     });
-    console.log('[Auth] user created:', user.id);//DEBUG
+    console.log('[Auth] user created:', user.id);//DEBUG --> NEED TO RUN PRISMA MIGRATE
 
     // Generate token
     console.log('[Auth] generating token');//DEBUG
@@ -90,7 +90,7 @@ router.post('/register', async (req: Request, res: Response) => {
       userId: user.id,
       email: user.email
     });
-
+    console.log('[Auth] sending response');//DEBUG
     res.status(201).json({
       message: 'User registered successfully',
       user: {

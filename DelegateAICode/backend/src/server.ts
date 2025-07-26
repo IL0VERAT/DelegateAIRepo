@@ -135,7 +135,7 @@ async function boot() {
     app.use(cache);
 
     // 4) Mount routes
-    //app.use('/api/health', healthRoutes); DEBUG
+    app.use('/api/health', healthRoutes); 
     app.use('/api/auth', authRoutes);
     app.use('/api/subscriptions', subscriptionRoutes);
     app.use('/api/users', userRoutes);
