@@ -20,9 +20,11 @@ const prisma = new PrismaClient();
  * User Registration
  */
 router.post('/register', async (req: Request, res: Response) => {
+  console.log('🛎️  [Auth] /register hit, body=', req.body); //DEBUG
   try {
+    console.log('[Auth] validating input');//DEBUG
     const { email, password, displayName } = req.body;
-
+    
     // Validate input
     if (!email || !password) {
       return res.status(400).json({
@@ -44,9 +46,11 @@ router.post('/register', async (req: Request, res: Response) => {
     }
 
     // Hash password
+    console.log('[Auth] hashing password'); //DEBUG
     const passwordHash = await bcrypt.hash(password, 12);
-
+    console.log('[Auth] password hashed'); //DEBUG
     // Create user
+    console.log('[Auth] creating user in DB'); //DEBUG
     const user = await prisma.user.create({
       data: {
         email,
@@ -59,21 +63,28 @@ router.post('/register', async (req: Request, res: Response) => {
         updatedAt: new Date()
       }
     });
+    console.log('[Auth] user created:', user.id);//DEBUG
 
     // Generate token
+    console.log('[Auth] generating token');//DEBUG
     const token = generateToken({
       id: user.id,
       email: user.email,
       role: user.role
     });
+    console.log('[Auth] token generated');//DEBUG
 
     // Send welcome email
+    console.log('[Auth] sending welcome email');//DEBUG
     await emailService.sendWelcomeEmail(user.email, user.name || undefined);
+    console.log('[Auth] welcome email sent');//DEBUG
 
+    console.log('[Auth] logging user action');//DEBUG
     await logUserAction(req, 'user_registered', 'auth', {
       userId: user.id,
       email: user.email
     });
+     console.log('[Auth] user action logged');//DEBUG
 
     logger.info('User registered successfully', {
       userId: user.id,
