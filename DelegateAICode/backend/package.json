@@ -4,7 +4,7 @@
   "description": "Backend API for Delegate AI",
   "main": "dist/server.js",
   "scripts": {
-    "postinstall": "prisma migrate deploy",
+    "postinstall": "prisma generate && prisma migrate deploy",
     "dev": "tsx watch src/server.ts",
     "build": "tsc",
     "start": "node dist/server.js",
