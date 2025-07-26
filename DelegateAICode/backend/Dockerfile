@@ -21,13 +21,13 @@ RUN npx prisma generate --schema=./prisma/schema.prisma
 RUN npm run build
 
 # ensure SENTRY_* env vars are set in Railway’s Env UI
-RUN sentry-cli releases new $RAILWAY_GIT_COMMIT_SHA --org $SENTRY_ORG --project $SENTRY_PROJECT || true \
- && sentry-cli releases files $RAILWAY_GIT_COMMIT_SHA upload-sourcemaps dist \
+RUN npx sentry-cli releases new $RAILWAY_GIT_COMMIT_SHA --org $SENTRY_ORG --project $SENTRY_PROJECT || true \
+ && npx sentry-cli releases files $RAILWAY_GIT_COMMIT_SHA upload-sourcemaps dist \
       --org $SENTRY_ORG \
       --project $SENTRY_PROJECT \
       --auth-token $SENTRY_AUTH_TOKEN \
       --rewrite --strip-common-prefix dist \
- && sentry-cli releases finalize $RAILWAY_GIT_COMMIT_SHA
+ && npx sentry-cli releases finalize $RAILWAY_GIT_COMMIT_SHA
 
 # Production image
 FROM node:18-alpine AS production
