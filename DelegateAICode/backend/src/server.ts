@@ -73,12 +73,7 @@ async function boot() {
     
     // 3) Create and configure Express app
     const app = express();
-    //DEBUG
-    app.get('/api/health', (_req, res) => {
-      console.log('🏓 /api/health pinged');
-      return res.json({ status: 'ok', timestamp: new Date().toISOString() });
-    });
-
+    
     app.set('trust proxy', 1);
 
     app.use(helmet({
