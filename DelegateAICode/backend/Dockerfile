@@ -21,13 +21,9 @@ RUN npx prisma generate --schema=./prisma/schema.prisma
 RUN npm run build
 
 # ensure SENTRY_* env vars are set in Railway’s Env UI
-RUN npx sentry-cli releases new $RAILWAY_GIT_COMMIT_SHA --org $SENTRY_ORG --project $SENTRY_PROJECT || true \
- && npx sentry-cli releases files $RAILWAY_GIT_COMMIT_SHA upload-sourcemaps dist \
-      --org $SENTRY_ORG \
-      --project $SENTRY_PROJECT \
-      --auth-token $SENTRY_AUTH_TOKEN \
-      --rewrite --strip-common-prefix dist \
- && npx sentry-cli releases finalize $RAILWAY_GIT_COMMIT_SHA
+COPY entrypoint.sh /entrypoint.sh
+RUN chmod +x /entrypoint.sh
+
 
 # Production image
 FROM node:18-alpine AS production
@@ -47,6 +43,9 @@ COPY --from=builder --chown=nodejs:nodejs /app/backend/node_modules ./node_modul
 COPY --from=builder --chown=nodejs:nodejs /app/backend/package.json ./
 COPY --from=builder --chown=nodejs:nodejs /app/backend/prisma ./prisma
 
+COPY --from=builder /entrypoint.sh /entrypoint.sh
+RUN chmod +x /entrypoint.sh
+
 USER nodejs
 
 EXPOSE 3001
@@ -54,4 +53,5 @@ EXPOSE 3001
 HEALTHCHECK --interval=30s --timeout=3s --start-period=5s --retries=3 \
   CMD curl -f http://localhost:3001/health || exit 1
 
+ENTRYPOINT ["/entrypoint.sh"]
 CMD ["npm", "start"]
