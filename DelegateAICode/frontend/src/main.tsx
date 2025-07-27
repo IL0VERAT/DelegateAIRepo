@@ -7,11 +7,11 @@ import '../styles/globals.css'
 const initializeApp = () => {
   try {
     // Initialize environment logging only in development
-    if (import.meta.env.DEV) {
+    //if (import.meta.env.DEV) {
       console.log('🚀 Delegate AI starting...')
       console.log('Environment:', import.meta.env.MODE)
       console.log('API URL:', import.meta.env.VITE_API_BASE_URL || 'http://localhost:3001/api')
-    }
+    //}
 
     // Remove loading screen if it exists
     const loadingScreen = document.querySelector('.loading-screen')
@@ -20,9 +20,9 @@ const initializeApp = () => {
     }
 
     // Log any environment warnings
-    if (!import.meta.env.VITE_API_BASE_URL) {
+    //if (!import.meta.env.VITE_API_BASE_URL) {
       console.warn('⚠️ VITE_API_BASE_URL not configured, using default')
-    }
+    //}
 
   } catch (error) {
     console.error('❌ Error initializing app:', error)
