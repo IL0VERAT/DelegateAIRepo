@@ -99,7 +99,7 @@ async function boot() {
     const vercelPreviewRegex = /^https:\/\/[a-z0-9-]+\.vercel\.app$/
 
     app.use(cors({
-        origin: (incomingOrigin, callback) => {
+        /*origin: (incomingOrigin, callback) => {
         // allow non-browser (curl/postman) requests
         if (!incomingOrigin) return callback(null, true)
 
@@ -115,7 +115,8 @@ async function boot() {
 
         //else reject
         return callback(new Error(`CORS not allowed for origin ${incomingOrigin}`), false)
-        },
+        },*/ //DEBUG
+      origin: true, //DEBUG
       credentials: true,
       methods: ['GET','POST','PUT','DELETE','PATCH'],
       allowedHeaders: ['Content-Type','Authorization'],
