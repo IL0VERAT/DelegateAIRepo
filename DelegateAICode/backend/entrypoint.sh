@@ -1,4 +1,4 @@
-#!/usr/bin/env bash
+#!/usr/bin/env sh
 set -e
 
 # Determine a release name
@@ -33,4 +33,4 @@ else
 fi
 
 # Hand off to the main command (npm start)
-exec "$@
+exec "$@"
