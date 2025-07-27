@@ -21,7 +21,7 @@ RUN npx prisma generate --schema=./prisma/schema.prisma
 RUN npm run build
 
 # ensure SENTRY_* env vars are set in Railway’s Env UI
-COPY entrypoint.sh /entrypoint.sh
+COPY --from=builder /entrypoint.sh /entrypoint.sh
 RUN chmod +x /entrypoint.sh
 
 
@@ -51,7 +51,7 @@ USER nodejs
 EXPOSE 3001
 
 HEALTHCHECK --interval=30s --timeout=3s --start-period=5s --retries=3 \
-  CMD curl -f http://localhost:3001/health || exit 1
+  CMD curl -f http://localhost:3001/api/health || exit 1
 
 ENTRYPOINT ["/entrypoint.sh"]
 CMD ["npm", "start"]
