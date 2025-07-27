@@ -20,9 +20,9 @@ const initializeApp = () => {
     }
 
     // Log any environment warnings
-    //if (!import.meta.env.VITE_API_BASE_URL) {
+    if (!import.meta.env.VITE_API_BASE_URL) {
       console.warn('⚠️ VITE_API_BASE_URL not configured, using default')
-    //}
+    }
 
   } catch (error) {
     console.error('❌ Error initializing app:', error)
