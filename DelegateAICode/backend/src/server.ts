@@ -90,8 +90,6 @@ async function boot() {
       },
     }));
 
-    //TEST!!
-
     const exactOrigins = [
       process.env.FRONTEND_URL,    // e.g. https://delegate-ai.vercel.app
       'http://localhost:5173',     // Vite dev
@@ -130,6 +128,11 @@ async function boot() {
     app.use(rateLimiter);
     app.use(security);
     app.use(cache);
+
+    app.use((req, res, next) => {
+    console.log(`→ ${req.method} ${req.originalUrl}`);
+    next();
+    });//DEBUG
 
     // 4) Mount routes
     app.use('/api/health', healthRoutes); 
@@ -193,6 +196,8 @@ async function boot() {
     app.listen(PORT, () => {
       logger.info(`🚀 Server running on port ${PORT}`);
       logger.info(`📊 Environment: ${environment.NODE_ENV}`);
+      console.log(`🚀 Server running on port ${PORT}`);
+      console.info(`📊 Environment: ${environment.NODE_ENV}`);
     });
 
   } catch (err) {
