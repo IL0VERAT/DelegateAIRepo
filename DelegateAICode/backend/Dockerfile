@@ -21,7 +21,7 @@ RUN npx prisma generate --schema=./prisma/schema.prisma
 RUN npm run build
 
 # ensure SENTRY_* env vars are set in Railway’s Env UI
-COPY --from=builder /entrypoint.sh /entrypoint.sh
+COPY entrypoint.sh /entrypoint.sh
 RUN chmod +x /entrypoint.sh
 
 
