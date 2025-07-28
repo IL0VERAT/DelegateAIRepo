@@ -10,7 +10,7 @@ import express from 'express';
 import { NextFunction } from 'express';
 import { Request, Response } from 'express';
 import { auth } from '../middleware/auth';
-import { rateLimiter } from '../middleware/rateLimiter';
+import { adaptiveRateLimit } from '../middleware';
 import requestLogger from '../middleware/requestLogger';
 import { geminiService } from '../services/gemini';
 import * as database from '../services/database';
@@ -20,7 +20,7 @@ const router = express.Router();
 
 // Apply middleware
 router.use(auth);
-router.use(rateLimiter);
+router.use(adaptiveRateLimit);
 router.use(requestLogger);
 
 // ============================================================================

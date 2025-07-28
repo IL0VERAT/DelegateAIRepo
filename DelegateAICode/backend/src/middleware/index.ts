@@ -8,7 +8,7 @@
 export { default as auth } from './auth';
 export { default as errorHandler } from './errorHandler';
 export { default as requestLogger } from './requestLogger';
-export { default as rateLimiter } from './rateLimiter';
+export * from './rateLimiter';
 export { default as security } from './security';
 export { default as cache } from './cache';
 

@@ -10,7 +10,7 @@ import { PrismaClient } from '@prisma/client';
 import Stripe from 'stripe';
 import StripePkg from 'stripe';
 import { auth } from '../middleware/auth';
-import { rateLimiter } from '../middleware/rateLimiter';
+import { subscriptionRateLimit } from '../middleware';
 import logger from '../utils/logger';
 
 const router = Router();
@@ -134,7 +134,7 @@ router.get('/plans', async (req, res) => {
 // CREATE CHECKOUT SESSION
 // ============================================================================
 
-router.post('/checkout', auth, rateLimiter({ windowMs: 60000, maxRequests: 5 }), async (req, res) => {
+router.post('/checkout', auth, subscriptionRateLimit, async (req, res) => {
   try {
 
     if (!req.user) {

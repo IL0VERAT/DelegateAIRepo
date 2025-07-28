@@ -9,7 +9,7 @@
 import express from 'express';
 import { Request, Response } from 'express';
 import { auth as authMiddleware } from '../middleware/auth';
-import { rateLimiter } from '../middleware/rateLimiter';
+import { adaptiveRateLimit } from '../middleware/rateLimiter';
 import requestLogger from '../middleware/requestLogger';
 import { aiServiceManager } from '../services/aiServiceManager';
 import * as database from '../services/database';
@@ -21,7 +21,7 @@ const prisma = database.getDatabase();
 
 // Apply middleware
 router.use(authMiddleware);
-router.use(rateLimiter);
+router.use(adaptiveRateLimit);
 router.use(requestLogger);
 
 // ============================================================================

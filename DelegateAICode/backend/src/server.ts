@@ -52,7 +52,7 @@ async function boot() {
     const {
       errorHandler,
       requestLogger,
-      rateLimiter,
+      globalRateLimiter,
       security,
       cache
     } = await import('./middleware');
@@ -124,7 +124,7 @@ async function boot() {
       methods: ['GET','POST','PUT','DELETE','PATCH'],
       allowedHeaders: ['Content-Type','Authorization'],
     }));
-    app.use(rateLimiter);
+    app.use(globalRateLimiter);
     app.use(express.json({ limit: '10mb' }));
     app.use(express.urlencoded({ extended: true, limit: '10mb' }));
     app.use('/api/subscriptions/webhook', express.raw({ type: 'application/json' }));

@@ -35,7 +35,7 @@ interface RateLimitOptions {
 /**
  * Create rate limiter with Redis store if available
  */
-export const rateLimiter = (options: RateLimitOptions) => {
+export const createRateLimiter = (options: RateLimitOptions) => {
   const {
     windowMs,
     maxRequests,
@@ -135,21 +135,21 @@ export const rateLimiter = (options: RateLimitOptions) => {
  */
 
 // General API rate limiter - 100 requests per 15 minutes
-export const apiRateLimit = rateLimiter({
+const apiRateLimit = createRateLimiter({
   windowMs: 15 * 60 * 1000, // 15 minutes
   maxRequests: 100,
   message: 'Too many API requests from this IP, please try again later'
 });
 
 // Strict rate limiter for sensitive operations - 10 requests per 15 minutes
-export const strictRateLimit = rateLimiter({
+const strictRateLimit = createRateLimiter({
   windowMs: 15 * 60 * 1000, // 15 minutes
   maxRequests: 10,
   message: 'Too many requests for this operation, please try again later'
 });
 
 // Authentication rate limiter - 5 attempts per 15 minutes
-export const authRateLimit = rateLimiter({
+const authRateLimit = createRateLimiter({
   windowMs: 15 * 60 * 1000, // 15 minutes
   maxRequests: 5,
   message: 'Too many authentication attempts, please try again later',
@@ -157,21 +157,28 @@ export const authRateLimit = rateLimiter({
 });
 
 // AI request rate limiter - 30 requests per minute
-export const aiRateLimit = rateLimiter({
+const aiRateLimit = createRateLimiter({
   windowMs: 1 * 60 * 1000, // 1 minute
   maxRequests: 30,
   message: 'Too many AI requests, please try again later'
 });
 
+//subscription rate limiter
+const subscriptionRateLimit = createRateLimiter({
+  windowMs: 60 * 1000, // 1 minute
+  maxRequests: 5,
+  message: 'Too many subscription attempts, please try again shortly'
+});
+
 // File upload rate limiter - 10 uploads per hour
-export const uploadRateLimit = rateLimiter({
+const uploadRateLimit = createRateLimiter({
   windowMs: 60 * 60 * 1000, // 1 hour
   maxRequests: 10,
   message: 'Too many file uploads, please try again later'
 });
 
 // Search rate limiter - 50 searches per minute
-export const searchRateLimit = rateLimiter({
+const searchRateLimit = createRateLimiter({
   windowMs: 1 * 60 * 1000, // 1 minute
   maxRequests: 50,
   message: 'Too many search requests, please try again later'
@@ -182,26 +189,26 @@ export const searchRateLimit = rateLimiter({
  */
 
 // Predefined adaptive limiters (computed once)
-const adaptiveLimiters: Record<string, ReturnType<typeof rateLimiter>> = {
-  admin: rateLimiter({
+const adaptiveLimiters: Record<string, ReturnType<typeof createRateLimiter>> = {
+  admin: createRateLimiter({
     windowMs: 60 * 1000,
     maxRequests: 200,
     message: 'Rate limit exceeded for admin users',
     keyGenerator: (req: Request) => `adaptive:admin:${req.user?.id || req.ip}`
   }),
-  premium: rateLimiter({
+  premium: createRateLimiter({
     windowMs: 60 * 1000,
     maxRequests: 100,
     message: 'Rate limit exceeded for premium users',
     keyGenerator: (req: Request) => `adaptive:premium:${req.user?.id || req.ip}`
   }),
-  user: rateLimiter({
+  user: createRateLimiter({
     windowMs: 60 * 1000,
     maxRequests: 60,
     message: 'Rate limit exceeded for regular users',
     keyGenerator: (req: Request) => `adaptive:user:${req.user?.id || req.ip}`
   }),
-  anonymous: rateLimiter({
+  anonymous: createRateLimiter({
     windowMs: 60 * 1000,
     maxRequests: 30,
     message: 'Rate limit exceeded for anonymous users',
@@ -210,7 +217,7 @@ const adaptiveLimiters: Record<string, ReturnType<typeof rateLimiter>> = {
 };
 
 // Middleware that selects the correct limiter
-export const adaptiveRateLimit = (req: Request, res: Response, next: NextFunction): void => {
+const adaptiveRateLimit = (req: Request, res: Response, next: NextFunction): void => {
   const role = req.user?.role || 'anonymous';
   const limiter = adaptiveLimiters[role] || adaptiveLimiters['anonymous'];
   return limiter(req, res, next);
@@ -219,7 +226,7 @@ export const adaptiveRateLimit = (req: Request, res: Response, next: NextFunctio
 /**
  * Burst protection middleware
  */
-export const burstProtection = rateLimiter({
+const burstProtection = createRateLimiter({
   windowMs: 1000, // 1 second
   maxRequests: 5, // 5 requests per second
   message: 'Too many requests in a short time, please slow down'
@@ -228,7 +235,7 @@ export const burstProtection = rateLimiter({
 /**
  * IP-based rate limiter (ignores authentication)
  */
-export const ipRateLimit = rateLimiter({
+const ipRateLimit = createRateLimiter({
   windowMs: 15 * 60 * 1000, // 15 minutes
   maxRequests: 200,
   message: 'Too many requests from this IP address',
@@ -238,16 +245,16 @@ export const ipRateLimit = rateLimiter({
 /**
  * Endpoint-specific rate limiters
  */
-export const endpointRateLimits = {
+const endpointRateLimits = {
   // Health check - very permissive
-  health: rateLimiter({
+  health: createRateLimiter({
     windowMs: 1 * 60 * 1000,
     maxRequests: 100,
     message: 'Too many health check requests'
   }),
 
   // Login attempts - strict
-  login: rateLimiter({
+  login: createRateLimiter({
     windowMs: 15 * 60 * 1000,
     maxRequests: 5,
     message: 'Too many login attempts, please try again later',
@@ -256,21 +263,21 @@ export const endpointRateLimits = {
   }),
 
   // Password reset - very strict
-  passwordReset: rateLimiter({
+  passwordReset: createRateLimiter({
     windowMs: 60 * 60 * 1000, // 1 hour
     maxRequests: 3,
     message: 'Too many password reset attempts, please try again later'
   }),
 
   // Registration - moderate
-  register: rateLimiter({
+  register: createRateLimiter({
     windowMs: 60 * 60 * 1000, // 1 hour
     maxRequests: 5,
     message: 'Too many registration attempts, please try again later'
   }),
 
   // Contact form - moderate
-  contact: rateLimiter({
+  contact: createRateLimiter({
     windowMs: 60 * 60 * 1000, // 1 hour
     maxRequests: 10,
     message: 'Too many contact form submissions, please try again later'
@@ -280,7 +287,7 @@ export const endpointRateLimits = {
 /**
  * Rate limit status middleware (adds headers with current limits)
  */
-export const rateLimitStatus = (req: Request, res: Response, next: NextFunction): void => {
+const rateLimitStatus = (req: Request, res: Response, next: NextFunction): void => {
   // Add custom headers with rate limit info
   res.setHeader('X-RateLimit-Policy', 'dynamic');
   res.setHeader('X-RateLimit-User-Role', req.user?.role || 'anonymous');
@@ -291,7 +298,7 @@ export const rateLimitStatus = (req: Request, res: Response, next: NextFunction)
 /**
  * Clear rate limit for a specific key (admin function)
  */
-export const clearRateLimit = async (key: string): Promise<void> => {
+const clearRateLimit = async (key: string): Promise<void> => {
   if (redisClient) {
     try {
       await redisClient.del(`rl:${key}`);
@@ -305,7 +312,7 @@ export const clearRateLimit = async (key: string): Promise<void> => {
 /**
  * Get rate limit info for a key
  */
-export const getRateLimitInfo = async (key: string): Promise<any> => {
+const getRateLimitInfo = async (key: string): Promise<any> => {
   if (redisClient) {
     try {
       const data = await redisClient.get(`rl:${key}`);
@@ -318,5 +325,28 @@ export const getRateLimitInfo = async (key: string): Promise<any> => {
   return null;
 };
 
-// Default export
-export default rateLimiter;
+//global rate limit --> hits all users
+const globalRateLimiter = createRateLimiter({
+  windowMs: 15 * 60 * 1000,
+  maxRequests: 500,
+  message: 'Too many requests to the server, please slow down'
+});
+
+export {
+  globalRateLimiter,
+  apiRateLimit,
+  strictRateLimit,
+  authRateLimit,
+  aiRateLimit,
+  uploadRateLimit,
+  searchRateLimit,
+  adaptiveRateLimit,
+  burstProtection,
+  ipRateLimit,
+  endpointRateLimits,
+  rateLimitStatus,
+  clearRateLimit,
+  getRateLimitInfo,
+  subscriptionRateLimit
+};
+

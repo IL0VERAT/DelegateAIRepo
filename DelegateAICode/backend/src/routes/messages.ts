@@ -3,7 +3,6 @@
  * =========================================================
  * 
  * Enhanced message handling with support for:
- * - Multiple AI providers (OpenAI, Gemini)
  * - Streaming responses with SSE
  * - Vision capabilities (image analysis)
  * - Provider selection and fallback
@@ -15,17 +14,10 @@ import express, { Request, Response } from 'express';
 import { body, validationResult } from 'express-validator';
 import { aiServiceManager, AIMessage, AIServiceOptions } from '../services/aiServiceManager';
 import { auth } from '../middleware/auth';
-import { rateLimiter } from '../middleware/rateLimiter';
+import { aiRateLimit } from '../middleware';
 import logger from '../utils/logger';
 
 const router = express.Router();
-
-// Rate limiting for AI requests
-const aiRateLimit = rateLimiter({
-  windowMs: 1 * 60 * 1000, // 1 minute
-  maxRequests: 30, // 30 requests per minute
-  message: 'Too many requests, please try again later'
-});
 
 // Validation middleware
 const validateMessageRequest = [
