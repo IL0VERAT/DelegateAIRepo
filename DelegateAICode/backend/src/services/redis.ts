@@ -20,7 +20,7 @@ export const initializeRedis = async () => {
   }
 
   try {
-    redisClient = new Redis(redisUrl + '?family=0');
+    redisClient = new Redis(redisUrl);
 
     redisClient.on('connect', () => {
       logger.info('Redis client connected');
