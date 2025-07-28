@@ -21,6 +21,10 @@ import logger from '../utils/logger';
 // Grab the single shared Redis client (or null if unavailable)
 const redisClient: RedisClient | null = getRedisClient();
 
+if (!redisClient) {
+  console.warn('⚠️ Redis unavailable, falling back to in-memory store');
+}//DEBUG
+
 interface RateLimitOptions {
   windowMs: number | ((req: Request) => number);
   maxRequests: number | ((req: Request) => number);
@@ -190,6 +194,7 @@ const searchRateLimit = createRateLimiter({
 
 // Predefined adaptive limiters (computed once)
 const adaptiveLimiters: Record<string, ReturnType<typeof createRateLimiter>> = {
+
   admin: createRateLimiter({
     windowMs: 60 * 1000,
     maxRequests: 200,
