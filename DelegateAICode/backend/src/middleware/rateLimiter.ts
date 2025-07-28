@@ -224,50 +224,8 @@ export const adaptiveRateLimit = (req: Request, res: Response, next: NextFunctio
 export const burstProtection = rateLimiter({
   windowMs: 1000, // 1 second
   maxRequests: 5, // 5 requests per second
-  message: 'Too many requests in short time, please slow down'
+  message: 'Too many requests in a short time, please slow down'
 });
-
-/**
- * Progressive rate limiting (increases limits over time for trusted users)
- */
-export const progressiveRateLimit = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
-  try {
-    if (!req.user) {
-      // Non-authenticated users get base rate limit
-      return apiRateLimit(req, res, next);
-    }
-
-    const userId = req.user.id;
-    const accountAge = await getAccountAge(userId); // You'd implement this
-    const trustScore = await getTrustScore(userId); // You'd implement this
-
-    let multiplier = 1;
-
-    // Increase limits for older accounts
-    if (accountAge > 30) multiplier += 0.5; // 30+ days
-    if (accountAge > 90) multiplier += 0.5; // 90+ days
-
-    // Increase limits for trusted users
-    if (trustScore > 0.8) multiplier += 0.5;
-
-    const baseLimit = 60;
-    const adjustedLimit = Math.floor(baseLimit * multiplier);
-
-    const limiter = rateLimiter({
-      windowMs: 1 * 60 * 1000, // 1 minute
-      maxRequests: adjustedLimit,
-      message: 'Rate limit exceeded',
-      keyGenerator: (req: Request) => `progressive:${userId}`
-    });
-
-    limiter(req, res, next);
-
-  } catch (error) {
-    logger.error('Progressive rate limit error:', error);
-    // Fallback to standard rate limit
-    apiRateLimit(req, res, next);
-  }
-};
 
 /**
  * IP-based rate limiter (ignores authentication)
@@ -320,21 +278,6 @@ export const endpointRateLimits = {
     message: 'Too many contact form submissions, please try again later'
   })
 };
-
-/**
- * Utility functions (you would implement these based on your data store)
- */
-async function getAccountAge(userId: string): Promise<number> {
-  // Implement based on your user model
-  // Return age in days
-  return 0;
-}
-
-async function getTrustScore(userId: string): Promise<number> {
-  // Implement based on user behavior metrics
-  // Return score between 0 and 1
-  return 0.5;
-}
 
 /**
  * Rate limit status middleware (adds headers with current limits)

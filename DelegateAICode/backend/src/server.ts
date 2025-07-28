@@ -72,7 +72,7 @@ async function boot() {
     
     // 3) Create and configure Express app
     const app = express();
-    
+
     app.use((req, res, next) => {
     console.log(`→ ${req.method} ${req.originalUrl}`);
     next();
@@ -124,12 +124,12 @@ async function boot() {
       methods: ['GET','POST','PUT','DELETE','PATCH'],
       allowedHeaders: ['Content-Type','Authorization'],
     }));
+    app.use(rateLimiter);
     app.use(express.json({ limit: '10mb' }));
     app.use(express.urlencoded({ extended: true, limit: '10mb' }));
     app.use('/api/subscriptions/webhook', express.raw({ type: 'application/json' }));
     app.use(compression());
     app.use(requestLogger);
-    app.use(rateLimiter);
     app.use(security);
     app.use(cache);
 
