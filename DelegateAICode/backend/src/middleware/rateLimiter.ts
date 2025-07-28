@@ -180,42 +180,40 @@ export const searchRateLimit = rateLimiter({
 /**
  * Adaptive rate limiter based on user role
  */
+
+// Predefined adaptive limiters (computed once)
+const adaptiveLimiters: Record<string, ReturnType<typeof rateLimiter>> = {
+  admin: rateLimiter({
+    windowMs: 60 * 1000,
+    maxRequests: 200,
+    message: 'Rate limit exceeded for admin users',
+    keyGenerator: (req: Request) => `adaptive:admin:${req.user?.id || req.ip}`
+  }),
+  premium: rateLimiter({
+    windowMs: 60 * 1000,
+    maxRequests: 100,
+    message: 'Rate limit exceeded for premium users',
+    keyGenerator: (req: Request) => `adaptive:premium:${req.user?.id || req.ip}`
+  }),
+  user: rateLimiter({
+    windowMs: 60 * 1000,
+    maxRequests: 60,
+    message: 'Rate limit exceeded for regular users',
+    keyGenerator: (req: Request) => `adaptive:user:${req.user?.id || req.ip}`
+  }),
+  anonymous: rateLimiter({
+    windowMs: 60 * 1000,
+    maxRequests: 30,
+    message: 'Rate limit exceeded for anonymous users',
+    keyGenerator: (req: Request) => `adaptive:anon:${req.ip}`
+  }),
+};
+
+// Middleware that selects the correct limiter
 export const adaptiveRateLimit = (req: Request, res: Response, next: NextFunction): void => {
-  const userRole = req.user?.role || 'anonymous';
-  
-  let windowMs: number;
-  let maxRequests: number;
-
-  switch (userRole) {
-    case 'admin':
-      // Admins get higher limits
-      windowMs = 1 * 60 * 1000; // 1 minute
-      maxRequests = 200;
-      break;
-    case 'premium':
-      // Premium users get higher limits
-      windowMs = 1 * 60 * 1000; // 1 minute
-      maxRequests = 100;
-      break;
-    case 'user':
-      // Regular users
-      windowMs = 1 * 60 * 1000; // 1 minute
-      maxRequests = 60;
-      break;
-    default:
-      // Anonymous users get lower limits
-      windowMs = 1 * 60 * 1000; // 1 minute
-      maxRequests = 30;
-  }
-
-  const limiter = rateLimiter({
-    windowMs,
-    maxRequests,
-    message: `Rate limit exceeded for ${userRole} users`,
-    keyGenerator: (req: Request) => `adaptive:${userRole}:${req.user?.id || req.ip}`
-  });
-
-  limiter(req, res, next);
+  const role = req.user?.role || 'anonymous';
+  const limiter = adaptiveLimiters[role] || adaptiveLimiters['anonymous'];
+  return limiter(req, res, next);
 };
 
 /**
