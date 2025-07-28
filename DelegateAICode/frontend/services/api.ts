@@ -155,7 +155,7 @@ class ApiService {
     try { 
       const { timeout = 30000, ...fetchOptions } = options;
       
-      const url = endpoint.startsWith('http') ? endpoint : `${this.baseUrl}${endpoint}`;
+      const url = endpoint.startsWith('https') ? endpoint : `${this.baseUrl}${endpoint}`;
       
       const controller = new AbortController();
       const timeoutId = setTimeout(() => controller.abort(), timeout);
