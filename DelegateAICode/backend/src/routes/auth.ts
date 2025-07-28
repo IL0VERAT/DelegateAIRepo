@@ -16,7 +16,7 @@ import { logger } from '../utils/logger';
 const router = express.Router();
 const prisma = new PrismaClient();
 
-// DEBUG middleware:
+// DEBUG 
 router.use((req, res, next) => {
   console.log(`🛎️  authRoutes received → ${req.method} ${req.originalUrl}`);
   next();
