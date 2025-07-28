@@ -33,7 +33,6 @@ if (process.env.NODE_ENV !== 'production') {
   dotenv.config();
 }
 
-console.log('→ DATABASE_URL =', process.env.DATABASE_URL);
 
 import { initializeDatabase } from './services/database';
 import logger from './utils/logger';
@@ -73,6 +72,11 @@ async function boot() {
     
     // 3) Create and configure Express app
     const app = express();
+    
+    app.use((req, res, next) => {
+    console.log(`→ ${req.method} ${req.originalUrl}`);
+    next();
+    });//DEBUG
     
     app.set('trust proxy', 1);
 
@@ -129,10 +133,7 @@ async function boot() {
     app.use(security);
     app.use(cache);
 
-    app.use((req, res, next) => {
-    console.log(`→ ${req.method} ${req.originalUrl}`);
-    next();
-    });//DEBUG
+
 
     // 4) Mount routes
     app.use('/api/health', healthRoutes); 
