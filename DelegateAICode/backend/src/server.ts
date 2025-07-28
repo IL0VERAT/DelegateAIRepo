@@ -35,6 +35,7 @@ if (process.env.NODE_ENV !== 'production') {
 
 
 import { initializeDatabase } from './services/database';
+import { initializeRedis } from './services/redis';
 import logger from './utils/logger';
 import { environment } from './config/environment';
 
@@ -43,6 +44,8 @@ async function boot() {
     // 1) Initialize and connect your database first
     await initializeDatabase();
     logger.info('✅ Database initialized');
+    await initializeRedis();
+    logger.info('✅ Redis initialized');
 
     // 2) Now that the DB is live, import everything else
     const express = (await import('express')).default;
