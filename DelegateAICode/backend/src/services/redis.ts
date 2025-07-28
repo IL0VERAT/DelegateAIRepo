@@ -20,8 +20,8 @@ export const initializeRedis = async () => {
   }
 
   try {
-    redisClient = new Redis(redisUrl);
-    tls: {}
+    redisClient = new Redis(redisUrl,{ tls: {} });
+
 
     redisClient.on('connect', () => {
       logger.info('Redis client connected');
