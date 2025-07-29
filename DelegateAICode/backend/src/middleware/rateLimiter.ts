@@ -25,6 +25,12 @@ if (!redisClient) {
   console.warn('⚠️ Redis unavailable, falling back to in-memory store');
 }//DEBUG
 
+if (redisClient) {
+  redisClient.ping().catch(() => {
+    console.warn('⚠️ Redis connected but unhealthy. Consider falling back to memory.');
+  });
+}//DEBUG
+
 interface RateLimitOptions {
   windowMs: number | ((req: Request) => number);
   maxRequests: number | ((req: Request) => number);
@@ -354,4 +360,3 @@ export {
   getRateLimitInfo,
   subscriptionRateLimit
 };
-
