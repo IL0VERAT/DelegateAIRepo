@@ -13,18 +13,15 @@
 
 import { Request, Response, NextFunction } from 'express';
 import rateLimit from 'express-rate-limit';
-//import RedisStore, { RedisReply } from 'rate-limit-redis';
+import RedisStore, { RedisReply } from 'rate-limit-redis';
 //import type { Options as RedisStoreOptions } from 'rate-limit-redis';
-import rateLimitRedis from 'rate-limit-redis';
+//import rateLimitRedis from 'rate-limit-redis';
 import { Command, Redis as RedisClient  } from 'ioredis';
 import { getRedisClient } from '../services/redis';
 import logger from '../utils/logger';
 
 // Grab the single shared Redis client (or null if unavailable)
 const redisClient: RedisClient | null = getRedisClient();
-
-//Correct redis naming scheme
-const RedisStore = rateLimitRedis;
 
 if (!redisClient) {
   console.warn('⚠️ Redis unavailable, falling back to in-memory store');
@@ -136,8 +133,10 @@ if (redisClient) {
   // attach RedisStore directly
   limitConfig.store = new RedisStore({
     prefix: 'rl:',
-    client: redisClient
-  }as any);
+    sendCommand: (...args: string[]) => {
+    return redisClient!.sendCommand(new Command(args[0], args.slice(1))) as Promise<RedisReply>;
+  }
+  });
   }
 
   return rateLimit(limitConfig);
