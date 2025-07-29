@@ -130,10 +130,27 @@ export const createRateLimiter = (options: RateLimitOptions) => {
   if (redisClient) {
     limitConfig.store = new RedisStore({
       prefix: 'rl:',
-      sendCommand: (...args: string[]): Promise<RedisReply> => {
-      const command = new Command(args[0], args.slice(1));
-      return redisClient.sendCommand(command) as Promise<RedisReply>;
-      }
+      sendCommand: async (...args: string[]): Promise<RedisReply> => {
+try {
+    const command = new Command(args[0], args.slice(1));
+    const result = await redisClient.sendCommand(command);
+
+    // Defensive check: result must be a string, number, or array (valid RedisReply)
+    if (
+      typeof result !== 'string' &&
+      typeof result !== 'number' &&
+      !Array.isArray(result)
+    ) {
+      logger.error('Unexpected Redis reply:', result);
+      throw new Error('Unexpected Redis reply format');
+    }
+
+    return result as RedisReply;
+  } catch (err) {
+    logger.error('Redis sendCommand failed:', err);
+    throw err;
+  }
+}
     });
   }
 
