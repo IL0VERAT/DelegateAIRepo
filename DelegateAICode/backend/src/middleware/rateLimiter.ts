@@ -13,13 +13,18 @@
 
 import { Request, Response, NextFunction } from 'express';
 import rateLimit from 'express-rate-limit';
-import RedisStore, { RedisReply } from 'rate-limit-redis';
+//import RedisStore, { RedisReply } from 'rate-limit-redis';
+//import type { Options as RedisStoreOptions } from 'rate-limit-redis';
+import rateLimitRedis from 'rate-limit-redis';
 import { Command, Redis as RedisClient  } from 'ioredis';
 import { getRedisClient } from '../services/redis';
 import logger from '../utils/logger';
 
 // Grab the single shared Redis client (or null if unavailable)
 const redisClient: RedisClient | null = getRedisClient();
+
+//Correct redis naming scheme
+const RedisStore = rateLimitRedis;
 
 if (!redisClient) {
   console.warn('⚠️ Redis unavailable, falling back to in-memory store');
@@ -128,32 +133,11 @@ export const createRateLimiter = (options: RateLimitOptions) => {
 
   // Use Redis store if available
 if (redisClient) {
-const sendCommand = async (...args: string[]): Promise<RedisReply> => {
-    try {
-      const command = new Command(args[0], args.slice(1));
-      const result = await redisClient.sendCommand(command);
-
-      if (
-        typeof result !== 'string' &&
-        typeof result !== 'number' &&
-        !Array.isArray(result)
-      ) {
-        logger.error('Unexpected Redis reply (but continuing):', result);
-        return ['0', '60']; // safe fallback
-      }
-
-      return result as RedisReply;
-    } catch (err) {
-      logger.error('Redis sendCommand failed (but continuing):', err);
-      return ['0', '60'];
-    }
-  };
-
   // attach RedisStore directly
   limitConfig.store = new RedisStore({
     prefix: 'rl:',
-    sendCommand: sendCommand
-  });
+    client: redisClient
+  }as any);
   }
 
   return rateLimit(limitConfig);

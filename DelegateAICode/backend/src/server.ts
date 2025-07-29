@@ -38,6 +38,7 @@ import { initializeDatabase } from './services/database';
 import { initializeRedis } from './services/redis';
 import logger from './utils/logger';
 import { environment } from './config/environment';
+import { getRedisClient } from './services/redis'; //DEBUG; REMOVE
 
 async function boot() {
   try {
@@ -75,6 +76,20 @@ async function boot() {
     
     // 3) Create and configure Express app
     const app = express();
+
+  app.get('/redis-test', async (req, res) => {
+  try {
+    const redis = getRedisClient();
+    if (!redis) {
+      return res.status(500).json({ error: 'Redis client is not initialized' });
+    }
+
+    const result = await redis.ping();
+    res.status(200).json({ message: 'Redis connection successful', result });
+  } catch (error) {
+    res.status(500).json({ error: 'Redis ping failed', details: String(error) });
+  }
+});//DEBUG; REMOVE
 
     app.use((req, res, next) => {
     console.log(`→ ${req.method} ${req.originalUrl}`);
