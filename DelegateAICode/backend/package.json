@@ -48,6 +48,7 @@
     "ws": "^8.14.2"
   },
   "devDependencies": {
+    "@sentry/cli": "^2.47.1",
     "@types/bcrypt": "^5.0.2",
     "@types/bcryptjs": "^2.4.6",
     "@types/compression": "^1.8.1",
@@ -69,8 +70,7 @@
     "prisma": "^6.11.1",
     "ts-jest": "^29.1.1",
     "tsx": "^4.6.2",
-    "typescript": "^5.3.3",
-    "@sentry/cli": "^2.47.1"
+    "typescript": "^5.3.3"
   },
   "engines": {
     "node": ">=18.0.0"
