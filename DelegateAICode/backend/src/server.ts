@@ -8,7 +8,7 @@
 import * as Sentry from "@sentry/node";
 import { nodeProfilingIntegration } from "@sentry/profiling-node";
 
-console.log("→ SENTRY_DSN:", process.env.SENTRY_DSN); //REMOVE
+
 Sentry.init({
   dsn: process.env.SENTRY_DSN,
   integrations: [
