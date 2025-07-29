@@ -133,8 +133,9 @@ if (redisClient) {
   // attach RedisStore directly
   limitConfig.store = new RedisStore({
     prefix: 'rl:',
-    sendCommand: (...args: string[]) => {
-    return redisClient!.sendCommand(new Command(args[0], args.slice(1))) as Promise<RedisReply>;
+    sendCommand: (...args: string[]): Promise<RedisReply> => {
+    const command = new Command(args[0], args.slice(1));
+    return redisClient.sendCommand(command) as Promise<RedisReply>;
   }
   });
   }
