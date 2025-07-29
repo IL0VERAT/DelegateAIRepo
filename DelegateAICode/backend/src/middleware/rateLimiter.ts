@@ -127,31 +127,33 @@ export const createRateLimiter = (options: RateLimitOptions) => {
   };
 
   // Use Redis store if available
-  if (redisClient) {
-    limitConfig.store = new RedisStore({
-      prefix: 'rl:',
-      sendCommand: async (...args: string[]): Promise<RedisReply> => {
-try {
-    const command = new Command(args[0], args.slice(1));
-    const result = await redisClient.sendCommand(command);
+if (redisClient) {
+const sendCommand = async (...args: string[]): Promise<RedisReply> => {
+    try {
+      const command = new Command(args[0], args.slice(1));
+      const result = await redisClient.sendCommand(command);
 
-    // Defensive check: result must be a string, number, or array (valid RedisReply)
-    if (
-      typeof result !== 'string' &&
-      typeof result !== 'number' &&
-      !Array.isArray(result)
-    ) {
-      logger.error('Unexpected Redis reply:', result);
-      return ['0', '60']; // fake valid fallback
+      if (
+        typeof result !== 'string' &&
+        typeof result !== 'number' &&
+        !Array.isArray(result)
+      ) {
+        logger.error('Unexpected Redis reply (but continuing):', result);
+        return ['0', '60']; // safe fallback
+      }
+
+      return result as RedisReply;
+    } catch (err) {
+      logger.error('Redis sendCommand failed (but continuing):', err);
+      return ['0', '60'];
     }
+  };
 
-    return result as RedisReply;
-  } catch (err) {
-    logger.error('Redis sendCommand failed:', err);
-    return ['0', '60']; // fake valid fallback
-  }
-}
-    });
+  // attach RedisStore directly
+  limitConfig.store = new RedisStore({
+    prefix: 'rl:',
+    sendCommand: sendCommand
+  });
   }
 
   return rateLimit(limitConfig);
