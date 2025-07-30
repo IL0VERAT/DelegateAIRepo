@@ -1,10 +1,4 @@
-/**
- * AI SERVICE MANAGER - GEMINI ONLY INTEGRATION
- * ============================================
- * 
- * Enhanced AI service manager with Model UN campaign-specific functionality.
- * Uses ONLY Gemini for all AI operations (no OpenAI fallback).
- */
+//AI SERVICE MANAGER -> GEMINI ONLY INTEGRATION
 
 import { geminiService } from './gemini';
 import { GoogleGenerativeAI, GenerativeModel } from '@google/generative-ai';
@@ -88,9 +82,8 @@ class AiServiceManagerEnhanced {
     throw new Error(`Vision completion is not supported for provider: ${options.provider}`);
   }
 
-  /**
-   * Get usage info. on AI 
-   */
+
+  //Get usage info. on AI
   async getUsageStats(): Promise<any> {
   const now = new Date();
   const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);
@@ -133,16 +126,9 @@ class AiServiceManagerEnhanced {
   };
 }
   
+  //CHARACTER GENERATION
 
-
-
-  // ============================================================================
-  // CHARACTER GENERATION
-  // ============================================================================
-
-  /**
-   * Generate player character for campaign
-   */
+  //Generate player character for campaign
   async generatePlayerCharacter(params: {
     scenarioId: string;
     sessionId: string;
@@ -173,9 +159,7 @@ class AiServiceManagerEnhanced {
   }
   
 
-  /**
-   * Generate AI characters for campaign
-   */
+  //Generate AI characters for campaign
   async generateAICharacters(params: {
     scenarioId: string;
     scenarioContext: string;
@@ -215,13 +199,9 @@ class AiServiceManagerEnhanced {
     }
   }
 
-  // ============================================================================
-  // CRISIS MANAGEMENT
-  // ============================================================================
+  //CRISIS MANAGEMENT
 
-  /**
-   * Generate crisis for campaign
-   */
+  //Generate crisis for campaign
   async generateCrisis(params: {
     sessionId: string;
     initialCrisis: string;
@@ -250,10 +230,7 @@ class AiServiceManagerEnhanced {
     }
   }
   
-
-  // ============================================================================
   // AI INTERACTIONS
-  // ============================================================================
 
   /**
    * Process player input and generate AI character responses

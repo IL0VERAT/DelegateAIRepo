@@ -1,27 +1,15 @@
-/**
- * RATE LIMITER MIDDLEWARE
- * ========================
- * 
- * Advanced rate limiting with:
- * - Multiple rate limiting strategies
- * - IP-based and user-based limits
- * - Redis-backed distributed limiting
- * - Adaptive rate limiting
- * - Bypass for admins
- * - Detailed logging and monitoring
- */
-
 import { Request, Response, NextFunction } from 'express';
 import rateLimit from 'express-rate-limit';
 import RedisStore, { RedisReply } from 'rate-limit-redis';
-//import type { Options as RedisStoreOptions } from 'rate-limit-redis';
-//import rateLimitRedis from 'rate-limit-redis';
-import { Command, Redis as RedisClient  } from 'ioredis';
+import type { Options as RedisStoreOptions } from 'rate-limit-redis';
+import rateLimitRedis from 'rate-limit-redis';
+import { Redis as RedisClient } from 'ioredis';
 import { getRedisClient } from '../services/redis';
 import logger from '../utils/logger';
 
 // Grab the single shared Redis client (or null if unavailable)
-const redisClient: RedisClient | null = getRedisClient();
+const redisClient = getRedisClient();
+
 
 if (!redisClient) {
   console.warn('⚠️ Redis unavailable, falling back to in-memory store');
@@ -130,13 +118,11 @@ export const createRateLimiter = (options: RateLimitOptions) => {
 
   // Use Redis store if available
 if (redisClient) {
-  // attach RedisStore directly
   limitConfig.store = new RedisStore({
     prefix: 'rl:',
-    sendCommand: (...args: string[]): Promise<RedisReply> => {
-    const command = new Command(args[0], args.slice(1));
-    return redisClient.sendCommand(command) as Promise<RedisReply>;
-  }
+    sendCommand: (command: string, ...args: string[]) => {
+      return (redisClient as any).send_command(command, ...args)as Promise<RedisReply>;
+    }
   });
   }
 

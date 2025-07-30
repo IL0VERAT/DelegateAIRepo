@@ -1,9 +1,4 @@
-/**
- * UPDATED SERVER WITH SUBSCRIPTION ROUTES
- * =======================================
- * 
- * Main server file updated to include subscription management
- */
+//Main server file 
 
 import * as Sentry from "@sentry/node";
 import { nodeProfilingIntegration } from "@sentry/profiling-node";
@@ -153,7 +148,7 @@ async function boot() {
 
 
 
-    // 4) Mount routes
+    //Mount routes
     app.use('/api/health', healthRoutes); 
     app.use('/api/auth', authRoutes);
     app.use('/api/subscriptions', subscriptionRoutes);
@@ -199,7 +194,7 @@ async function boot() {
 
     app.use(errorHandler);
 
-    // 5) Graceful shutdown
+    //shutdown
     process.on('SIGTERM', () => shutdown('SIGTERM'));
     process.on('SIGINT', () => shutdown('SIGINT'));
 

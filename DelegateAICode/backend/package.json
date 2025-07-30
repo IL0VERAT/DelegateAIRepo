@@ -40,7 +40,7 @@
     "nodemailer": "^6.9.7",
     "rate-limit-redis": "^4.2.1",
     "react": "^19.1.0",
-    "redis": "^5.6.0",
+    "redis": "^5.6.1",
     "socket.io": "^4.8.1",
     "stripe": "^18.3.0",
     "uuid": "^9.0.1",

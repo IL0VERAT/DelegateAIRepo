@@ -1,17 +1,12 @@
-/**
- * Redis Service for Delegate AI
- * =============================
- * 
- * Handles Redis connection for caching, session storage, and real-time features.
- */
-import Redis from 'ioredis';
+//Redis Service
+
+import { createClient, RedisClientType } from 'redis';
+//import { createClient } from 'redis';
 import { logger } from '../utils/logger';
 
-let redisClient: Redis | null = null;
+let redisClient: RedisClientType | null = null;
 
-/**
- * Initialize Redis connection
- */
+//Initialize Redis connection
 export const initializeRedis = async () => {
   const redisUrl = process.env.REDIS_URL;
   if (!redisUrl) {
@@ -20,51 +15,46 @@ export const initializeRedis = async () => {
   }
 
   try {
-    redisClient = new Redis(redisUrl);
-
-
-    redisClient.on('connect', () => {
-      logger.info('Redis client connected');
+    redisClient = createClient({
+      url: redisUrl
     });
+
     redisClient.on('error', (err) => {
       logger.error('Redis error:', err);
     });
 
-    // Optionally await a ping to be sure
-    await redisClient.ping();
-    logger.info('Redis service initialized successfully');
+    redisClient.on('connect', () => {
+      logger.info('✅ Redis client connected');
+    });
 
+    await redisClient.connect();
+
+    logger.info('✅ Redis service initialized successfully');
     return redisClient;
   } catch (error) {
-    logger.error('Failed to initialize Redis:', error);
+    logger.error('❌ Failed to initialize Redis:', error);
     redisClient = null;
     return null;
   }
 };
 
-/**
- * Get Redis client
- */
-export const getRedisClient = () => {
-  return redisClient;
-};
 
-/**
- * Redis health check
- */
+//Get Redis client
+export const getRedisClient = (): RedisClientType | null => redisClient;
+
+//Redis health check
 export const checkRedisHealth = async (): Promise<boolean> => {
   if (!redisClient) return false;
   try {
-    return (await redisClient.ping()) === 'PONG';
+    const pong = await redisClient.ping();
+    return pong === 'PONG';
   } catch (error) {
     logger.error('Redis health check failed:', error);
     return false;
   }
 };
 
-/**
- * Close Redis connection
- */
+//Close Redis connection
 export const closeRedis = async (): Promise<void> => {
   if (redisClient) {
     await redisClient.quit();
