@@ -72,7 +72,7 @@ export const cache = (options: {
         if (res.statusCode >= 200 && res.statusCode < 300) {
           const payload = JSON.stringify({ statusCode: res.statusCode, data: body });
           redisClient
-            .setex(cacheKey, ttl, payload)
+            .set(cacheKey, payload,{ EX: ttl })
             .then(() => logger.debug('Response cached', { cacheKey, ttl }))
             .catch(err => logger.warn('Failed to cache response', { err, cacheKey }));
         }
