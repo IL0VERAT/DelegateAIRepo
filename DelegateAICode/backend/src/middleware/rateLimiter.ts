@@ -120,8 +120,10 @@ export const createRateLimiter = (options: RateLimitOptions) => {
 if (redisClient) {
   limitConfig.store = new RedisStore({
     prefix: 'rl:',
-    sendCommand: (command: string, ...args: string[]) => 
-      (redisClient as any).send_command(command, ...args),
+    sendCommand: (command: string, ...args: string[]): Promise<RedisReply> => {
+      // cast to any to bypass TS type mismatch
+      return (redisClient as any).send_command(command, ...args) as Promise<RedisReply>;
+    }
   });
   }
 
