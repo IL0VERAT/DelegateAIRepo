@@ -3,9 +3,10 @@ import rateLimit from 'express-rate-limit';
 import RedisStore, { RedisReply } from 'rate-limit-redis';
 import type { Options as RedisStoreOptions } from 'rate-limit-redis';
 import rateLimitRedis from 'rate-limit-redis';
-import { Redis as RedisClient } from 'ioredis';
+import { RedisClientType } from 'redis';
 import { getRedisClient } from '../services/redis';
 import logger from '../utils/logger';
+import assert from 'assert';
 
 // Grab the single shared Redis client (or null if unavailable)
 const redisClient = getRedisClient();
@@ -120,9 +121,15 @@ export const createRateLimiter = (options: RateLimitOptions) => {
 if (redisClient) {
   limitConfig.store = new RedisStore({
     prefix: 'rl:',
-    sendCommand: (command: string, ...args: string[]): Promise<RedisReply> => {
-      // cast to any to bypass TS type mismatch
-      return (redisClient as any).send_command(command, ...args) as Promise<RedisReply>;
+    sendCommand: async (command: string, ...args: string[]): Promise<RedisReply> => {
+      try {
+        // The await will handle the Promise conversion automatically
+        const result = await redisClient.sendCommand([command, ...args]);
+        return result as unknown as RedisReply;
+      } catch (error) {
+        console.error('Redis sendCommand error:', error);
+        throw error;
+      }
     }
   });
   }
