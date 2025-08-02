@@ -152,15 +152,15 @@ async function boot() {
       console.log(`🔍 [SERVER] ${req.method} ${req.path} - IP: ${req.ip}`);
       next();
     });//DEBUG
-/*
-    app.use(globalRateLimiter);
+
+    //app.use(globalRateLimiter);
     app.use(express.json({ limit: '10mb' }));
     app.use(express.urlencoded({ extended: true, limit: '10mb' }));
-    app.use('/api/subscriptions/webhook', express.raw({ type: 'application/json' }));
-    app.use(compression());
-    app.use(requestLogger);
-    app.use(security);
-    app.use(cache);*/
+    //app.use('/api/subscriptions/webhook', express.raw({ type: 'application/json' }));
+    //app.use(compression());
+    //app.use(requestLogger);
+    //app.use(security);
+    //app.use(cache);
 
 app.use((req, res, next) => {
   console.log(`🔍 [SERVER-2] Made it past first debug`);
