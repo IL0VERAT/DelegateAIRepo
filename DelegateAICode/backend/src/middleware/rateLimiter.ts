@@ -121,13 +121,20 @@ export const createRateLimiter = (options: RateLimitOptions) => {
 if (redisClient) {
   limitConfig.store = new RedisStore({
     prefix: 'rl:',
-    sendCommand: async (command: string, ...args: string[]): Promise<RedisReply> => {
+    sendCommand: async (command: string, ...args: any[]): Promise<RedisReply> => {
       try {
-        // The await will handle the Promise conversion automatically
-        const result = await redisClient.sendCommand([command, ...args]);
+        // Convert all arguments to RedisArgument type (string | Buffer)
+        const processedArgs = args.map((arg: any): string => {
+          if (arg === null || arg === undefined) return '';
+          if (typeof arg === 'object') return JSON.stringify(arg);
+          return String(arg);
+        });
+
+        const result = await redisClient.sendCommand([command, ...processedArgs]);
         return result as unknown as RedisReply;
       } catch (error) {
         console.error('Redis sendCommand error:', error);
+        console.error('Command:', command, 'Args:', args);
         throw error;
       }
     }
