@@ -117,20 +117,30 @@ async function boot() {
 
     app.use(cors({
         origin: (incomingOrigin, callback) => {
-        // allow non-browser (curl/postman) requests
-        if (!incomingOrigin) return callback(null, true)
+         //DEBUG 
+         console.log('🔍 CORS Debug - Incoming Origin:', incomingOrigin);
+         console.log('🔍 CORS Debug - Exact Origins:', exactOrigins);
+         console.log('🔍 CORS Debug - FRONTEND_URL env:', process.env.FRONTEND_URL);
 
+        // allow non-browser (curl/postman) requests
+        if (!incomingOrigin) {
+        console.log('✅ CORS: Allowing request with no origin'); //DEBUG
+          return callback(null, true);
+        }
         //exact matches
         if (exactOrigins.includes(incomingOrigin)) {
+          console.log('✅ CORS: Exact origin match');//DEBUG
           return callback(null, true)
         }
 
         //any vercel.app subdomain
         if (vercelPreviewRegex.test(incomingOrigin)) {
+          console.log('✅ CORS: Vercel regex match');//DEBUG
           return callback(null, true)
         }
 
         //else reject
+        console.log('❌ CORS: Origin rejected');//DEBUG
         return callback(new Error(`CORS not allowed for origin ${incomingOrigin}`), false)
         },
       credentials: true,

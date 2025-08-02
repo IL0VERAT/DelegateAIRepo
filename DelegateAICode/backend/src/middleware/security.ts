@@ -1,16 +1,4 @@
-/**
- * SECURITY MIDDLEWARE
- * ===================
- * 
- * Comprehensive security middleware with:
- * - Helmet security headers
- * - CORS configuration
- * - CSRF protection
- * - XSS protection
- * - SQL injection prevention
- * - Content Security Policy
- */
-
+//Security middleware
 import { Request, Response, NextFunction } from 'express';
 import helmet from 'helmet';
 import cors from 'cors';
@@ -413,7 +401,6 @@ export const ipFilter = (options: {
  */
 const security = [
   helmetConfig,
-  corsConfig,
   inputSanitization,
   sqlInjectionPrevention,
   suspiciousActivityDetection,
