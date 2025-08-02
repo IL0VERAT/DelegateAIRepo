@@ -29,7 +29,7 @@ export const helmetConfig = helmet({
       fontSrc: ["'self'", "https://fonts.gstatic.com"],
       imgSrc: ["'self'", "data:", "https:", "blob:"],
       scriptSrc: ["'self'"],
-      connectSrc: ["'self'", "https://api.openai.com", "https://api.elevenlabs.io"],
+      connectSrc: ["'self'", "https://api.openai.com", "https://api.elevenlabs.io"],//NEED TO ADD GEMINI?
       frameSrc: ["'none'"],
       objectSrc: ["'none'"],
       upgradeInsecureRequests: environmentInfo.isDevelopment ? [] : null,

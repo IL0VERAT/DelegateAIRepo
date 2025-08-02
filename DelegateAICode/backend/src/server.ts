@@ -113,7 +113,7 @@ async function boot() {
     ].filter(Boolean) as string[]
 
     // A regex to match any Vercel preview URL
-    const vercelPreviewRegex = /^https:\/\/[a-z0-9-]+\.vercel\.app$/
+    const vercelPreviewRegex =  /^https:\/\/.*\.vercel\.app$/
 
     app.use(cors({
         origin: (incomingOrigin, callback) => {
