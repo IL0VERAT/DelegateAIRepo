@@ -118,9 +118,9 @@ async function boot() {
     app.use(cors({
         origin: (incomingOrigin, callback) => {
          //DEBUG 
-         console.log('🔍 CORS Debug - Incoming Origin:', incomingOrigin);
-         console.log('🔍 CORS Debug - Exact Origins:', exactOrigins);
-         console.log('🔍 CORS Debug - FRONTEND_URL env:', process.env.FRONTEND_URL);
+         //console.log('🔍 CORS Debug - Incoming Origin:', incomingOrigin);
+         //console.log('🔍 CORS Debug - Exact Origins:', exactOrigins);
+         //console.log('🔍 CORS Debug - FRONTEND_URL env:', process.env.FRONTEND_URL);
 
         // allow non-browser (curl/postman) requests
         if (!incomingOrigin) {
@@ -153,7 +153,7 @@ async function boot() {
       next();
     });//DEBUG
 
-    app.use(globalRateLimiter);
+    //app.use(globalRateLimiter);
     app.use(express.json({ limit: '10mb' }));
     app.use(express.urlencoded({ extended: true, limit: '10mb' }));
     app.use('/api/subscriptions/webhook', express.raw({ type: 'application/json' }));
@@ -162,10 +162,14 @@ async function boot() {
     app.use(security);
     app.use(cache);
 
-
+    app.get('/api/test-direct', (req, res) => {
+    console.log('🧪 Direct test endpoint hit');
+    res.json({ message: 'Server is responding', timestamp: new Date().toISOString() });
+    });
 
     //Mount routes
     app.use('/api/health', healthRoutes); 
+    console.log('🔗 Mounting auth routes at /api/auth');
     app.use('/api/auth', authRoutes);
     app.use('/api/subscriptions', subscriptionRoutes);
     app.use('/api/users', userRoutes);
