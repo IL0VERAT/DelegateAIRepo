@@ -18,7 +18,7 @@ RUN npm install
 RUN npx prisma generate --schema=./prisma/schema.prisma
 
 # Build TypeScript
-RUN npm run build
+RUN npm run build && npx prisma db push
 
 # ensure SENTRY_* env vars are set in Railway’s Env UI
 COPY entrypoint.sh /entrypoint.sh
