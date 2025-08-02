@@ -80,7 +80,7 @@ router.post('/register', async (req: Request, res: Response) => {
       role: user.role
     });
     console.log('[Auth] token generated');//DEBUG
-
+/*
     // Send welcome email
     console.log('[Auth] sending welcome email');//DEBUG
     await emailService.sendWelcomeEmail(user.email, user.name || undefined);
@@ -91,7 +91,7 @@ router.post('/register', async (req: Request, res: Response) => {
       userId: user.id,
       email: user.email
     });
-     console.log('[Auth] user action logged');//DEBUG
+     console.log('[Auth] user action logged');//DEBUG*/
 
     logger.info('User registered successfully', {
       userId: user.id,
