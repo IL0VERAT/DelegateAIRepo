@@ -32,5 +32,8 @@ else
   echo "   SENTRY_AUTH_TOKEN=${#SENTRY_AUTH_TOKEN} chars"
 fi
 
+echo "Running Prisma migrate deploy..."
+npx prisma migrate deploy
+
 # Hand off to the main command (npm start)
 exec "$@"
