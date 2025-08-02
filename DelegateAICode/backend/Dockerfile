@@ -10,7 +10,7 @@ COPY prisma ./prisma
 COPY src ./src
 
 WORKDIR /app/backend
-
+#TEST
 # Install dependencies
 RUN npm install
 
