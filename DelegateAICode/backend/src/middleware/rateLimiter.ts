@@ -53,7 +53,7 @@ export const createRateLimiter = (options: RateLimitOptions) => {
 
   const limitConfig: any = {
     
-    windowMs: resolvedWindowMs as unknown,
+    windowMs: typeof windowMs === 'function' ? windowMs : windowMs,
     max: resolvedMaxRequests,
     message: {
       error: 'Rate limit exceeded',
